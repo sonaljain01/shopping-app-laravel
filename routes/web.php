@@ -7,7 +7,8 @@ use App\Http\Middleware\AdminRedirectIfAuthenticated;
 use App\Http\Middleware\AdminAuthenticate;
 use App\Http\Controllers\admin\CategoryController;
 use App\Http\Controllers\admin\TempImagesController;
-
+use App\Http\Controllers\admin\SubCategoryController;
+use App\Http\Controllers\admin\BrandController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -36,10 +37,23 @@ Route::group(['prefix'=>'admin'], function () {
         Route::post('/upload-temp-image', [TempImagesController::class, 'create'])->name('temp-images.create');
 
 
+        //sub_category Routes
+        Route::get('/sub-categories/create', [SubCategoryController::class, 'create'])->name('sub-categories.create');
+        Route::post('/sub-categories', [SubCategoryController::class, 'store'])->name('sub-categories.store');
+
+        //brands
+        Route::get('brands/create', [BrandController::class, 'create'])->name('brands.create');
+        Route::post('/brands', [BrandController::class, 'store'])->name('brands.store');
+        Route::get('/brands', [BrandController::class, 'index'])->name('brands.index');
+        Route::delete('/brands/{brand}', [BrandController::class, 'destroy'])->name('brands.delete');
+        Route::get('/brands/{brand}/edit', [BrandController::class, 'edit'])->name('brands.edit');
+        Route::put('/brands/{brand}', [BrandController::class, 'update'])->name('brands.update');
+
+
         Route::get('/getSlug', function(Request $request){
-            $slug = ' ';
-            if(!empty($request->name)){
-                $slug = \Str::slug($request->name);
+            $slug = '';
+            if(!empty($request->title)){
+                $slug = \Str::slug($request->title);
             }
 
             return response()->json([
