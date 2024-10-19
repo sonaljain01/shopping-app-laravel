@@ -8,6 +8,11 @@ use App\Models\Category;
 use App\Models\Brand;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Product;
+use App\Models\ProductImage;
+use App\Models\TempImage;
+use Intervention\Image\ImageManager;
+use Intervention\Image\Drivers\Gd\Driver;
+
 class ProductController extends Controller
 {
     public function create()
@@ -22,6 +27,8 @@ class ProductController extends Controller
 
     public function store(Request $request)
     {
+        // dd($request->image_array);
+        // exit();
         $rules = [
             'title' => 'required',
             'slug' => 'required|unique:products',
@@ -53,6 +60,41 @@ class ProductController extends Controller
             $product->barcode = $request->barcode;
             $product->compare_price = $request->compare_price;
             $product->save();
+
+            // save gallery 
+            if (!empty($request->image_array)) {
+                foreach ($request->image_array as $temp_image_id) {
+
+                    $tempImageInfo = TempImage::find($temp_image_id);
+                    $extArray = explode('.', $tempImageInfo->name);
+                    $ext = last($extArray);
+
+                    $productImage = new ProductImage();
+                    $productImage->product_id = $product->id;
+                    $productImage->image = 'NULL';
+                    $productImage->save();
+
+                    $imageName = $product->id.'-'.$productImage->id.'-'.time().'.'.$ext;
+                    $productImage->image = $imageName;
+                    $productImage->save();
+
+                    //Thumbnail
+                    $sourcePath = public_path() . '/temp-images' . $tempImageInfo->name;
+                    $destPath = public_path() . '/uploads/product/large' . $tempImageInfo->name;
+                    $image = $image->make($sourcePath);
+                    $image->resize(1400, null, function ($constraint) {
+                        $constraint->aspectRatio();
+                    });
+                    $image->save($destPath);
+
+                    //small
+                    $destPath = public_path() . '/uploads/product/small' . $tempImageInfo->name;
+                    $image = $image->make($sourcePath);
+                    $image->fit(300, 300);
+                    $image->save($destPath);
+                }
+            }
+
             $request->session()->flash('success', 'Product Created Successfully');
             return response()->json([
                 'status' => true,
