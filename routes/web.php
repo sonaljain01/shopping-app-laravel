@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\admin\AdminLoginController;
+use App\Http\Controllers\admin\ProductController;
 use Illuminate\Support\Facades\Route;
 use  App\Http\Controllers\admin\HomeController;
 use App\Http\Middleware\AdminRedirectIfAuthenticated;
@@ -48,6 +49,11 @@ Route::group(['prefix'=>'admin'], function () {
         Route::delete('/brands/{brand}', [BrandController::class, 'destroy'])->name('brands.delete');
         Route::get('/brands/{brand}/edit', [BrandController::class, 'edit'])->name('brands.edit');
         Route::put('/brands/{brand}', [BrandController::class, 'update'])->name('brands.update');
+
+
+        //Products Routes
+        Route::get('products/create', [ProductController::class, 'create'])->name('products.create');
+        Route::post('/products', [ProductController::class, 'store'])->name('products.store');
 
 
         Route::get('/getSlug', function(Request $request){
