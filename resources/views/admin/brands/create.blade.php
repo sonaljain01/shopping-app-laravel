@@ -79,6 +79,7 @@
 
                 success: function(response) {
                     $("button[type='submit']").prop('disabled', false);
+                    window.location.href = "{{ route('brands.index') }}";
                     if (response["status"] == true) {
 
                         // window.location.href = "{{ route('categories.index') }}";
