@@ -9,7 +9,7 @@
                     <h1>Create Product</h1>
                 </div>
                 <div class="col-sm-6 text-right">
-                    <a href="products.html" class="btn btn-primary">Back</a>
+                    <a href="{{ route('products.index') }}" class="btn btn-primary">Back</a>
                 </div>
             </div>
         </div>
@@ -195,7 +195,7 @@
 
                 <div class="pb-5 pt-3">
                     <button type="submit" class="btn btn-primary">Create</button>
-                    <a href="products.html" class="btn btn-outline-dark ml-3">Cancel</a>
+                    <a href="{{ route('products.index') }}" class="btn btn-outline-dark ml-3">Cancel</a>
                 </div>
             </div>
         </form>
@@ -280,18 +280,23 @@
             success: function(file, response) {
                 // $("#image_id").val(response.image_id);
 
-                var html = `<div class="col-md-3"><div class="card">
+                var html = `<div class="col-md-3" id="image-row-${response.image_id}"><div class="card">
                     <input type="hidden" name="image-array[]" value="${response.image_id}">
                         <img src="${response.ImagePath}" class="card-img-top" alt="">
                         <div class="card-body">
                             
-                            <a href="#" class="btn btn-danger">Delete</a>
+                            <a href="javascript:void(0)" onclick="deleteImage(${response.image_id})" class="btn btn-danger">Delete</a>
                         </div>
                     </div>
                     </div>`;
 
                 $("#product-gallery").append(html);
             }
-        })
+        });
+
+        function deleteImage(id) {
+            $("#image-row-" + id).remove();
+            // $("#image_id").val("");
+        }
     </script>
 @endsection
