@@ -187,5 +187,22 @@ class ProductController extends Controller
         }
     }
 
-    
+    public function destroy($id, Request $request)
+    {
+        $product = Product::find($id);
+        if(empty($product)) {
+            return redirect()->route('products.index');
+        }
+
+        // File::delete(public_path() . '/uploads/category/' . $category->image);
+
+        $product->delete();
+
+        $request->session()->flash('success', 'Product deleted successfully');
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Product deleted successfully'
+        ]);
+    }
 }
