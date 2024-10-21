@@ -166,7 +166,7 @@
                     }
                 });
             },
-            url: "{{ route('product.image.upload') }}",
+            url: "{{ route('products.store') }}",
             maxFiles: 1,
             paramName: 'image',
             addRemoveLinks: true,
