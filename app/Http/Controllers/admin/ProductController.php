@@ -58,7 +58,7 @@ class ProductController extends Controller
                 $rules['qty'] = 'required|numeric';
             }
             $validator = Validator::make($request->all(), $rules);
-            
+
 
             if ($validator->fails()) {
                 return response()->json([
@@ -66,7 +66,7 @@ class ProductController extends Controller
                     'errors' => $validator->errors(),
                 ]);
             }
-        
+
             // Store product details
             $product = Product::create([
                 'title' => $request->title,
@@ -84,41 +84,43 @@ class ProductController extends Controller
                 'compare_price' => $request->compare_price,
             ]);
 
-                if ($request->hasFile('image')) {
-                    foreach ($request->file('image') as $image) {
-                        $ext = $image->getClientOriginalExtension();
-                        $newName = time() . '-' . uniqid() . '.' . $ext;
+            if ($request->hasFile('image')) {
+                foreach ($request->file('image') as $image) {
+                    $ext = $image->getClientOriginalExtension();
+                    $newName = time() . '-' . uniqid() . '.' . $ext;
 
-                        // $productImage = new ProductImage();
-                        // $productImage->product_id = $product->id;  
-                        // $productImage->image = 'uploads/product/' . $newName;
-                        // $productImage->name = $newName;
-                        // $productImage->save();
+                    $image->move(public_path('uploads/product'), $newName);
 
-                        $product = ProductImage::create([
-                            "product_id" => $product->id,
-                            "image"=> 'uploads/product/' . $newName,
-                            "name" => $newName
-                            ]);
-                            
-                            if(!$product){
-                            return back()->with("error", "there is error");}
-            
-                        // Move the image to the uploads folder
-                        $image->move(public_path('uploads/product'), $newName);
+
+                    $product = ProductImage::create([
+                        "product_id" => $product->id,
+                        "image" => 'uploads/product/' . $newName,
+                        "name" => $newName
+                    ]);
+
+                    if (!$product) {
+                        return back()->with("error", "there is error");
                     }
+
+
                 }
+            }
 
-                $request->session()->flash('success', 'Product Created Successfully');
-                return response()->json([
-                    'status' => true,
-                    'message' => 'Product Created Successfully'
-                ]);
-            } 
+            // $request->session()->flash('success', 'Product Created Successfully');
+            // return response()->json([
+            //     'status' => true,
+            //     'message' => 'Product Created Successfully'
+            // ]);
+            // return redirect()->route('products.index')->with('success', 'Product created successfully.');
+            $request->session()->flash('success', 'Product Created Successfully');
+
+            // Return JSON response for AJAX request
+            return redirect()->route('products.index');
         }
+    }
 
 
-    
+
 
 
     public function edit($id, Request $request)
