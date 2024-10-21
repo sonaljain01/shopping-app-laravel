@@ -67,6 +67,15 @@
                                     </select>
                                 </div>
                             </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="status">Show on Home</label>
+                                    <select type="text" name="showHome" id="showHome" class="form-control">
+                                        <option {{ $category->showHome == 'Yes' ? 'selected': '' }} value="Yes">Yes</option>
+                                        <option {{ $category->showHome == 'No' ? 'selected': '' }} value="No">No</option>
+                                    </select>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -162,7 +171,8 @@
                     }
                 });
             },
-            url: "{{ route('temp-images.create') }}",
+            
+            url: "{{ route('product.image.upload') }}",
             maxFiles: 1,
             paramName: 'image',
             addRemoveLinks: true,

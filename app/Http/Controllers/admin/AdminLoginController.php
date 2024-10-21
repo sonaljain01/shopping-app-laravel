@@ -6,13 +6,14 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Validator;
 use Auth;
+
 class AdminLoginController extends Controller
 {
     public function index()
     {
         return view('admin.login');
     }
-
+    
     public function authenticate(Request $request)
     {
         $validator = Validator::make($request->all(), [

@@ -12,7 +12,8 @@ use App\Models\ProductImage;
 use App\Models\TempImage;
 use Intervention\Image\ImageManager;
 use Intervention\Image\Drivers\Gd\Driver;
-
+use Intervention\Image\ImageManagerStatic as Image;
+use Storage;
 class ProductController extends Controller
 {
     public function index(Request $request)
@@ -50,60 +51,61 @@ class ProductController extends Controller
             'category' => 'required',
             'is_featured' => 'required|in:Yes,No',
             'description' => 'required',
+            'image.*' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ];
 
         if (!empty($request->track_qty) && $request->track_qty == 'Yes') { {
-                $rule['qty'] = 'required|numeric';
+                $rules['qty'] = 'required|numeric';
             }
             $validator = Validator::make($request->all(), $rules);
-            if ($validator->passes()) {
-                $product = new Product();
-                $product->title = $request->title;
-                $product->slug = $request->slug;
-                $product->price = $request->price;
-                $product->sku = $request->sku;
-                $product->track_qty = $request->track_qty;
-                $product->qty = $request->qty;
-                $product->category_id = $request->category;
-                $product->brand_id = $request->brand;
-                $product->is_featured = $request->is_featured;
-                $product->description = $request->description;
-                $product->status = $request->status;
-                $product->barcode = $request->barcode;
-                $product->compare_price = $request->compare_price;
-                $product->save();
+            
 
-                // save gallery 
-                if (!empty($request->image_array)) {
-                    foreach ($request->image_array as $temp_image_id) {
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => false,
+                    'errors' => $validator->errors(),
+                ]);
+            }
+        
+            // Store product details
+            $product = Product::create([
+                'title' => $request->title,
+                'slug' => $request->slug,
+                'price' => $request->price,
+                'sku' => $request->sku,
+                'track_qty' => $request->track_qty,
+                'qty' => $request->qty,
+                'category_id' => $request->category,
+                'brand_id' => $request->brand,
+                'is_featured' => $request->is_featured,
+                'description' => $request->description,
+                'status' => $request->status,
+                'barcode' => $request->barcode,
+                'compare_price' => $request->compare_price,
+            ]);
 
-                        $tempImageInfo = TempImage::find($temp_image_id);
-                        $extArray = explode('.', $tempImageInfo->name);
-                        $ext = last($extArray);
+                if ($request->hasFile('image')) {
+                    foreach ($request->file('image') as $image) {
+                        $ext = $image->getClientOriginalExtension();
+                        $newName = time() . '-' . uniqid() . '.' . $ext;
 
-                        $productImage = new ProductImage();
-                        $productImage->product_id = $product->id;
-                        $productImage->image = 'NULL';
-                        $productImage->save();
+                        // $productImage = new ProductImage();
+                        // $productImage->product_id = $product->id;  
+                        // $productImage->image = 'uploads/product/' . $newName;
+                        // $productImage->name = $newName;
+                        // $productImage->save();
 
-                        $imageName = $product->id . '-' . $productImage->id . '-' . time() . '.' . $ext;
-                        $productImage->image = $imageName;
-                        $productImage->save();
-
-                        //Thumbnail
-                        $sourcePath = public_path() . '/temp-images' . $tempImageInfo->name;
-                        $destPath = public_path() . '/uploads/product/large' . $imageName;
-                        $image = $image->make($sourcePath);
-                        $image->resize(1400, null, function ($constraint) {
-                            $constraint->aspectRatio();
-                        });
-                        $image->save($destPath);
-
-                        //small
-                        $destPath = public_path() . '/uploads/product/small' . $imageName;
-                        $image = $image->make($sourcePath);
-                        $image->fit(300, 300);
-                        $image->save($destPath);
+                        $product = ProductImage::create([
+                            "product_id" => $product->id,
+                            "image"=> 'uploads/product/' . $newName,
+                            "name" => $newName
+                            ]);
+                            
+                            if(!$product){
+                            return back()->with("error", "there is error");}
+            
+                        // Move the image to the uploads folder
+                        $image->move(public_path('uploads/product'), $newName);
                     }
                 }
 
@@ -112,15 +114,12 @@ class ProductController extends Controller
                     'status' => true,
                     'message' => 'Product Created Successfully'
                 ]);
-            } else {
-
-                return response()->json([
-                    'status' => false,
-                    'errors' => $validator->errors()
-                ]);
-            }
+            } 
         }
-    }
+
+
+    
+
 
     public function edit($id, Request $request)
     {
@@ -141,17 +140,17 @@ class ProductController extends Controller
 
         $rules = [
             'title' => 'required',
-            'slug' => 'required|unique:products, slug, '.$product->id.',id',
+            'slug' => 'required|unique:products, slug, ' . $product->id . ',id',
             'price' => 'required|numeric',
-            'sku' => 'required|unique:products, sku, '.$product->id.',id',
+            'sku' => 'required|unique:products, sku, ' . $product->id . ',id',
             'track_qty' => 'required|in:Yes,No',
             'category' => 'required',
             'is_featured' => 'required|in:Yes,No',
-            
+
         ];
 
         if (!empty($request->track_qty) && $request->track_qty == 'Yes') { {
-                $rule['qty'] = 'required|numeric';
+                $rules['qty'] = 'required|numeric';
             }
             $validator = Validator::make($request->all(), $rules);
             if ($validator->passes()) {
@@ -170,7 +169,7 @@ class ProductController extends Controller
                 $product->compare_price = $request->compare_price;
                 $product->save();
 
-                
+
 
                 $request->session()->flash('success', 'Product Updated Successfully');
                 return response()->json([
@@ -190,7 +189,7 @@ class ProductController extends Controller
     public function destroy($id, Request $request)
     {
         $product = Product::find($id);
-        if(empty($product)) {
+        if (empty($product)) {
             return redirect()->route('products.index');
         }
 

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\admin\AdminLoginController;
 use App\Http\Controllers\admin\ProductController;
+use App\Http\Controllers\FrontController;
 use Illuminate\Support\Facades\Route;
 use  App\Http\Controllers\admin\HomeController;
 use App\Http\Middleware\AdminRedirectIfAuthenticated;
@@ -10,11 +11,13 @@ use App\Http\Controllers\admin\CategoryController;
 use App\Http\Controllers\admin\TempImagesController;
 use App\Http\Controllers\admin\SubCategoryController;
 use App\Http\Controllers\admin\BrandController;
+use App\Http\Controllers\admin\ProductImageController;
 
-Route::get('/', function () {
-    return view('welcome');
-});
 
+// Route::get('/', function () {
+//     return view('welcome');
+// });
+Route::get('/', [FrontController::class, 'index'])->name('front.home');
 
 Route::group(['prefix'=>'admin'], function () {
     Route::middleware(['admin.guest'])->group(function () {
@@ -35,7 +38,7 @@ Route::group(['prefix'=>'admin'], function () {
         Route::get('/categories', [CategoryController::class, 'index'])->name('categories.index');
 
         //temp-images.create
-        Route::post('/upload-temp-image', [TempImagesController::class, 'create'])->name('temp-images.create');
+        // Route::post('/upload-temp-image', [TempImagesController::class, 'create'])->name('temp-images.create');
 
 
         //sub_category Routes
@@ -58,7 +61,7 @@ Route::group(['prefix'=>'admin'], function () {
         Route::get('/products/{product}/edit', [ProductController::class, 'edit'])->name('products.edit');
         Route::put('/products/{product}', [ProductController::class, 'update'])->name('products.update');
         Route::delete('/products/{product}', [ProductController::class, 'destroy'])->name('products.delete');
-
+        Route::post('product/image/upload', [ProductImageController::class, 'upload'])->name('product.image.upload');
 
         Route::get('/getSlug', function(Request $request){
             $slug = '';
