@@ -66,7 +66,7 @@
                         </div>
                         <div class="form-group">
                             <label for="image">Product Images</label>
-                            <input type="file" name="image[]" id="image" class="form-control" multiple>
+                            <input type="file" name="file[]" id="image" class="form-control" multiple>
                             @error('images.*')
                                 <p class="text-danger">{{ $message }}</p>
                             @enderror
