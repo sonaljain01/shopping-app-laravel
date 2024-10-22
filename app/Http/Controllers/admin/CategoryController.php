@@ -33,13 +33,27 @@ class CategoryController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'name' => 'required',
-            'slug' => 'required|unique:categories',
+            'slug' => 'nullable|unique:categories',
         ]);
-
+        $slug = null;
+        if ($request->slug) {
+            $isCategoryExist = Category::where('slug', $request->slug)->first();
+            if ($isCategoryExist) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Blog with this slug already exist',
+                ]);
+            } else {
+                $slug = $request->slug;
+            }
+        } else {
+            $slug = $this->slug($request->name);
+        }
+        
         if ($validator->passes()) {
             $category = new Category();
             $category->name = $request->name;
-            $category->slug = $request->slug;
+            $category->slug = $slug;
             $category->status = $request->status;
             $category->showHome = $request->showHome;
             $category->save();
@@ -81,27 +95,27 @@ class CategoryController extends Controller
     public function edit($categoryId, Request $request)
     {
         $category = Category::find($categoryId);
-        if(empty($category)) {
+        if (empty($category)) {
             return redirect()->route('categories.index');
         }
-        
+
         return view('admin.category.edit', compact('category'));
     }
 
     public function update($categoryId, Request $request)
     {
         $category = Category::find($categoryId);
-        if(empty($category)) {
+        if (empty($category)) {
             return response()->json([
                 'status' => false,
                 'notFound' => true,
                 'message' => 'Category not found'
             ]);
         }
-        
+
         $validator = Validator::make($request->all(), [
             'name' => 'required',
-            'slug' => 'required|unique:categories, slug, '.$category->id.',id' ,
+            'slug' => 'required|unique:categories, slug, ' . $category->id . ',id',
         ]);
 
         if ($validator->passes()) {
@@ -120,7 +134,7 @@ class CategoryController extends Controller
                 $extArray = explode('.', $tempImage->name);
                 $ext = last($extArray);
 
-                $newImageName = $category->id .'-'.time(). '.' . $ext;
+                $newImageName = $category->id . '-' . time() . '.' . $ext;
                 $sPath = public_path() . '/temp-images/' . $tempImage->name;
                 $dPath = public_path() . '/uploads/category/' . $newImageName;
                 File::copy($sPath, $dPath);
@@ -153,7 +167,7 @@ class CategoryController extends Controller
     public function destroy($categoryId, Request $request)
     {
         $category = Category::find($categoryId);
-        if(empty($category)) {
+        if (empty($category)) {
             return redirect()->route('categories.index');
         }
 
@@ -167,5 +181,16 @@ class CategoryController extends Controller
             'status' => true,
             'message' => 'Category deleted successfully'
         ]);
+    }
+
+    protected function slug($title)
+    {
+        $slug = \Str::slug($title);
+        $isCategoryExist = Category::where('slug', $slug)->first();
+        if ($isCategoryExist) {
+            $slug = $slug . '-' . rand(1000, 9999);
+        }
+
+        return $slug;
     }
 }
