@@ -9,8 +9,8 @@ use App\Models\Brand;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Product;
 use App\Models\ProductImage;
+use Str;
 
-use File;
 class ProductController extends Controller
 {
     public function index(Request $request)
@@ -21,7 +21,6 @@ class ProductController extends Controller
             $products = $products->where('title', 'like', '%' . $request->get('keyword') . '%');
         }
         $products = $products->paginate(10);
-        // dd($products);
         $data['products'] = $products;
         return view('admin.products.list', $data);
     }
@@ -38,8 +37,6 @@ class ProductController extends Controller
     public function store(Request $request)
     {
 
-        // dd($request->all());
-        // exit();
         $rules = [
             'title' => 'required',
             'slug' => 'nullable|unique:products',
@@ -49,7 +46,6 @@ class ProductController extends Controller
             'category' => 'required',
             'is_featured' => 'required|in:Yes,No',
             'description' => 'required',
-            // Ensure at least one image is provided
             'image.*' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ];
 
@@ -100,7 +96,6 @@ class ProductController extends Controller
 
             if ($request->hasFile('image')) {
                 foreach ($request->file('image') as $image) {
-                    // dd($request->file('image'));
                     $ext = $image->getClientOriginalExtension();
                     $newName = time() . '-' . uniqid() . '.' . $ext;
 
@@ -112,7 +107,6 @@ class ProductController extends Controller
                         "image" => 'uploads/product/' . $newName,
                         "name" => $newName
                     ]);
-                    // dd($product);
                     if (!$product) {
                         return back()->with("error", "there is error");
                     }
@@ -142,8 +136,7 @@ class ProductController extends Controller
 
     public function update(Request $request, $id)
     {
-        // dd($request->all());
-        // $product = Product::with('product_images')->find($id);
+       
         $product = Product::where('id', $id)->with('product_images')->first();
         $rules = [
             'title' => 'required',
@@ -185,16 +178,14 @@ class ProductController extends Controller
                         }
                         $image->delete(); // Delete the image record from the database
                     }
-            
+
                     // Upload new images
                     foreach ($request->file('image') as $image) {
                         $ext = $image->getClientOriginalExtension();
                         $newName = time() . '-' . uniqid() . '.' . $ext;
-            
-                        // Move the image to the uploads directory
+
                         $image->move(public_path('uploads/product'), $newName);
-            
-                        // Save the new image information to the database
+        
                         ProductImage::create([
                             "product_id" => $product->id,
                             "image" => 'uploads/product/' . $newName,
@@ -221,8 +212,6 @@ class ProductController extends Controller
             return redirect()->route('products.index');
         }
 
-        // File::delete(public_path() . '/uploads/category/' . $category->image);
-
         foreach ($product->product_images as $image) {
             $imagePath = public_path($image->image);
             if (file_exists($imagePath)) {
@@ -242,7 +231,7 @@ class ProductController extends Controller
 
     protected function slug($title)
     {
-        $slug = \Str::slug($title);
+        $slug = Str::slug($title);
         $isProductExist = Product::where('slug', $slug)->first();
         if ($isProductExist) {
             $slug = $slug . '-' . rand(1000, 9999);

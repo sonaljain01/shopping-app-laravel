@@ -6,9 +6,9 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Validator;
 use App\Models\Category;
-use App\Models\TempImage;
 use File;
-use Intervention\Image\Laravel\Facades\Image;
+use Str;
+
 class CategoryController extends Controller
 {
     public function index(Request $request)
@@ -82,9 +82,9 @@ class CategoryController extends Controller
 
     public function update($id, Request $request)
     {
-        // dd($request->all());
+        
         $category = Category::where('id', $id)->first();
-        // dd($category);
+        
         $rules = [
             'name' => 'required',
             'slug' => 'required|unique:categories,slug,'. $category->id . ',id',
@@ -131,7 +131,7 @@ class CategoryController extends Controller
 
     protected function slug($title)
     {
-        $slug = \Str::slug($title);
+        $slug = Str::slug($title);
         $isCategoryExist = Category::where('slug', $slug)->first();
         if ($isCategoryExist) {
             $slug = $slug . '-' . rand(1000, 9999);
