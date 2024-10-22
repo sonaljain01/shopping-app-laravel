@@ -59,34 +59,9 @@ class CategoryController extends Controller
             $category->parent_id = $request->parent_id;
             $category->save();
 
-
-            //save image
-            if (!empty($request->image_id)) {
-                $tempImage = TempImage::find($request->image_id);
-                $extArray = explode('.', $tempImage->name);
-                $ext = last($extArray);
-
-                $newImageName = $category->id . '.' . $ext;
-                $sPath = public_path() . '/temp-images/' . $tempImage->name;
-                $dPath = public_path() . '/uploads/category/' . $newImageName;
-                File::copy($sPath, $dPath);
-
-                // //Image thumbnail
-                // $dPath = public_path() . '/uploads/category/thumb' . $newImageName;
-                // $img = Image::make($sPath);
-                // $img->resize(450,600);
-                // $img->save($dPath);
-
-                $category->image = $newImageName;
-                $category->save();
-            }
-
             $request->session()->flash('success', 'Category created successfully');
-            return response()->json([
-                'status' => true,
-                'message' => 'Category created successfully',
-                'category' => $category
-            ]);
+            return redirect()->route('categories.index');
+           
         } else {
             return response()->json([
                 'status' => false,
@@ -95,9 +70,9 @@ class CategoryController extends Controller
         }
     }
 
-    public function edit($categoryId, Request $request)
+    public function edit($id, Request $request)
     {
-        $category = Category::find($categoryId);
+        $category = Category::find($id);
         if (empty($category)) {
             return redirect()->route('categories.index');
         }
@@ -105,68 +80,34 @@ class CategoryController extends Controller
         return view('admin.category.edit', compact('category', 'categories'));
     }
 
-    public function update($categoryId, Request $request)
+    public function update($id, Request $request)
     {
-        $category = Category::find($categoryId);
-        if (empty($category)) {
-            return response()->json([
-                'status' => false,
-                'notFound' => true,
-                'message' => 'Category not found'
-            ]);
-        }
-
-        $validator = Validator::make($request->all(), [
+        // dd($request->all());
+        $category = Category::where('id', $id)->first();
+        // dd($category);
+        $rules = [
             'name' => 'required',
-            'slug' => 'nullable|unique:categories, slug, ' . $category->id . ',id',
+            'slug' => 'required|unique:categories,slug,'. $category->id . ',id',
             'parent_id' => 'nullable|exists:categories,id',
-        ]);
+        ];
 
+        $validator = Validator::make($request->all(), $rules);
         if ($validator->passes()) {
-
             $category->name = $request->name;
             $category->slug = $request->slug;
             $category->status = $request->status;
             $category->showHome = $request->showHome;
             $category->parent_id = $request->parent_id;
             $category->save();
-
-            $oldImage = $category->image;
-
-            //save image
-            if (!empty($request->image_id)) {
-                $tempImage = TempImage::find($request->image_id);
-                $extArray = explode('.', $tempImage->name);
-                $ext = last($extArray);
-
-                $newImageName = $category->id . '-' . time() . '.' . $ext;
-                $sPath = public_path() . '/temp-images/' . $tempImage->name;
-                $dPath = public_path() . '/uploads/category/' . $newImageName;
-                File::copy($sPath, $dPath);
-
-                // //Image thumbnail
-                // $dPath = public_path() . '/uploads/category/thumb' . $newImageName;
-                // $img = Image::make($sPath);
-                // $img->resize(450,600);
-                // $img->save($dPath);
-
-                $category->image = $newImageName;
-                $category->save();
-
-                File::delete(public_path() . '/uploads/category/' . $oldImage);
-            }
-
             $request->session()->flash('success', 'Category updated successfully');
-            return response()->json([
-                'status' => true,
-                'message' => 'Category created successfully'
-            ]);
+            return redirect()->route('categories.index');
         } else {
             return response()->json([
                 'status' => false,
                 'errors' => $validator->errors()
             ]);
         }
+           
     }
 
     public function destroy($categoryId, Request $request)
