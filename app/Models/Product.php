@@ -21,6 +21,7 @@ class Product extends Model
         'description',
         'is_featured',
         'image',
+        'compare_price',
         'additional_image',
     ];
     public function product_images()
