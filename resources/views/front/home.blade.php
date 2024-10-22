@@ -388,7 +388,7 @@
                         <div class="card product-card">
                             <div class="product-image position-relative">
                                 <a href="" class="product-img"><img class="card-img-top"
-                                        src="{{ asset('front-assets/images/product-1.jpg') }}" alt=""></a>
+                                    src="{{ asset('front-assets/images/product-1.jpg') }}" alt=""></a>
                                 <a class="whishlist" href="222"><i class="far fa-heart"></i></a>
 
                                 <div class="product-action">
