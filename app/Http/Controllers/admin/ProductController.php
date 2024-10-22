@@ -9,12 +9,8 @@ use App\Models\Brand;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Product;
 use App\Models\ProductImage;
-use App\Models\TempImage;
-use Intervention\Image\ImageManager;
-use Intervention\Image\Drivers\Gd\Driver;
-use Intervention\Image\ImageManagerStatic as Image;
-use Storage;
-use DB;
+
+use File;
 class ProductController extends Controller
 {
     public function index(Request $request)
@@ -42,7 +38,7 @@ class ProductController extends Controller
     public function store(Request $request)
     {
 
-        // dd($request->image_array);
+        // dd($request->all());
         // exit();
         $rules = [
             'title' => 'required',
@@ -116,7 +112,7 @@ class ProductController extends Controller
                         "image" => 'uploads/product/' . $newName,
                         "name" => $newName
                     ]);
-
+                    // dd($product);
                     if (!$product) {
                         return back()->with("error", "there is error");
                     }
@@ -130,15 +126,7 @@ class ProductController extends Controller
     }
 
 
-    protected function uploadImage($file)
-    {
-        $uploadFolder = 'public/uploads/product';
-        $image = $file;
-        $image_uploaded_path = $image->store($uploadFolder, 'public');
-        $uploadedImageUrl = Storage::disk('public')->url($image_uploaded_path);
-
-        return $uploadedImageUrl;
-    }
+   
     public function edit($id, Request $request)
     {
 
@@ -152,10 +140,11 @@ class ProductController extends Controller
         return view('admin.products.edit', $data);
     }
 
-    public function update($id, Request $request)
+    public function update(Request $request, $id)
     {
-        $product = Product::find($id);
-
+        // dd($request->all());
+        // $product = Product::with('product_images')->find($id);
+        $product = Product::where('id', $id)->with('product_images')->first();
         $rules = [
             'title' => 'required',
             'slug' => 'required|unique:products, slug, ' . $product->id . ',id',
@@ -187,13 +176,34 @@ class ProductController extends Controller
                 $product->compare_price = $request->compare_price;
                 $product->save();
 
-
-
+                if ($request->hasFile('image')) {
+                    // Delete old images from the database and file system
+                    foreach ($product->product_images as $image) {
+                        $imagePath = public_path($image->image);
+                        if (file_exists($imagePath)) {
+                            unlink($imagePath); // Delete the image file
+                        }
+                        $image->delete(); // Delete the image record from the database
+                    }
+            
+                    // Upload new images
+                    foreach ($request->file('image') as $image) {
+                        $ext = $image->getClientOriginalExtension();
+                        $newName = time() . '-' . uniqid() . '.' . $ext;
+            
+                        // Move the image to the uploads directory
+                        $image->move(public_path('uploads/product'), $newName);
+            
+                        // Save the new image information to the database
+                        ProductImage::create([
+                            "product_id" => $product->id,
+                            "image" => 'uploads/product/' . $newName,
+                            "name" => $newName
+                        ]);
+                    }
+                }
                 $request->session()->flash('success', 'Product Updated Successfully');
-                return response()->json([
-                    'status' => true,
-                    'message' => 'Product Updated Successfully'
-                ]);
+                return redirect()->route('products.index');
             } else {
 
                 return response()->json([
@@ -206,13 +216,20 @@ class ProductController extends Controller
 
     public function destroy($id, Request $request)
     {
-        $product = Product::find($id);
+        $product = Product::with('product_images')->find($id);
         if (empty($product)) {
             return redirect()->route('products.index');
         }
 
         // File::delete(public_path() . '/uploads/category/' . $category->image);
 
+        foreach ($product->product_images as $image) {
+            $imagePath = public_path($image->image);
+            if (file_exists($imagePath)) {
+                unlink($imagePath); // Delete the image file
+            }
+            $image->delete(); // Delete the image record from the database
+        }
         $product->delete();
 
         $request->session()->flash('success', 'Product deleted successfully');
