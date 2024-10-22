@@ -51,7 +51,7 @@
                                         .replace(/-+/g, '-'); // Replace multiple dashes with a single dash
 
                                     document.getElementById('slug').value = slug;
-                                    
+
                                 });
                             </script>
                             <div class="col-md-6">
@@ -65,6 +65,19 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class="form-group">
+                                <label for="parent_id">Parent Category (if sub-category)</label>
+                                <select name="parent_id" id="parent_id" class="form-control">
+                                    <option value="">None</option>
+                                    @if(isset($categories) && $categories->isNotEmpty())
+                                        @foreach ($categories as $parentCategory) <!-- Use a different variable name -->
+                                            <option value="{{ $parentCategory->id }}">{{ $parentCategory->name }}</option>
+                                        @endforeach
+                                    @endif
+                                </select>
+                            </div>
+                            
+                            
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="status">Status</label>
