@@ -38,10 +38,22 @@
                                 <div class="mb-3">
                                     <label for="slug">Slug</label>
                                     <input type="text" name="slug" id="slug" class="form-control"
-                                        placeholder="Slug">
+                                        placeholder="Slug" readonly>
                                     <p></p>
                                 </div>
                             </div>
+                            <script>
+                                document.getElementById('name').addEventListener('input', function() {
+                                    let name = this.value;
+                                    let slug = name.toLowerCase().trim()
+                                        .replace(/[^a-z0-9\s-]/g, '') // Remove invalid characters
+                                        .replace(/\s+/g, '-') // Replace spaces with dashes
+                                        .replace(/-+/g, '-'); // Replace multiple dashes with a single dash
+
+                                    document.getElementById('slug').value = slug;
+                                    
+                                });
+                            </script>
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <input type="hidden" id="image_id" name="image_id" value="">
@@ -92,7 +104,7 @@
             var element = $(this);
             $("button[type=submit]").prop('disabled', true);
             $.ajax({
-                url: '{{ route("categories.store") }}',
+                url: '{{ route('categories.store') }}',
                 type: 'POST',
                 data: element.serializeArray(),
                 dataType: 'json',
@@ -140,7 +152,7 @@
             element = $(this);
             $("button[type=submit]").prop('disabled', true);
             $.ajax({
-                url: '{{ route("getSlug") }}',
+                url: '{{ route('getSlug') }}',
                 type: 'get',
                 data: {
                     title: element.val()
