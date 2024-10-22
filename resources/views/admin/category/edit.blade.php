@@ -42,6 +42,7 @@
                                     <p></p>
                                 </div>
                             </div>
+
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <input type="hidden" id="image_id" name="image_id" value="">
@@ -53,17 +54,33 @@
                                     </div>
                                 </div>
                                 @if (!empty($category->image))
-                                <div>
-                                    <img width="100px" src="{{ asset('uploads/category/' . $category->image) }}" alt="" width="100px" height="100px">
-                                </div>
+                                    <div>
+                                        <img width="100px" src="{{ asset('uploads/category/' . $category->image) }}"
+                                            alt="" width="100px" height="100px">
+                                    </div>
                                 @endif
+                            </div>
+                            <div class="form-group">
+                                <label for="parent_id">Parent Category (if sub-category)</label>
+                                <select name="parent_id" id="parent_id" class="form-control">
+                                    <option value="">None</option>
+                                    @if (isset($categories) && $categories->isNotEmpty())
+                                        @foreach ($categories as $parentCategory)
+                                            <option value="{{ $parentCategory->id }}"
+                                                {{ $category->parent_id == $parentCategory->id ? 'selected' : '' }}>
+                                                {{ $parentCategory->name }}
+                                            </option>
+                                        @endforeach
+                                    @endif
+                                </select>
                             </div>
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="status">Status</label>
                                     <select type="text" name="status" id="status" class="form-control">
-                                        <option {{ $category->status == 1 ? 'selected': '' }} value="1">Active</option>
-                                        <option {{ $category->status == 0 ? 'selected': '' }} value="0">Block</option>
+                                        <option {{ $category->status == 1 ? 'selected' : '' }} value="1">Active
+                                        </option>
+                                        <option {{ $category->status == 0 ? 'selected' : '' }} value="0">Block</option>
                                     </select>
                                 </div>
                             </div>
@@ -71,8 +88,10 @@
                                 <div class="mb-3">
                                     <label for="status">Show on Home</label>
                                     <select type="text" name="showHome" id="showHome" class="form-control">
-                                        <option {{ $category->showHome == 'Yes' ? 'selected': '' }} value="Yes">Yes</option>
-                                        <option {{ $category->showHome == 'No' ? 'selected': '' }} value="No">No</option>
+                                        <option {{ $category->showHome == 'Yes' ? 'selected' : '' }} value="Yes">Yes
+                                        </option>
+                                        <option {{ $category->showHome == 'No' ? 'selected' : '' }} value="No">No
+                                        </option>
                                     </select>
                                 </div>
                             </div>
@@ -97,7 +116,7 @@
             var element = $(this);
             $("button[type='submit']").prop('disabled', true);
             $.ajax({
-                url: '{{ route("categories.update", $category->id) }}',
+                url: '{{ route('categories.update', $category->id) }}',
                 type: 'PUT',
                 data: element.serializeArray(),
                 dataType: 'json',
@@ -171,7 +190,7 @@
                     }
                 });
             },
-            
+
             url: "{{ route('product.image.upload') }}",
             maxFiles: 1,
             paramName: 'image',
