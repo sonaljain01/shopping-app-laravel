@@ -21,7 +21,7 @@
     <section class="content">
         <!-- Default box -->
         <div class="container-fluid">
-            <form action="{{ route('categories.store') }}" method="POST" id="categoryForm" name="categoryForm">
+            <form action="{{ route('categories.update', $category->id) }}" method="POST" id="categoryForm" name="categoryForm" enctype="multipart/form-data">
                 @csrf
                 <div class="card">
                     <div class="card-body">
@@ -43,23 +43,7 @@
                                 </div>
                             </div>
 
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <input type="hidden" id="image_id" name="image_id" value="">
-                                    <label for="image">Image</label>
-                                    <div id="image" class="dropzone dz-clickable">
-                                        <div class="dz-message needsclick">
-                                            <br> Drop image here or click to upload</br>
-                                        </div>
-                                    </div>
-                                </div>
-                                @if (!empty($category->image))
-                                    <div>
-                                        <img width="100px" src="{{ asset('uploads/category/' . $category->image) }}"
-                                            alt="" width="100px" height="100px">
-                                    </div>
-                                @endif
-                            </div>
+                           
                             <div class="form-group">
                                 <label for="parent_id">Parent Category (if sub-category)</label>
                                 <select name="parent_id" id="parent_id" class="form-control">
@@ -109,100 +93,8 @@
     <!-- /.content -->
 @endsection
 
-@section('customJs')
-    <script>
-        $("#categoryForm").submit(function(event) {
-            event.preventDefault();
-            var element = $(this);
-            $("button[type='submit']").prop('disabled', true);
-            $.ajax({
-                url: '{{ route('categories.update', $category->id) }}',
-                type: 'PUT',
-                data: element.serializeArray(),
-                dataType: 'json',
-
-                success: function(response) {
-                    $("button[type='submit']").prop('disabled', false);
-                    if (response["status"] == true) {
-
-                        window.location.href = "{{ route('categories.index') }}";
-
-                        $('#name').removeClass('is-invalid').siblings('p').removeClass(
-                            'invalid-feedback').html("");
-
-                        $('#slug').removeClass('is-invalid').siblings('p').removeClass(
-                            'invalid-feedback').html("");
-
-
-                    } else {
-                        var errors = response['errors'];
-                        if (errors['name']) {
-                            $('#name').addClass('is-invalid').siblings('p').addClass('invalid-feedback')
-                                .html(errors['name']);
-                        } else {
-                            $('#name').removeClass('is-invalid').siblings('p').removeClass(
-                                'invalid-feedback').html("");
-                        }
-
-                        if (errors['slug']) {
-                            $('#slug').addClass('is-invalid').siblings('p').addClass('invalid-feedback')
-                                .html(errors['slug']);
-                        } else {
-                            $('#slug').removeClass('is-invalid').siblings('p').removeClass(
-                                'invalid-feedback').html("");
-                        }
-                    }
-                },
-
-                error: function(jqHXR, exception) {
-                    console.log('something went wrong');
-                }
-            })
-        });
-
-        $("#name").change(function() {
-            element = $(this);
-            $("button[type='submit']").prop('disabled', true);
-            $.ajax({
-                url: '{{ route('getSlug') }}',
-                type: 'get',
-                data: {
-                    name: element.val()
-                },
-                dataType: 'json',
-
-                success: function(response) {
-                    $("button[type='submit']").prop('disabled', false);
-                    if (response["status"] == true) {
-                        $("#slug").val(response["slug"]);
-                    }
-                }
-
-            });
-        });
-
-        Dropzone.autoDiscover = false;
-        const dropzone = $("#image").dropzone({
-            init: function() {
-                this.on('addedfile', function(file) {
-                    if (this.files.length > 1) {
-                        this.removeFile(this.files[0]);
-                    }
-                });
-            },
-
-            url: "{{ route('product.image.upload') }}",
-            maxFiles: 1,
-            paramName: 'image',
-            addRemoveLinks: true,
-            acceptedFiles: 'image/*',
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
-
-            success: function(file, response) {
-                $("#image_id").val(response.image_id);
-            }
-        })
-    </script>
-@endsection
+@if (session('success'))
+    <div class="alert alert-success">
+        {{ session('success') }} <!-- Display the custom message -->
+    </div>
+@endif
