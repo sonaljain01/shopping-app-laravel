@@ -13,7 +13,7 @@ class AdminLoginController extends Controller
     {
         return view('admin.login');
     }
-    
+
     public function authenticate(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -24,16 +24,16 @@ class AdminLoginController extends Controller
             if(Auth::guard('admin')->attempt(['email' => $request->email, 'password' => $request->password],
    $request->get('remember'))) {
 
-                $admin = Auth::guard('admin')->user();
+                    $admin = Auth::guard('admin')->user();
                 if($admin->role == 0){
-                    return redirect()->route('admin.dashboard');
+                    return redirect()->route('admin.dashboard')->with('success', 'Login successfully');
 
-                } else {
+                    } else {
                     Auth::guard('admin')->logout();
-                    return redirect()->route('admin.login')->withErrors(['error' => 'You are not authorized to access dmin panel']);
+                    return redirect()->route('admin.login')->withErrors(['credentials' => 'You are not authorized to access dmin panel']);
                 }
             } else {
-                return redirect()->route('admin.login')->withErrors(['error' => 'Invalid email or password']);
+                return redirect()->route('admin.login')->withErrors(['credentials' => 'Invalid email or password']);
             }
         }
         else{
@@ -41,6 +41,4 @@ class AdminLoginController extends Controller
                 ->withInput($request->only('email'));
         }
     }
-
-    
 }
