@@ -20,7 +20,6 @@ class Product extends Model
         'brand_id',
         'description',
         'is_featured',
-        'image_array',
         'image',
         'additional_image',
     ];
