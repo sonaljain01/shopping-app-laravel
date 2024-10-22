@@ -14,6 +14,7 @@ use Intervention\Image\ImageManager;
 use Intervention\Image\Drivers\Gd\Driver;
 use Intervention\Image\ImageManagerStatic as Image;
 use Storage;
+use DB;
 class ProductController extends Controller
 {
     public function index(Request $request)
@@ -53,7 +54,7 @@ class ProductController extends Controller
             'is_featured' => 'required|in:Yes,No',
             'description' => 'required',
             // Ensure at least one image is provided
-            'file.*' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'image.*' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ];
 
         if (!empty($request->track_qty) && $request->track_qty == 'Yes') { {
@@ -128,6 +129,16 @@ class ProductController extends Controller
         }
     }
 
+
+    protected function uploadImage($file)
+    {
+        $uploadFolder = 'public/uploads/product';
+        $image = $file;
+        $image_uploaded_path = $image->store($uploadFolder, 'public');
+        $uploadedImageUrl = Storage::disk('public')->url($image_uploaded_path);
+
+        return $uploadedImageUrl;
+    }
     public function edit($id, Request $request)
     {
 
