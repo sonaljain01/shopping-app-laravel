@@ -11,6 +11,8 @@
 		<!-- Theme style -->
 		<link rel="stylesheet" href="{{ asset('admin-assets/css/adminlte.min.css') }}">
 		<link rel="stylesheet" href="{{ asset('admin-assets/css/custom.css') }}">
+		<!-- SweetAlert CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 	</head>
 	<body class="hold-transition login-page">
 		<div class="login-box">
@@ -23,7 +25,7 @@
 			  	</div>
 			  	<div class="card-body">
 					<p class="login-box-msg">Sign in to start your session</p>
-					<form action="{{ route('admin.authenticate') }}" method="post">
+					<form action="{{ route('admin.authenticate') }}" id="loginForm" method="post">
                         @csrf
 				  		<div class="input-group mb-3">
 							<input type="email" value="{{ old('email') }}" name="email" id="email" class="form-control @error('email') is-invalid @enderror" placeholder="Email">
@@ -48,6 +50,12 @@
                                 <p class='invalid-feedback'>{{ $message }}</p>
                             @enderror
 				  		</div>
+						@if ($errors->has('credentials'))
+							<div class="alert alert-danger">
+						  		{{ $errors->first('credentials') }}
+							</div>
+					  	@endif
+			  
 				  		<div class="row">
 							<!-- <div class="col-8">
 					  			<div class="icheck-primary">
@@ -63,6 +71,8 @@
 							</div>
 							<!-- /.col -->
 				  		</div>
+						
+					  
 					</form>
 		  			<p class="mb-1 mt-3">
 				  		<a href="forgot-password.html">I forgot my password</a>
@@ -81,5 +91,8 @@
 		<script src="{{ asset('admin-assets/js/adminlte.min.js') }}"></script>
 		<!-- AdminLTE for demo purposes -->
 		{{-- <script src="js/demo.js"></script> --}}
+		<!-- SweetAlert -->
+		<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 	</body>
 </html>
+
