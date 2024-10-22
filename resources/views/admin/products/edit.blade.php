@@ -18,7 +18,8 @@
     <!-- Main content -->
     <section class="content">
         <!-- Default box -->
-        <form action="" method="POST" id="productForm" name="productForm">
+        <form action="{{ route('products.update', $product->id) }}" method="post" id="productForm" name="productForm" enctype="multipart/form-data">
+            @csrf
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-md-8">
@@ -52,15 +53,12 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="card mb-3">
-                            <div class="card-body">
-                                <h2 class="h4 mb-3">Media</h2>
-                                <div id="image" class="dropzone dz-clickable">
-                                    <div class="dz-message needsclick">
-                                        <br>Drop files here or click to upload.<br><br>
-                                    </div>
-                                </div>
-                            </div>
+                        <div class="form-group">
+                            <label for="image">Product Images</label>
+                            <input type="file" name="image[]" id="image" class="form-control" multiple>
+                            @error('images.*')
+                                <p class="text-danger">{{ $message }}</p>
+                            @enderror
                         </div>
                         <div class="row" id="product-images">
 
@@ -204,99 +202,4 @@
     <!-- /.content -->
 @endsection
 
-@section('customJs')
-    <script>
-        $("#title").change(function() {
-            element = $(this);
-            $("button[type='submit']").prop('disabled', true);
-            $.ajax({
-                url: '{{ route('getSlug') }}',
-                type: 'get',
-                data: {
-                    title: element.val()
-                },
-                dataType: 'json',
 
-                success: function(response) {
-                    $("button[type='submit']").prop('disabled', false);
-                    if (response["status"] == true) {
-                        $("#slug").val(response["slug"]);
-                    }
-                }
-
-            });
-        });
-
-        $("#productForm").submit(function(event) {
-            event.preventDefault();
-            var formArray = $(this).serializeArray();
-            $("button[type='submit']").prop('disabled', true);
-            $.ajax({
-                url: '{{ route("products.update", $product->id) }}',
-                type: 'PUT',
-                data: formArray,
-                dataType: 'json',
-
-                success: function(response) {
-                    $("button[type=submit]").prop('disabled', false);
-                    window.location.href = "{{ route('products.index') }}";
-                    if (response["status"] == true) {
-
-                        $(".error").removeClass("invalid-feedback").html("");
-                        $("input[type='text'], select, input[type='number']").removeClass("is-invalid");
-                        
-                        window.location.href = "{{ route('products.index') }}";
-                    } else {
-                        var errors = response['errors'];
-
-                        $(".error").removeClass("invalid-feedback").html("");
-                        $("input[type='text'], select, input[type='number']").removeClass("is-invalid");
-                        $.each(errors, function(key, value) {
-                            $("#" + key).addClass('is-invalid').siblings('p').addClass(
-                                    'invalid-feedback')
-                                .html(value);
-                        });
-
-
-                    }
-                },
-                error: function() {
-                    console.log("something went wrong");
-                }
-            });
-        });
-
-        Dropzone.autoDiscover = false;
-        const dropzone = $("#image").dropzone({
-            url: "{{ route('temp-images.create') }}",
-            maxFiles: 10,
-            paramName: 'image',
-            addRemoveLinks: true,
-            acceptedFiles: 'image/*',
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
-
-            success: function(file, response) {
-                // $("#image_id").val(response.image_id);
-
-                var html = `<div class="col-md-3" id="image-row-${response.image_id}"><div class="card">
-                    <input type="hidden" name="image-array[]" value="${response.image_id}">
-                        <img src="${response.ImagePath}" class="card-img-top" alt="">
-                        <div class="card-body">
-                            
-                            <a href="javascript:void(0)" onclick="deleteImage(${response.image_id})" class="btn btn-danger">Delete</a>
-                        </div>
-                    </div>
-                    </div>`;
-
-                $("#product-gallery").append(html);
-            }
-        });
-
-        function deleteImage(id) {
-            $("#image-row-" + id).remove();
-            // $("#image_id").val("");
-        }
-    </script>
-@endsection
