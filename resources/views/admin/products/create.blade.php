@@ -38,10 +38,21 @@
                                         <div class="mb-3">
                                             <label for="slug">Slug</label>
                                             <input type="text" name="slug" id="slug" class="form-control"
-                                                placeholder="Slug">
+                                                placeholder="Slug" readonly>
                                             <p class="error"></p>
                                         </div>
                                     </div>
+                                    <script>
+                                        document.getElementById('title').addEventListener('input', function () {
+                                            let title = this.value;
+                                            let slug = title.toLowerCase().trim()
+                                                .replace(/[^a-z0-9\s-]/g, '') // Remove invalid characters
+                                                .replace(/\s+/g, '-')          // Replace spaces with dashes
+                                                .replace(/-+/g, '-');          // Replace multiple dashes with a single dash
+                                    
+                                            document.getElementById('slug').value = slug;
+                                        });
+                                    </script>
                                     <div class="col-md-12">
                                         <div class="mb-3">
                                             <label for="description">Description</label>
@@ -54,8 +65,8 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <label for="images">Product Images</label>
-                            <input type="file" name="images[]" id="images" class="form-control" multiple>
+                            <label for="image">Product Images</label>
+                            <input type="file" name="image[]" id="image" class="form-control" multiple>
                             @error('images.*')
                                 <p class="text-danger">{{ $message }}</p>
                             @enderror
