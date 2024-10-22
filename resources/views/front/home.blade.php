@@ -90,7 +90,6 @@
                 </button>
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                        
                         @if (!is_null(getCategories()) && getCategories()->isNotEmpty())
                             @foreach (getCategories() as $category)
                                 <li class="nav-item dropdown">
@@ -98,18 +97,22 @@
                                         aria-expanded="false">
                                         {{ $category->name }}
                                     </button>
+
                                     <ul class="dropdown-menu dropdown-menu-dark">
-                                        <li><a class="dropdown-item nav-link" href="#">Mobile</a></li>
-                                        <li><a class="dropdown-item nav-link" href="#">Tablets</a></li>
-                                        <li><a class="dropdown-item nav-link" href="#">Laptops</a></li>
-                                        <li><a class="dropdown-item nav-link" href="#">Speakers</a></li>
-                                        <li><a class="dropdown-item nav-link" href="#">Watches</a></li>
+                                        @if ($category->children->isNotEmpty())
+                                            @foreach ($category->children as $child)
+                                                <li><a class="dropdown-item nav-link"
+                                                        href="#">{{ $child->name }}</a></li>
+                                            @endforeach
+                                        @else
+                                            <li><a class="dropdown-item nav-link" href="#">No subcategories</a>
+                                            </li>
+                                        @endif
                                     </ul>
                                 </li>
                             @endforeach
-
                         @endif
-                        
+
 
                     </ul>
                 </div>
