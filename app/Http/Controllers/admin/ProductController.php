@@ -40,18 +40,20 @@ class ProductController extends Controller
 
     public function store(Request $request)
     {
+
         // dd($request->image_array);
         // exit();
         $rules = [
             'title' => 'required',
-            'slug' => 'required|unique:products',
+            'slug' => 'nullable|unique:products',
             'price' => 'required|numeric',
             'sku' => 'required',
             'track_qty' => 'required|in:Yes,No',
             'category' => 'required',
             'is_featured' => 'required|in:Yes,No',
             'description' => 'required',
-            'image.*' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            // Ensure at least one image is provided
+            'file.*' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ];
 
         if (!empty($request->track_qty) && $request->track_qty == 'Yes') { {
@@ -66,11 +68,25 @@ class ProductController extends Controller
                     'errors' => $validator->errors(),
                 ]);
             }
+            $slug = null;
+            if ($request->slug) {
+                $isProductExist = Product::where('slug', $request->slug)->first();
+                if ($isProductExist) {
+                    return response()->json([
+                        'status' => false,
+                        'message' => 'Blog with this slug already exist',
+                    ]);
+                } else {
+                    $slug = $request->slug;
+                }
+            } else {
+                $slug = $this->slug($request->title);
+            }
 
             // Store product details
             $product = Product::create([
                 'title' => $request->title,
-                'slug' => $request->slug,
+                'slug' => $slug,
                 'price' => $request->price,
                 'sku' => $request->sku,
                 'track_qty' => $request->track_qty,
@@ -82,10 +98,12 @@ class ProductController extends Controller
                 'status' => $request->status,
                 'barcode' => $request->barcode,
                 'compare_price' => $request->compare_price,
+
             ]);
 
             if ($request->hasFile('image')) {
                 foreach ($request->file('image') as $image) {
+                    // dd($request->file('image'));
                     $ext = $image->getClientOriginalExtension();
                     $newName = time() . '-' . uniqid() . '.' . $ext;
 
@@ -102,26 +120,13 @@ class ProductController extends Controller
                         return back()->with("error", "there is error");
                     }
 
-
                 }
             }
 
-            // $request->session()->flash('success', 'Product Created Successfully');
-            // return response()->json([
-            //     'status' => true,
-            //     'message' => 'Product Created Successfully'
-            // ]);
-            // return redirect()->route('products.index')->with('success', 'Product created successfully.');
             $request->session()->flash('success', 'Product Created Successfully');
-
-            // Return JSON response for AJAX request
             return redirect()->route('products.index');
         }
     }
-
-
-
-
 
     public function edit($id, Request $request)
     {
@@ -205,5 +210,16 @@ class ProductController extends Controller
             'status' => true,
             'message' => 'Product deleted successfully'
         ]);
+    }
+
+    protected function slug($title)
+    {
+        $slug = \Str::slug($title);
+        $isProductExist = Product::where('slug', $slug)->first();
+        if ($isProductExist) {
+            $slug = $slug . '-' . rand(1000, 9999);
+        }
+
+        return $slug;
     }
 }
