@@ -18,7 +18,7 @@
     <!-- Main content -->
     <section class="content">
         <!-- Default box -->
-        <form action="{{ route('products.store') }}" method="POST" id="productForm" name="productForm">
+        <form action="{{ route('products.store') }}" method="POST" id="productForm" name="productForm" enctype="multipart/form-data">
             @csrf
             <div class="container-fluid">
                 <div class="row">
@@ -38,7 +38,7 @@
                                         <div class="mb-3">
                                             <label for="slug">Slug</label>
                                             <input type="text" name="slug" id="slug" class="form-control"
-                                                placeholder="Slug" readonly>
+                                                placeholder="Slug" >
                                             <p class="error"></p>
                                         </div>
                                     </div>
@@ -66,7 +66,7 @@
                         </div>
                         <div class="form-group">
                             <label for="image">Product Images</label>
-                            <input type="file" name="file[]" id="image" class="form-control" multiple>
+                            <input type="file" name="image[]" id="image" class="form-control" multiple>
                             @error('images.*')
                                 <p class="text-danger">{{ $message }}</p>
                             @enderror
