@@ -23,10 +23,14 @@ class CategoryController extends Controller
 
         return view('admin.category.list', compact('categories'));
     }
+    
 
     public function create()
     {
-        return view('admin.category.create');
+
+        $categories = Category::whereNull('parent_id')->get();
+    
+        return view('admin.category.create', compact('categories'));
     }
 
     public function store(Request $request)
@@ -34,29 +38,27 @@ class CategoryController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required',
             'slug' => 'nullable|unique:categories',
+            'parent_id' => 'nullable|exists:categories,id',
         ]);
-        $slug = null;
-        if ($request->slug) {
-            $isCategoryExist = Category::where('slug', $request->slug)->first();
-            if ($isCategoryExist) {
-                return response()->json([
-                    'status' => false,
-                    'message' => 'Blog with this slug already exist',
-                ]);
-            } else {
-                $slug = $request->slug;
-            }
-        } else {
-            $slug = $this->slug($request->name);
+        $slug = $request->slug ?? $this->slug($request->name);
+
+        // Check if the slug is unique
+        $isCategoryExist = Category::where('slug', $slug)->first();
+        if ($isCategoryExist) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Category with this slug already exists',
+            ]);
         }
-        
         if ($validator->passes()) {
             $category = new Category();
             $category->name = $request->name;
             $category->slug = $slug;
             $category->status = $request->status;
             $category->showHome = $request->showHome;
+            $category->parent_id = $request->parent_id;
             $category->save();
+
 
             //save image
             if (!empty($request->image_id)) {
@@ -82,7 +84,8 @@ class CategoryController extends Controller
             $request->session()->flash('success', 'Category created successfully');
             return response()->json([
                 'status' => true,
-                'message' => 'Category created successfully'
+                'message' => 'Category created successfully',
+                'category' => $category
             ]);
         } else {
             return response()->json([
@@ -98,8 +101,8 @@ class CategoryController extends Controller
         if (empty($category)) {
             return redirect()->route('categories.index');
         }
-
-        return view('admin.category.edit', compact('category'));
+        $categories = Category::whereNull('parent_id')->get();
+        return view('admin.category.edit', compact('category', 'categories'));
     }
 
     public function update($categoryId, Request $request)
@@ -115,7 +118,8 @@ class CategoryController extends Controller
 
         $validator = Validator::make($request->all(), [
             'name' => 'required',
-            'slug' => 'required|unique:categories, slug, ' . $category->id . ',id',
+            'slug' => 'nullable|unique:categories, slug, ' . $category->id . ',id',
+            'parent_id' => 'nullable|exists:categories,id',
         ]);
 
         if ($validator->passes()) {
@@ -124,6 +128,7 @@ class CategoryController extends Controller
             $category->slug = $request->slug;
             $category->status = $request->status;
             $category->showHome = $request->showHome;
+            $category->parent_id = $request->parent_id;
             $category->save();
 
             $oldImage = $category->image;
