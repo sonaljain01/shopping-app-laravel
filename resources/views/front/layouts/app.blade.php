@@ -180,12 +180,16 @@
             </div>
         </div>
     </footer>
-    <script src="{{ asset('front-assets/js/jquery-3.5.1.min.js') }}"></script>
+    {{-- <script src="{{ asset('front-assets/js/jquery-3.5.1.min.js') }}"></script> --}}
+    {{-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script> --}}
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="{{ asset('front-assets/js/bootstrap.bundle.5.1.3.min.js') }}"></script>
     <script src="{{ asset('front-assets/js/instantpages.5.1.0.min.js') }}"></script>
     <script src="{{ asset('front-assets/js/lazyload.17.6.0.min.js') }}"></script>
     <script src="{{ asset('front-assets/js/slick.min.js') }}"></script>
     <script src="{{ asset('front-assets/js/custom.js') }}"></script>
+    <!-- Use jQuery from CDN if local file isn't accessible -->
+
     <script>
         window.onscroll = function() {
             myFunction()
@@ -202,6 +206,8 @@
             }
         }
     </script>
+
+    
 </body>
 
 </html>

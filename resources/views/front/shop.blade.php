@@ -34,16 +34,16 @@
                                     </button>
                                 </h2>
                                 @else
-                                <a href="{{ route('front.shop', $category->slug) }}" class="nav-item nav-link">{{ $category->name }}</a>
+                                <a href="{{ route('front.shop', $category->slug) }}" class="nav-item nav-link {{ ($categorySelected == $category->id) ? 'text-primary' : '' }}">{{ $category->name }}</a>
                                 @endif
 
                                 @if ($category->children->count() > 0)
-                                <div id="collapseOne-{{ $key }}" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample" style="">
+                                <div id="collapseOne-{{ $key }}" class="accordion-collapse collapse {{ ($categorySelected == $category->id) ? 'show' : '' }}" aria-labelledby="headingOne" data-bs-parent="#accordionExample" style="">
                                     <div class="accordion-body">
                                         <div class="navbar-nav">
 
                                             @foreach($category->children as $child)
-                                            <a href="{{ route('front.shop', [$category->slug, $child->slug]) }}" class="nav-item nav-link">{{ $child->name }}</a>
+                                            <a href="{{ route('front.shop', [$category->slug, $child->slug]) }}" class="nav-item nav-link {{ ($subCategorySelected == $category->id) ? 'text-primary' : '' }}">{{ $child->name }}</a>
                                             @endforeach
 
                                                                                 
@@ -64,18 +64,22 @@
                 
                 <div class="card">
                     <div class="card-body">
+                        <form method="GET" action="{{ url()->current() }}">
                         @if ($brands->count() > 0)
                         @foreach ($brands as $brand)
                     
                         <div class="form-check mb-2">
-                            <input class="form-check-input" type="checkbox" name="brand[]" value="{{ $brand->id }}" id="brand-{{ $brand->id }}">
-                            <label class="form-check-label" for="flexCheckDefault">
+                            <input class="form-check-input brand-label" type="checkbox" name="brand[]" value="{{ $brand->id }}" id="brand-{{ $brand->id }}"
+                            {{ (in_array($brand->id, request()->input('brand', []))) ? 'checked' : '' }}
+                            onchange="this.form.submit()">
+                            <label class="form-check-label" for="brand-{{ $brand->id }}">
                                 {{ $brand->name }}
                             </label>
                         </div>
 
                         @endforeach
                         @endif
+                        </form>
                                        
                     </div>
                 </div>
@@ -139,8 +143,7 @@
                             <div class="product-image position-relative">
                                 <a href="#" class="product-img">
                                 @if (count($product->product_images) > 0)
-                                <img class="card-img-top" src="{{ asset($product->product_images[0]->image) }}"
-                                    />
+                                <img class="card-img-top" src="{{ asset($product->product_images[0]->image) }}" />
                             
                                 @endif
                                 </a>
@@ -190,3 +193,4 @@
     </div>
 </section>
 @endsection
+
