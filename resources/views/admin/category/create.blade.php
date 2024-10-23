@@ -56,18 +56,22 @@
                             </script>
                             
                             <div class="form-group">
-                                <label for="parent_id">Parent Category (if sub-category)</label>
+                                <label for="parent_id">Parent Category</label>
                                 <select name="parent_id" id="parent_id" class="form-control">
-                                    <option value="">None</option>
-                                    @if(isset($categories) && $categories->isNotEmpty())
-                                        @foreach ($categories as $parentCategory) <!-- Use a different variable name -->
-                                            <option value="{{ $parentCategory->id }}">{{ $parentCategory->name }}</option>
+                                    <option value="">None</option> --}}
+                                     @if(isset($categories) && $categories->isNotEmpty())
+                                        @foreach ($categories as $category) 
+                                        <option value="{{ $category->id }}">{{ $category->name }}</option>
+                                        @if (isset($category->children) && $category->children->isNotEmpty())
+                                            @foreach ($category->children as $child)
+                                                <option value="{{ $child->id }}">sub-category - ({{ $child->name }})</option>
+                                            @endforeach
+                                        @endif
                                         @endforeach
                                     @endif
                                 </select>
                             </div>
-                            
-                            
+  
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="status">Status</label>
