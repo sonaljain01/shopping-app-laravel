@@ -50,9 +50,8 @@
                             <tr>
                                 <th width="60">ID</th>
                                 <th>Name</th>
-                                <th>Slug</th>
-                                <th width="100">Status</th>
-                                <th width="100">Action</th>
+                                <th width="500">Status</th>
+                                <th width="200">Action</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -61,7 +60,7 @@
                                     <tr>
                                         <td>{{ $brand->id }}</td>
                                         <td>{{ $brand->name }}</td>
-                                        <td>{{ $brand->slug }}</td>
+
                                         <td>
                                             @if ($brand->status == 1)
                                                 <svg class="text-success-500 h-6 w-6 text-success"
