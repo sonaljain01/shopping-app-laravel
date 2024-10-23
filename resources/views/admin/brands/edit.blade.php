@@ -34,14 +34,7 @@
                                     <p></p>
                                 </div>
                             </div>
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label for="slug">Slug</label>
-                                    <input type="text" name="slug" id="slug" class="form-control"
-                                        placeholder="Slug" value="{{ $brand->slug }}">
-                                    <p></p>
-                                </div>
-                            </div>
+                            
                             
                             <div class="col-md-6">
                                 <div class="mb-3">
