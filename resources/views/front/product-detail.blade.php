@@ -34,6 +34,8 @@
                     <li><strong>Category:</strong> {{ $product->category->name }}</li>
                     <li><strong>Brand:</strong> {{ $product->brand->name }}</li>
                     <li><strong>Stock:</strong> {{ $product->stock > 0 ? 'In Stock' : 'Out of Stock' }}</li>
+                    <li><strong>SKU:</strong> {{ $product->sku }}</li>
+                    {{-- <li><strong>Stock:</strong> {{ $product->track_qty }}</li> --}}
                 </ul>
 
                 <!-- Add to Cart Button -->
