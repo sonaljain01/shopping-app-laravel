@@ -34,7 +34,7 @@
                                     </button>
                                 </h2>
                                 @else
-                                <a href="#" class="nav-item nav-link">{{ $category->name }}</a>
+                                <a href="{{ route('front.shop', $category->slug) }}" class="nav-item nav-link">{{ $category->name }}</a>
                                 @endif
 
                                 @if ($category->children->count() > 0)
@@ -43,7 +43,7 @@
                                         <div class="navbar-nav">
 
                                             @foreach($category->children as $child)
-                                            <a href="#" class="nav-item nav-link">{{ $child->name }}</a>
+                                            <a href="{{ route('front.shop', [$category->slug, $child->slug]) }}" class="nav-item nav-link">{{ $child->name }}</a>
                                             @endforeach
 
                                                                                 
