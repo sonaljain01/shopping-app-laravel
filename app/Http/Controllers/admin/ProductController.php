@@ -38,7 +38,7 @@ class ProductController extends Controller
     {
 
         $rules = [
-            'title' => 'required',
+            'title' => 'required|unique:products',
             'slug' => 'nullable|unique:products',
             'price' => 'required|numeric',
             'sku' => 'required',
@@ -56,10 +56,8 @@ class ProductController extends Controller
 
 
             if ($validator->fails()) {
-                return response()->json([
-                    'status' => false,
-                    'errors' => $validator->errors(),
-                ]);
+                $request->session()->flash('error', $validator->errors()->first());
+                return redirect()->route('products.index');
             }
             $slug = null;
             if ($request->slug) {
@@ -113,7 +111,7 @@ class ProductController extends Controller
 
                 }
             }
-
+           
             $request->session()->flash('success', 'Product Created Successfully');
             return redirect()->route('products.index');
         }
@@ -139,7 +137,7 @@ class ProductController extends Controller
        
         $product = Product::where('id', $id)->with('product_images')->first();
         $rules = [
-            'title' => 'required',
+            'title' => 'required|unique:products, title, ' . $product->id . ',id',
             'slug' => 'required|unique:products, slug, ' . $product->id . ',id',
             'price' => 'required|numeric',
             'sku' => 'required|unique:products, sku, ' . $product->id . ',id',
