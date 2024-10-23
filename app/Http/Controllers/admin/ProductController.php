@@ -111,14 +111,14 @@ class ProductController extends Controller
 
                 }
             }
-           
+
             $request->session()->flash('success', 'Product Created Successfully');
             return redirect()->route('products.index');
         }
     }
 
 
-   
+
     public function edit($id, Request $request)
     {
 
@@ -134,7 +134,7 @@ class ProductController extends Controller
 
     public function update(Request $request, $id)
     {
-       
+
         $product = Product::where('id', $id)->with('product_images')->first();
         $rules = [
             'title' => 'required|unique:products, title, ' . $product->id . ',id',
@@ -183,7 +183,7 @@ class ProductController extends Controller
                         $newName = time() . '-' . uniqid() . '.' . $ext;
 
                         $image->move(public_path('uploads/product'), $newName);
-        
+
                         ProductImage::create([
                             "product_id" => $product->id,
                             "image" => 'uploads/product/' . $newName,
@@ -237,4 +237,17 @@ class ProductController extends Controller
 
         return $slug;
     }
+
+    public function show($slug)
+    {
+        // Fetch the product using the slug
+        $product = Product::with(['product_images', 'category', 'brand'])
+            ->where('slug', $slug)
+            ->where('status', 1)
+            ->first(); // Use firstOrFail to throw a 404 if not found
+
+        // Pass the product details to the view
+        return view('front.product-detail', compact('product'));
+    }
+
 }
