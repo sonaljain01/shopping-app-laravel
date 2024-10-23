@@ -28,27 +28,21 @@ class BrandController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'name' => 'required',
-            'slug' => 'required|unique:brands',
             'status' => 'required',
         ]);
 
         if($validator->passes()){
             $brand = new Brand();
             $brand->name = $request->name;
-            $brand->slug = $request->slug;
             $brand->status = $request->status;
             $brand->save();
 
-            return response()->json([
-                'status' => true,
-                'message' => 'Brand Created Successfully'
-            ]);
+            $request->session()->flash('success', 'Brand created successfully');
+            return redirect()->route('brands.index');
         } else {
 
-            return response()->json( [
-                'status' => false,
-                'errors' => $validator->errors()
-            ]);
+            $request->session()->flash('error', $validator->errors()->first());
+            return redirect()->route('brands.index');
         }
     }
     public function destroy($brandId, Request $request)
@@ -91,13 +85,11 @@ class BrandController extends Controller
         
         $validator = Validator::make($request->all(), [
             'name' => 'required',
-            'slug' => 'required|unique:brands, slug, '.$brand->id.',id' ,
         ]);
 
         if ($validator->passes()) {
 
             $brand->name = $request->name;
-            $brand->slug = $request->slug;
             $brand->status = $request->status;
             $brand->save();
 
