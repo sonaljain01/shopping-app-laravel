@@ -43,21 +43,32 @@
                                 </div>
                             </div>
 
-                           
                             <div class="form-group">
-                                <label for="parent_id">Parent Category (if sub-category)</label>
+                                <label for="parent_id">Parent Category</label>
                                 <select name="parent_id" id="parent_id" class="form-control">
                                     <option value="">None</option>
-                                    @if (isset($categories) && $categories->isNotEmpty())
-                                        @foreach ($categories as $parentCategory)
-                                            <option value="{{ $parentCategory->id }}"
-                                                {{ $category->parent_id == $parentCategory->id ? 'selected' : '' }}>
-                                                {{ $parentCategory->name }}
+                                    @if(isset($categories) && $categories->isNotEmpty())
+                                        @foreach ($categories as $cat)
+                                            
+                                            <option value="{{ $cat->id }}" 
+                                                @if (old('parent_id', isset($category) ? $category->parent_id : '') == $cat->id) selected @endif>
+                                                {{ $cat->name }}
                                             </option>
+  
+                                            @if ($cat->children->isNotEmpty())
+                                                @foreach ($cat->children as $child)
+                                                    <option value="{{ $child->id }}" 
+                                                        @if (old('parent_id', isset($category) ? $category->parent_id : '') == $child->id) selected @endif>
+                                                        sub-category- ({{ $child->name }})
+                                                    </option>
+                                                @endforeach
+                                            @endif
                                         @endforeach
                                     @endif
                                 </select>
                             </div>
+                            
+
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="status">Status</label>
