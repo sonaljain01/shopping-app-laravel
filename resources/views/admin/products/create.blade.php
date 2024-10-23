@@ -18,7 +18,8 @@
     <!-- Main content -->
     <section class="content">
         <!-- Default box -->
-        <form action="{{ route('products.store') }}" method="POST" id="productForm" name="productForm" enctype="multipart/form-data">
+        <form action="{{ route('products.store') }}" method="POST" id="productForm" name="productForm"
+            enctype="multipart/form-data">
             @csrf
             <div class="container-fluid">
                 <div class="row">
@@ -38,18 +39,18 @@
                                         <div class="mb-3">
                                             <label for="slug">Slug</label>
                                             <input type="text" name="slug" id="slug" class="form-control"
-                                                placeholder="Slug" >
+                                                placeholder="Slug">
                                             <p class="error"></p>
                                         </div>
                                     </div>
                                     <script>
-                                        document.getElementById('title').addEventListener('input', function () {
+                                        document.getElementById('title').addEventListener('input', function() {
                                             let title = this.value;
                                             let slug = title.toLowerCase().trim()
                                                 .replace(/[^a-z0-9\s-]/g, '') // Remove invalid characters
-                                                .replace(/\s+/g, '-')          // Replace spaces with dashes
-                                                .replace(/-+/g, '-');          // Replace multiple dashes with a single dash
-                                    
+                                                .replace(/\s+/g, '-') // Replace spaces with dashes
+                                                .replace(/-+/g, '-'); // Replace multiple dashes with a single dash
+
                                             document.getElementById('slug').value = slug;
                                         });
                                     </script>
@@ -88,12 +89,12 @@
                                     </div>
                                     <div class="col-md-12">
                                         <div class="mb-3">
-                                            <label for="compare_price">Compare at Price</label>
+                                            <label for="compare_price">Original Price</label>
                                             <input type="text" name="compare_price" id="compare_price"
                                                 class="form-control" placeholder="Compare Price">
                                             <p class="text-muted mt-3">
-                                                To show a reduced price, move the product’s original price into Compare at
-                                                price. Enter a lower value into Price.
+                                                To show a reduced price, move the product’s original price here. 
+                                                Enter a lower value into Price.
                                             </p>
                                         </div>
                                     </div>
@@ -207,6 +208,7 @@
                     <a href="{{ route('products.index') }}" class="btn btn-outline-dark ml-3">Cancel</a>
                 </div>
             </div>
+            
         </form>
         <!-- /.card -->
     </section>
@@ -214,8 +216,3 @@
 @endsection
 
 
-@if(session('success'))
-    <div class="alert alert-success">
-        {{ session('success') }}
-    </div>
-@endif
