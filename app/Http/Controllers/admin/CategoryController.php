@@ -28,7 +28,7 @@ class CategoryController extends Controller
     public function create()
     {
 
-        $categories = Category::whereNull('parent_id')->get();
+        $categories = Category::with('children')->whereNull('parent_id')->get();
     
         return view('admin.category.create', compact('categories'));
     }
@@ -63,10 +63,8 @@ class CategoryController extends Controller
             return redirect()->route('categories.index');
            
         } else {
-            return response()->json([
-                'status' => false,
-                'errors' => $validator->errors()
-            ]);
+            $request->session()->flash('error', $validator->errors()->first());
+            return redirect()->route('categories.index');
         }
     }
 
@@ -102,10 +100,8 @@ class CategoryController extends Controller
             $request->session()->flash('success', 'Category updated successfully');
             return redirect()->route('categories.index');
         } else {
-            return response()->json([
-                'status' => false,
-                'errors' => $validator->errors()
-            ]);
+            $request->session()->flash('error', $validator->errors()->first());
+            return redirect()->route('categories.index');
         }
            
     }
