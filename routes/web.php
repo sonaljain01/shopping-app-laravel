@@ -11,7 +11,7 @@ use App\Http\Controllers\admin\BrandController;
 use App\Http\Controllers\admin\ProductImageController;
 
 Route::get('/', [FrontController::class, 'index'])->name('front.home');
-Route::get('/shop', [ShopController::class, 'index'])->name('front.shop');
+Route::get('/shop/{categorySlug?}/{subcategorySlug?}', [ShopController::class, 'index'])->name('front.shop');
 
 
 
