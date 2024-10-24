@@ -19,7 +19,7 @@ class ShopController extends Controller
 
         $productsQuery = Product::where('status', 1);
 
-        if (!empty($categorySlug)) {
+        if (!empty($categorySlug)) {    
             $category = Category::where('slug', $categorySlug)->where('status', 1)->first();
 
             if ($category) {

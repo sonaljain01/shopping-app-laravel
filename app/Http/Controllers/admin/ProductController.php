@@ -244,8 +244,11 @@ class ProductController extends Controller
         $product = Product::with(['product_images', 'category', 'brand'])
             ->where('slug', $slug)
             ->where('status', 1)
-            ->first(); // Use firstOrFail to throw a 404 if not found
+            ->first(); 
 
+        if (!$product) {
+            abort(404);
+        }
         // Pass the product details to the view
         return view('front.product-detail', compact('product'));
     }
