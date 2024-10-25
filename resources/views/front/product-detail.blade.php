@@ -401,7 +401,7 @@
                                         <div class="shop_thumb position-relative">
                                             <a class="card-img-top d-block overflow-hidden"
                                                 href="shop-single-v1.html"><img class="card-img-top"
-                                                    src="assets/img/product/8.jpg" alt="..."></a>
+                                                    src="{{ asset('front-assets/img/product/8.jpg') }}" alt="..."></a>
                                             <div
                                                 class="product-hover-overlay bg-dark d-flex align-items-center justify-content-center">
                                                 <div class="edlio"><a href="#" data-toggle="modal"
@@ -434,7 +434,7 @@
                                         <div class="shop_thumb position-relative">
                                             <a class="card-img-top d-block overflow-hidden"
                                                 href="shop-single-v1.html"><img class="card-img-top"
-                                                    src="assets/img/product/9.jpg" alt="..."></a>
+                                                    src="{{ asset('front-assets/img/product/9.jpg') }}" alt="..."></a>
                                             <div
                                                 class="product-hover-overlay bg-dark d-flex align-items-center justify-content-center">
                                                 <div class="edlio"><a href="#" data-toggle="modal"
@@ -466,7 +466,7 @@
                                         <div class="shop_thumb position-relative">
                                             <a class="card-img-top d-block overflow-hidden"
                                                 href="shop-single-v1.html"><img class="card-img-top"
-                                                    src="assets/img/product/10.jpg" alt="..."></a>
+                                                    src="{{ asset('front-assets/img/product/10.jpg') }}" alt="..."></a>
                                             <div
                                                 class="product-hover-overlay bg-dark d-flex align-items-center justify-content-center">
                                                 <div class="edlio"><a href="#" data-toggle="modal"
@@ -500,7 +500,7 @@
                                         <div class="shop_thumb position-relative">
                                             <a class="card-img-top d-block overflow-hidden"
                                                 href="shop-single-v1.html"><img class="card-img-top"
-                                                    src="assets/img/product/11.jpg" alt="..."></a>
+                                                    src="{{ asset('front-assets/img/product/11.jpg') }}" alt="..."></a>
                                             <div
                                                 class="product-hover-overlay bg-dark d-flex align-items-center justify-content-center">
                                                 <div class="edlio"><a href="#" data-toggle="modal"
@@ -532,7 +532,7 @@
                                         <div class="shop_thumb position-relative">
                                             <a class="card-img-top d-block overflow-hidden"
                                                 href="shop-single-v1.html"><img class="card-img-top"
-                                                    src="assets/img/product/12.jpg" alt="..."></a>
+                                                    src="{{ asset('front-assets/img/product/12.jpg') }}" alt="..."></a>
                                             <div
                                                 class="product-hover-overlay bg-dark d-flex align-items-center justify-content-center">
                                                 <div class="edlio"><a href="#" data-toggle="modal"
@@ -567,7 +567,7 @@
                                         <div class="shop_thumb position-relative">
                                             <a class="card-img-top d-block overflow-hidden"
                                                 href="shop-single-v1.html"><img class="card-img-top"
-                                                    src="assets/img/product/13.jpg" alt="..."></a>
+                                                    src="{{ asset('front-assets/img/product/13.jpg') }}" alt="..."></a>
                                             <div
                                                 class="product-hover-overlay bg-dark d-flex align-items-center justify-content-center">
                                                 <div class="edlio"><a href="#" data-toggle="modal"
@@ -601,7 +601,7 @@
                                         <div class="shop_thumb position-relative">
                                             <a class="card-img-top d-block overflow-hidden"
                                                 href="shop-single-v1.html"><img class="card-img-top"
-                                                    src="assets/img/product/14.jpg" alt="..."></a>
+                                                    src="{{ asset('front-assets/img/product/14.jpg') }}" alt="..."></a>
                                             <div
                                                 class="product-hover-overlay bg-dark d-flex align-items-center justify-content-center">
                                                 <div class="edlio"><a href="#" data-toggle="modal"
