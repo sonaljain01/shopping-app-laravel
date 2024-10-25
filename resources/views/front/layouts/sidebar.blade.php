@@ -50,16 +50,17 @@
             <!-- Single Option -->
             <div class="single_search_boxed">
                 <div class="widget-boxed-header">
-                    <h4><a href="#pricing" data-toggle="collapse" aria-expanded="false" role="button">Pricing</a></h4>
+                    <h4><a href="#pricing" data-toggle="collapse" aria-expanded="false"
+                            role="button">Pricing</a></h4>
                 </div>
                 <div class="widget-boxed-body collapse show" id="pricing" data-parent="#pricing">
                     <div class="side-list no-border mb-4">
                         <div class="rg-slider">
-                             <input type="text" class="js-range-slider" name="my_range" value="" />
-                        </div>		
+                            <input type="text" class="js-range-slider" name="my_range" value="" />
+                        </div>
                     </div>
                 </div>
-            </div>
+            </div>
 
             <!-- Single Option -->
             <div class="single_search_boxed">
