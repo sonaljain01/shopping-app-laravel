@@ -50,12 +50,7 @@ class ShopController extends Controller
             }
         }
 
-        $minPrice = $request->input('min_price', 0);
-        $maxPrice = $request->input('max_price', 1000);
-        if ($minPrice !== null && $maxPrice !== null) {
-            $productsQuery->whereBetween('price', [$minPrice, $maxPrice]);
-        }
-    
+        
         $sort = $request->input('sort');
         switch ($sort) {
             case 'price_low_high':
@@ -85,8 +80,7 @@ class ShopController extends Controller
             'categorySelected' => $categorySelected,
             'subCategorySelected' => $subCategorySelected,
             'sort' => $sort,
-            'min_price' => $minPrice,
-            'max_price' => $maxPrice,
+            
         ]);
     }
 

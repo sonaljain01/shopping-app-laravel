@@ -38,7 +38,7 @@
                                             </div>
                                         </div>
                                     </div>
-
+                                    
                                 </div>
                             @endforeach
 
@@ -48,70 +48,22 @@
             </div>
 
             <!-- Single Option -->
-            {{-- <div class="single_search_boxed">
-                <div class="widget-boxed-header">
-
-                    <h4><a href="#pricing" data-toggle="collapse" aria-expanded="false" role="button">Pricing</a></h4>
-
-                </div>
-                <div class="widget-boxed-body collapse show" id="pricing" data-parent="#pricing">
-                    <div class="side-list no-border mb-4">
-                        <div class="rg-slider">
-                            <form id="sortForm" method="GET" action="{{ route('front.shop') }}">
-                                <input type="text" class="js-range-slider" name="my_range" value="price" {{ request('sort') == 'price' ? 'selected' : '' }}/>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-                
-            </div> --}}
             <div class="single_search_boxed">
                 <div class="widget-boxed-header">
-                    <h4><a href="#pricing" data-toggle="collapse" aria-expanded="false" role="button">Pricing</a></h4>
+                    
+                    <h4><a href="#pricing" data-toggle="collapse" aria-expanded="false"
+                            role="button" >Pricing</a></h4>
+                    
                 </div>
                 <div class="widget-boxed-body collapse show" id="pricing" data-parent="#pricing">
                     <div class="side-list no-border mb-4">
                         <div class="rg-slider">
-                            <form id="sortForm" method="GET" action="{{ route('front.shop') }}">
-                                <!-- Add the sorting parameter if it's present to retain it on submission -->
-                                <input type="hidden" name="sort" value="{{ request('sort') }}">
-            
-                                <!-- Hidden fields to capture the min and max price values -->
-                                <input type="hidden" id="min_price" name="min_price" value="{{ request('min_price', 0) }}">
-                                <input type="hidden" id="max_price" name="max_price" value="{{ request('max_price', 1000) }}">
-            
-                                <!-- Range slider input, which will update the min_price and max_price fields -->
-                                <input type="text" class="js-range-slider" name="price_range" value=""
-                                    data-min="0" data-max="1000" data-from="{{ request('min_price', 0) }}" data-to="{{ request('max_price', 1000) }}"
-                                    data-type="double" data-grid="true"/>
-            
-                            </form>
+                            
+                            <input type="text" class="js-range-slider" name="my_range" value="" />
                         </div>
                     </div>
                 </div>
-            </div>
-            <script>
-                $(document).ready(function() {
-                    // Initialize the slider with options
-                    $(".js-range-slider").ionRangeSlider({
-                        type: "double",
-                        grid: true,
-                        min: 0,
-                        max: 1000,
-                        from: {{ request('min_price', 0) }},
-                        to: {{ request('max_price', 1000) }},
-                        onFinish: function(data) {
-                            // Update the hidden fields with selected min and max values
-                            $('#min_price').val(data.from);
-                            $('#max_price').val(data.to);
-            
-                            // Submit the form to apply the price filter
-                            $('#sortForm').submit();
-                        }
-                    });
-                });
-            </script>
-            
+            </div>
 
             <!-- Single Option -->
             <div class="single_search_boxed">
