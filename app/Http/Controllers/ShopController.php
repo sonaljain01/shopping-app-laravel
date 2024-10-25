@@ -19,7 +19,7 @@ class ShopController extends Controller
 
         $productsQuery = Product::where('status', 1);
 
-        if (!empty($categorySlug)) {    
+        if (!empty($categorySlug)) {
             $category = Category::where('slug', $categorySlug)->where('status', 1)->first();
 
             if ($category) {
@@ -50,7 +50,27 @@ class ShopController extends Controller
             }
         }
 
-        $products = $productsQuery->orderBy('id', 'desc')->get();
+        $sort = $request->input('sort');
+        switch ($sort) {
+            case 'price_low_high':
+                $productsQuery->orderBy('price', 'asc');
+                break;
+            case 'price_high_low':
+                $productsQuery->orderBy('price', 'desc');
+                break;
+            case 'rating':
+                $productsQuery->orderBy('rating', 'desc'); // Assuming there's a 'rating' column
+                break;
+            case 'trending':
+                $productsQuery->orderBy('trending_score', 'desc'); // Assuming there's a 'trending_score' column
+                break;
+            default:
+                $productsQuery->orderBy('id', 'desc'); // Default sorting
+                break;
+        }
+        $products = $productsQuery->get();
+
+      
 
         return view('front.shop', [
             'categories' => $categories,
@@ -60,5 +80,6 @@ class ShopController extends Controller
             'subCategorySelected' => $subCategorySelected,
         ]);
     }
+
 
 }
