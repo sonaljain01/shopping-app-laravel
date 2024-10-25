@@ -244,7 +244,7 @@ class ProductController extends Controller
         $product = Product::with(['product_images', 'category', 'brand'])
             ->where('slug', $slug)
             ->where('status', 1)
-            ->first(); 
+            ->first();
 
         if (!$product) {
             abort(404);
@@ -252,5 +252,18 @@ class ProductController extends Controller
         // Pass the product details to the view
         return view('front.product-detail', compact('product'));
     }
+
+    public function quickView($id)
+    {
+        $product = Product::with('product_images')->find($id);
+
+        if (!$product) {
+            return response()->json(['message' => 'Product not found'], 404);
+        }
+
+        // Load a view with product details for the quick view modal
+        return view('front.quick-view-product', compact('product'));
+    }
+
 
 }

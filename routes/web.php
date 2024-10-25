@@ -15,6 +15,9 @@ Route::get('/shop/{categorySlug?}/{subcategorySlug?}', [ShopController::class, '
 Route::get('/product/{slug}', [ProductController::class, 'show'])->name('product.show');
 
 
+Route::get('/product/{id}/quick-view', [ProductController::class, 'quickView'])->name('product.quickview');
+
+
 Route::group(['prefix'=>'admin'], function () {
     Route::middleware(['admin.guest'])->group(function () {
         Route::get('/login', [AdminLoginController::class, 'index'])->name('admin.login');
