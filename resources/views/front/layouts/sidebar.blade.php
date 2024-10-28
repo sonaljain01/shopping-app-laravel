@@ -38,7 +38,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    
+
                                 </div>
                             @endforeach
 
@@ -48,7 +48,7 @@
             </div>
 
             <!-- Single Option -->
-            <div class="single_search_boxed">
+            {{-- <div class="single_search_boxed">
                 <div class="widget-boxed-header">
                     
                     <h4><a href="#pricing" data-toggle="collapse" aria-expanded="false"
@@ -63,8 +63,62 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> --}}
 
+            <form method="GET" action="{{ route('front.shop') }}">
+                <div class="single_search_boxed">
+                    <div class="widget-boxed-header">
+                        <h4><a href="#pricing" data-toggle="collapse" aria-expanded="false" role="button">Pricing</a>
+                        </h4>
+                    </div>
+                    <div class="widget-boxed-body collapse show" id="pricing" data-parent="#pricing">
+                        <div class="side-list no-border mb-4">
+                            <div class="rg-slider">
+
+                                <input type="text" class="js-range-slider" name="price"
+                                    value="{{ request('price', '0-1000') }}" />
+                                <input type="text" name="price_min" id="price_min" value="0" hidden />
+                                <input type="text" name="price_max" id="price_max" value="10000" hidden />
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+
+            <!-- Range Slider -->
+            <script>
+                $('.js-range-slider').ionRangeSlider({
+                    type: "double",
+                    min: 0,
+                    max: 10000,
+                    from: 0,
+                    to: 10000,
+                    onFinish: function(data) {
+                        $('#price_min').val(data.from);
+                        $('#price_max').val(data.to);
+                    }
+                });
+
+                function fetchProducts(minPrice, maxPrice) {
+                    $.ajax({
+                        url: '{{ route("front.shop") }}', // Your route to the ShopController index method
+                        method: 'GET',
+                        data: {
+                            price_min: minPrice,
+                            price_max: maxPrice,
+                            // Include any other parameters needed, e.g., category, brand, etc.
+                        },
+                        success: function(response) {
+                            // Assuming the response contains the HTML for the product list
+                            $('#product-list').html(response);
+                        },
+                        error: function(xhr, status, error) {
+                            console.error('Error fetching products:', error);
+                        }
+                    });
+                }
+            </script>
             <!-- Single Option -->
             <div class="single_search_boxed">
                 <div class="widget-boxed-header">
@@ -103,7 +157,8 @@
                                         <label class="form-option-label" for="36s">36</label>
                                     </div>
                                     <div class="form-check form-option form-check-inline mb-2">
-                                        <input class="form-check-input" type="radio" name="sizes" id="38s">
+                                        <input class="form-check-input" type="radio" name="sizes"
+                                            id="38s">
                                         <label class="form-option-label" for="38s">38</label>
                                     </div>
                                     <div class="form-check form-option form-check-inline mb-2">

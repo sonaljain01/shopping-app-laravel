@@ -9,14 +9,27 @@ use  App\Http\Controllers\admin\HomeController;
 use App\Http\Controllers\admin\CategoryController;
 use App\Http\Controllers\admin\BrandController;
 use App\Http\Controllers\admin\ProductImageController;
+use App\Http\Controllers\CartController;
+use App\Http\Controllers\AuthController;
 
 Route::get('/', [FrontController::class, 'index'])->name('front.home');
 Route::get('/shop/{categorySlug?}/{subcategorySlug?}', [ShopController::class, 'index'])->name('front.shop');
 Route::get('/product/{slug}', [ProductController::class, 'show'])->name('product.show');
 Route::get('/products/{id}', [ShopController::class, 'show']);
-// Route::get('/shop', [ShopController::class, 'index'])->name('shop.index');
+Route::post('/cart/add/{productId}', [CartController::class, 'addToCart'])->name('cart.add');
+Route::get('/cart', [CartController::class, 'viewCart'])->name('cart.index');
+Route::post('/cart/remove/{productId}', [CartController::class, 'removeFromCart'])->name('cart.remove');
 
 Route::get('/product/{id}/quick-view', [ProductController::class, 'quickView'])->name('product.quickview');
+Route::get('/register', [AuthController::class, 'showRegistrationForm'])->name('front.register');
+Route::post('/register', [AuthController::class, 'register']);
+Route::post('login', [AuthController::class, 'login'])->name('front.login');
+Route::get('/login', [AuthController::class, 'showLoginForm'])->name('front.login');
+
+
+
+
+
 
 
 Route::group(['prefix'=>'admin'], function () {

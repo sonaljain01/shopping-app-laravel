@@ -4,6 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\ProductImage;
+use App\Models\Category;
+use App\Models\Brand;
 
 class Product extends Model
 {
@@ -20,9 +23,9 @@ class Product extends Model
         'brand_id',
         'description',
         'is_featured',
-        'image',
         'compare_price',
-        'additional_image',
+        'status',
+        'barcode',
     ];
     public function product_images()
     {

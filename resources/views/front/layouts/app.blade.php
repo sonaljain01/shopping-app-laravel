@@ -206,8 +206,11 @@
 									</a>
 								</li>
 								<li>
-									<a href="#" onclick="openCart()">
-										<i class="lni lni-shopping-basket"></i><span class="dn-counter bg-success">3</span>
+									<a href="{{ route('cart.index') }}" onclick="openCart()">
+										<i class="lni lni-shopping-basket"></i>
+										<span class="dn-counter bg-success">
+											{{ session('cart') ? array_reduce(session('cart'), fn($total, $item) => $total + $item['quantity'], 0) : '0' }}
+										</span>
 									</a>
 								</li>
 							</ul>
@@ -222,7 +225,7 @@
 			<!-- ============================================================== -->
 			
 			<!-- ======================= Shop Style 1 ======================== -->
-			<section class="bg-cover" style="background:url({{ asset('front-assets/img/banner-2.png') }}) no-repeat;">
+			{{-- <section class="bg-cover" style="background:url({{ asset('front-assets/img/banner-2.png') }}) no-repeat;">
 				<div class="container">
 					<div class="row align-items-center justify-content-center">
 						<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
@@ -238,7 +241,7 @@
 						</div>
 					</div>
 				</div>
-			</section>
+			</section> --}}
 			<!-- ======================= Shop Style 1 ======================== -->
 			
 			
@@ -441,21 +444,22 @@
 								<h2 class="m-0 ft-regular">Login</h2>
 							</div>
 							
-							<form>				
+							<form action="{{ route('front.login') }}" method="POST }}">				
+								@csrf
 								<div class="form-group">
 									<label>User Name</label>
-									<input type="text" class="form-control" placeholder="Username*">
+									<input type="text" name="username" class="form-control" placeholder="Username*">
 								</div>
 								
 								<div class="form-group">
 									<label>Password</label>
-									<input type="password" class="form-control" placeholder="Password*">
+									<input type="password" name="password" class="form-control" placeholder="Password*">
 								</div>
 								
 								<div class="form-group">
 									<div class="d-flex align-items-center justify-content-between">
 										<div class="flex-1">
-											<input id="dd" class="checkbox-custom" name="dd" type="checkbox">
+											<input id="dd" class="checkbox-custom" name="remember" type="checkbox">
 											<label for="dd" class="checkbox-custom-label">Remember Me</label>
 										</div>	
 										<div class="eltio_k2">
@@ -469,7 +473,7 @@
 								</div>
 								
 								<div class="form-group text-center mb-0">
-									<p class="extra">Not a member?<a href="#et-register-wrap" class="text-dark"> Register</a></p>
+									<p class="extra">Not a member?<a href="{{ route('front.register') }}" class="text-dark">Register</a></p>
 								</div>
 							</form>
 						</div>
