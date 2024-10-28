@@ -25,11 +25,11 @@ class ProductFactory extends Factory
             'category_id' => Category::inRandomOrder()->first()->id,
             'slug' => $this->faker->slug(),
             'sku' => $this->faker->ean8(),
-            'track_qty' => $this->faker->boolean(),
+            'track_qty' => $this->faker->boolean() ? 'Yes' : 'No',
             'qty' => $this->faker->numberBetween(1, 10),
             'brand_id' => Brand::inRandomOrder()->first()->id,
             'status' => $this->faker->randomElement([0, 1]),
-            'is_featured' => $this->faker->boolean(),
+            'is_featured' => $this->faker->boolean() ? 'Yes' : 'No',
             'compare_price' => $this->faker->randomFloat(2, 10, 500),
             'barcode' => $this->faker->ean8(),
 
