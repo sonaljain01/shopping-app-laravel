@@ -11,13 +11,13 @@ class AuthController extends Controller
     public function login(request $request)
     {
         $request->validate([
-            'username' => 'required|string',
+            'email' => 'required|email',
             'password' => 'required|string'
         ]);
     
         // Manually specifying 'username' instead of 'email'
         $credentials = [
-            'username' => $request->username,
+            'email' => $request->email,
             'password' => $request->password,
         ];
     

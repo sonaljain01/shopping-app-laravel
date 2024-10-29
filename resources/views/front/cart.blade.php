@@ -99,7 +99,7 @@
                     </div>
                 </div>
 
-                <a class="btn btn-block btn-dark mb-3" href="checkout.html">Proceed to Checkout</a>
+                <a class="btn btn-block btn-dark mb-3" href="{{ route('front.checkout') }}">Proceed to Checkout</a>
                 <a class="btn-link text-dark ft-medium" href="shop.html">
                     <i class="ti-back-left mr-2"></i> Continue Shopping
                 </a>

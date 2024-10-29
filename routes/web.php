@@ -3,6 +3,7 @@
 use App\Http\Controllers\admin\AdminLoginController;
 use App\Http\Controllers\admin\ProductController;
 use App\Http\Controllers\FrontController;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ShopController;
 use Illuminate\Support\Facades\Route;
 use  App\Http\Controllers\admin\HomeController;
@@ -26,8 +27,9 @@ Route::post('/register', [AuthController::class, 'register']);
 Route::post('login', [AuthController::class, 'login'])->name('front.login');
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('front.login');
 
-
-
+Route::get('/checkout', [OrderController::class, 'checkout'])->name('front.checkout');
+Route::post('/checkout/place-order', [OrderController::class, 'placeOrder'])->name('checkout.placeOrder');
+Route::get('/my-orders', [OrderController::class, 'myOrders'])->name('front.index');
 
 
 

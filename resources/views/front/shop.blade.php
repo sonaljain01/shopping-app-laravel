@@ -115,6 +115,12 @@
             </div>
         </div>
     </section>
+    {{-- @foreach($products as $product)
+    {{-- @php 
+    echo $product;
+    @endphp 
+    @endforeach --}}
+
     @foreach ($products as $product)
         {{-- Quick View Modal --}}
         <div class="modal fade lg-modal" id="quickview" tabindex="-1" role="dialog" aria-labelledby="quickviewmodal"
@@ -129,7 +135,7 @@
 
                     <div class="modal-body">
                         <div class="quick_view_wrap">
-
+                            
 
                             <div class="quick_view_capt">
 
@@ -140,8 +146,9 @@
                                             @if (count($product->product_images) > 0)
                                                 <img src="{{ asset($product->product_images[0]->image) }}"
                                                     class="img-fluid" />
+                                            
                                             @endif
-                                        </div>
+                                        
                                     </div>
 
 
@@ -262,4 +269,5 @@
                 </div>
             </div>
     @endforeach
+            </div>
 @endsection
