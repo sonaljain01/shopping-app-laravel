@@ -84,7 +84,7 @@ class CartController extends Controller
         // Save the updated cart in the session
         session()->put('cart', $cart);
 
-        // **Database Cart Logic** - Check if the product exists in the database cart and update it
+        
         $cartItem = Cart::where('product_id', $productId)
             ->where(function ($query) use ($userId, $guestId) {
                 $query->where('user_id', $userId)

@@ -201,7 +201,7 @@
 									</a>
 								</li>
 								<li>
-									<a href="#" onclick="openWishlist()">
+									<a href="{{ route('wishlist.add') }}" onclick="openWishlist()">
 										<i class="lni lni-heart"></i><span class="dn-counter bg-danger">2</span>
 									</a>
 								</li>

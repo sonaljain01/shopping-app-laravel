@@ -106,7 +106,7 @@
                                     <div class="col-xl-5 col-lg-5 col-md-5 col-12">
                                         <div class="cart_single d-flex align-items-start mfliud-bot">
                                             <div class="cart_selected_single_thumb">
-                                                <a href="#"><img src="{{ $item->product->image_url }}" width="75"
+                                                <a href="#"><img src="{{ $item->product->image }}" width="75"
                                                         class="img-fluid rounded" alt=""></a>
                                             </div>
                                             <div class="cart_single_caption pl-3">

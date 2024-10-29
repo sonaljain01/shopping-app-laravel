@@ -12,6 +12,7 @@ use App\Http\Controllers\admin\BrandController;
 use App\Http\Controllers\admin\ProductImageController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\Wishlistcontroller;
 
 Route::get('/', [FrontController::class, 'index'])->name('front.home');
 Route::get('/shop/{categorySlug?}/{subcategorySlug?}', [ShopController::class, 'index'])->name('front.shop');
@@ -31,6 +32,8 @@ Route::get('/checkout', [OrderController::class, 'checkout'])->name('front.check
 Route::post('/checkout/place-order', [OrderController::class, 'placeOrder'])->name('checkout.placeOrder');
 Route::get('/my-orders', [OrderController::class, 'myOrders'])->name('front.index');
 
+Route::post('/wishlist/add', [WishlistController::class, 'add'])->name('wishlist.add');
+Route::get('/wishlist', [WishlistController::class, 'index'])->name('wishlist.index');
 
 
 

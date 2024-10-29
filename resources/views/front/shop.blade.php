@@ -100,8 +100,13 @@
                                                             class="ft-bold text-dark fs-sm">Rs.{{ $product->price }}</span>
                                                     </div>
                                                 </div>
-                                                <button class="btn auto btn_love snackbar-wishlist"><i
-                                                        class="far fa-heart"></i></button>
+                                                <form action="{{ route('wishlist.add') }}" method="POST">
+                                                    @csrf
+                                                    <input type="hidden" name="product_id" value="{{ $product->id }}">
+                                                    <button type="submit" class="btn auto btn_love">
+                                                        <i class="far fa-heart"></i>
+                                                    </button>
+                                                </form>
                                             </div>
                                         </div>
                                     </div>
