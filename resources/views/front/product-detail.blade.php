@@ -75,23 +75,27 @@
                                         </select>
                                     </div>
                                     <div class="col-12 col-lg">
-                                        <!-- Submit -->
+                                        <!-- Submit to Cart -->
                                         <form action="{{ route('cart.add', $product->id) }}" method="POST">
                                             @csrf
-                                        <button type="submit" class="btn btn-block custom-height bg-dark mb-2">
-                                            <i class="lni lni-shopping-basket mr-2"></i>Add to Cart
-                                        </button>
+                                            <button type="submit" class="btn btn-block custom-height bg-dark mb-2">
+                                                <i class="lni lni-shopping-basket mr-2"></i>Add to Cart
+                                            </button>
                                         </form>
                                     </div>
                                     <div class="col-12 col-lg-auto">
                                         <!-- Wishlist -->
-                                        <button class="btn custom-height btn-default btn-block mb-2 text-dark"
-                                            data-toggle="button">
-                                            <i class="lni lni-heart mr-2"></i>Wishlist
-                                        </button>
+                                        <form action="{{ route('wishlist.add') }}" method="POST">
+                                            @csrf
+                                            <input type="hidden" name="product_id" value="{{ $product->id }}">
+                                            <button type="submit" class="btn custom-height btn-default btn-block mb-2 text-dark">
+                                                <i class="lni lni-heart mr-2"></i>Wishlist
+                                            </button>
+                                        </form>
                                     </div>
                                 </div>
                             </div>
+                            
 
                             <div class="prt_06">
                                 <p class="mb-0 d-flex align-items-center">
