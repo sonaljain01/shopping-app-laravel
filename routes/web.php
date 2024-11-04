@@ -34,6 +34,7 @@ Route::get('/my-orders', [OrderController::class, 'myOrders'])->name('front.inde
 
 Route::post('/wishlist/add', [WishlistController::class, 'add'])->name('wishlist.add');
 Route::get('/wishlist', [WishlistController::class, 'index'])->name('wishlist.index');
+Route::delete('/wishlist/remove/{id}', [WishlistController::class, 'remove'])->name('wishlist.remove');
 
 
 
