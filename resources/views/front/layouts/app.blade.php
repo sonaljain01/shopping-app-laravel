@@ -227,8 +227,8 @@
                                     <i class="lni lni-heart"></i>
                                     <span class="dn-counter bg-danger">
                                         {{ \App\Models\Wishlist::where('user_id', auth()->id())->orWhere('guest_id', session('guest_id'))->count() }}
-									
-										
+
+
                                     </span>
                                 </a>
                             </li>
@@ -463,7 +463,6 @@
         <!-- ============================ Footer End ================================== -->
 
 
-
         <!-- Log In Modal -->
         <div class="modal fade" id="login" tabindex="-1" role="dialog" aria-labelledby="loginmodal"
             aria-hidden="true">
@@ -480,29 +479,24 @@
                             <h2 class="m-0 ft-regular">Login</h2>
                         </div>
 
-                        <form action="{{ route('front.login') }}" method="POST }}">
+                        <form action="{{ route('front.login') }}" method="POST" id="loginForm">
                             @csrf
                             <div class="form-group">
-                                <label>User Name</label>
-                                <input type="text" name="username" class="form-control" placeholder="Username*">
+                                <label>Email</label>
+                                <input type="email" class="form-control" placeholder="your@email.com"
+                                    autocomplete="off" name="email" id="email" value="{{ old('email') }}">
+                                @error('email')
+                                    <p class="text-red-500">{{ $message }}</p>
+                                @enderror
                             </div>
 
                             <div class="form-group">
                                 <label>Password</label>
-                                <input type="password" name="password" class="form-control" placeholder="Password*">
-                            </div>
-
-                            <div class="form-group">
-                                <div class="d-flex align-items-center justify-content-between">
-                                    <div class="flex-1">
-                                        <input id="dd" class="checkbox-custom" name="remember"
-                                            type="checkbox">
-                                        <label for="dd" class="checkbox-custom-label">Remember Me</label>
-                                    </div>
-                                    <div class="eltio_k2">
-                                        <a href="#">Lost Your Password?</a>
-                                    </div>
-                                </div>
+                                <input type="password" class="form-control" placeholder="Password*" name="password"
+                                    id="password">
+                                @error('password')
+                                    <p class="text-red-500">{{ $message }}</p>
+                                @enderror
                             </div>
 
                             <div class="form-group">
@@ -511,8 +505,8 @@
                             </div>
 
                             <div class="form-group text-center mb-0">
-                                <p class="extra">Not a member?<a href="{{ route('front.register') }}"
-                                        class="text-dark">Register</a></p>
+                                <p class="extra">Not a member?<a href="{{ route('front.register') }}" class="text-dark">
+                                        Register</a></p>
                             </div>
                         </form>
                     </div>
@@ -565,7 +559,8 @@
                                         class="d-inline-flex align-items-center justify-content-center p-3 circle mb-2 gray">
                                         <a href="javascript:void(0);" class="d-block"><img
                                                 src="{{ asset('front-assets/img/tshirt.png') }}" class="img-fluid"
-                                                width="40" alt="" /></a></div>
+                                                width="40" alt="" /></a>
+                                    </div>
                                 </div>
                                 <div class="sl_cat_02">
                                     <h6 class="m-0 ft-medium fs-sm"><a href="javascript:void(0);">T-Shirts</a></h6>
@@ -579,7 +574,8 @@
                                         class="d-inline-flex align-items-center justify-content-center p-3 circle mb-2 gray">
                                         <a href="javascript:void(0);" class="d-block"><img
                                                 src="{{ asset('front-assets/img/pant.png') }}" class="img-fluid"
-                                                width="40" alt="" /></a></div>
+                                                width="40" alt="" /></a>
+                                    </div>
                                 </div>
                                 <div class="sl_cat_02">
                                     <h6 class="m-0 ft-medium fs-sm"><a href="javascript:void(0);">Pants</a></h6>
@@ -593,7 +589,8 @@
                                         class="d-inline-flex align-items-center justify-content-center p-3 circle mb-2 gray">
                                         <a href="javascript:void(0);" class="d-block"><img
                                                 src="{{ asset('front-assets/img/fashion.png') }}" class="img-fluid"
-                                                width="40" alt="" /></a></div>
+                                                width="40" alt="" /></a>
+                                    </div>
                                 </div>
                                 <div class="sl_cat_02">
                                     <h6 class="m-0 ft-medium fs-sm"><a href="javascript:void(0);">Women's</a></h6>
@@ -607,7 +604,8 @@
                                         class="d-inline-flex align-items-center justify-content-center p-3 circle mb-2 gray">
                                         <a href="javascript:void(0);" class="d-block"><img
                                                 src="{{ asset('front-assets/img/sneakers.png') }}" class="img-fluid"
-                                                width="40" alt="" /></a></div>
+                                                width="40" alt="" /></a>
+                                    </div>
                                 </div>
                                 <div class="sl_cat_02">
                                     <h6 class="m-0 ft-medium fs-sm"><a href="javascript:void(0);">Shoes</a></h6>
@@ -621,7 +619,8 @@
                                         class="d-inline-flex align-items-center justify-content-center p-3 circle mb-2 gray">
                                         <a href="javascript:void(0);" class="d-block"><img
                                                 src="{{ asset('front-assets/img/television.png') }}"
-                                                class="img-fluid" width="40" alt="" /></a></div>
+                                                class="img-fluid" width="40" alt="" /></a>
+                                    </div>
                                 </div>
                                 <div class="sl_cat_02">
                                     <h6 class="m-0 ft-medium fs-sm"><a href="javascript:void(0);">Television</a></h6>
@@ -635,7 +634,8 @@
                                         class="d-inline-flex align-items-center justify-content-center p-3 circle mb-2 gray">
                                         <a href="javascript:void(0);" class="d-block"><img
                                                 src="{{ asset('front-assets/img/accessories.png') }}"
-                                                class="img-fluid" width="40" alt="" /></a></div>
+                                                class="img-fluid" width="40" alt="" /></a>
+                                    </div>
                                 </div>
                                 <div class="sl_cat_02">
                                     <h6 class="m-0 ft-medium fs-sm"><a href="javascript:void(0);">Accessories</a></h6>

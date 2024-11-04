@@ -9,7 +9,6 @@ use Illuminate\Support\Facades\Route;
 use  App\Http\Controllers\admin\HomeController;
 use App\Http\Controllers\admin\CategoryController;
 use App\Http\Controllers\admin\BrandController;
-use App\Http\Controllers\admin\ProductImageController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Wishlistcontroller;
@@ -23,10 +22,17 @@ Route::get('/cart', [CartController::class, 'viewCart'])->name('cart.index');
 Route::post('/cart/remove/{productId}', [CartController::class, 'removeFromCart'])->name('cart.remove');
 
 Route::get('/product/{id}/quick-view', [ProductController::class, 'quickView'])->name('product.quickview');
-Route::get('/register', [AuthController::class, 'showRegistrationForm'])->name('front.register');
-Route::post('/register', [AuthController::class, 'register']);
-Route::post('login', [AuthController::class, 'login'])->name('front.login');
-Route::get('/login', [AuthController::class, 'showLoginForm'])->name('front.login');
+// Route::get('/register/form', [AuthController::class, 'showRegistrationForm'])->name('front.register');
+Route::post('register', [AuthController::class, 'register'])->name('front.register.store');
+Route::get('register', function(){
+    return view('front.register');
+})->name('front.register');
+
+Route::post('/login', [AuthController::class, 'login'])->name('front.login');
+Route::get('login', function () {
+    return view('front.login');
+})->name('front.login');
+
 
 Route::get('/checkout', [OrderController::class, 'checkout'])->name('front.checkout');
 Route::post('/checkout/place-order', [OrderController::class, 'placeOrder'])->name('checkout.placeOrder');

@@ -11,7 +11,7 @@ class RegisterRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        return true; // Authorization logic can be added if needed in the future
     }
 
     /**
@@ -22,33 +22,32 @@ class RegisterRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'first_name' => 'required',
-            'second_name' => 'nullable',
-            'email' => 'required|email|unique:users',
-            'password' => [
-                'required',
-                'string',
-                'min:8',
-                'regex:/[a-z]/',
-                'regex:/[A-Z]/',
-                'regex:/[0-9]/',
-                'regex:/[@$!%*?&]/',
-            ],
-            'role' => 'required|in:0,1',
+            'username' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email|max:255',
+            'password' => 'required|string|min:8|confirmed',
+            'role' => 'nullable|in:0,1', 
         ];
     }
 
+    /**
+     * Custom messages for validation errors.
+     *
+     * @return array<string, string>
+     */
     public function messages(): array
     {
         return [
-            'name.required' => 'Name is required',
-            'email.required' => 'Email is required',
-            'email.email' => 'Email is invalid',
-            'email.unique' => 'Email already exists',
-            'password.required' => 'Password is required',
-            'password.min' => 'Password must be at least 8 characters',
-            'password.regex' => 'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character',
-            'role.required' => 'Role is required',
+            'username.required' => 'The username is required.',
+            'username.string' => 'The username must be a string.',
+            'username.max' => 'The username may not be greater than 255 characters.',
+            'email.required' => 'The email address is required.',
+            'email.email' => 'The email address must be a valid email format.',
+            'email.unique' => 'The email address has already been taken.',
+            'password.required' => 'The password is required.',
+            'password.min' => 'The password must be at least 8 characters long.',
+            'password.confirmed' => 'The password confirmation does not match.',
+            'role.required' => 'The role is required.',
+            'role.in' => 'The selected role is invalid.',
         ];
     }
 }
