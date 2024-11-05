@@ -19,7 +19,8 @@ Route::get('/product/{slug}', [ProductController::class, 'show'])->name('product
 Route::get('/products/{id}', [ShopController::class, 'show']);
 Route::post('/cart/add/{productId}', [CartController::class, 'addToCart'])->name('cart.add');
 Route::get('/cart', [CartController::class, 'viewCart'])->name('cart.index');
-Route::post('/cart/remove/{productId}', [CartController::class, 'removeFromCart'])->name('cart.remove');
+Route::post('/cart/update', [CartController::class, 'update'])->name('cart.update');
+
 
 Route::get('/product/{id}/quick-view', [ProductController::class, 'quickView'])->name('product.quickview');
 // Route::get('/register/form', [AuthController::class, 'showRegistrationForm'])->name('front.register');

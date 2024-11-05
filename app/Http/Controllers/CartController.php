@@ -6,11 +6,11 @@ use App\Models\Cart;
 use Illuminate\Http\Request;
 use App\Models\Product;
 use Auth;
+
 class CartController extends Controller
 {
     public function addToCart(Request $request, $productId)
     {
-        
         $product = Product::find($productId);
         if (!$product) {
             return redirect()->back()->with('error', 'Product not found.');
@@ -33,7 +33,6 @@ class CartController extends Controller
             // Increment the quantity if it exists
             $cart[$productId]['quantity']++;
         } else {
-            // Add new product to the session cart if it doesn't exist
             $cart[$productId] = [
                 'product_id' => $product->id,
                 'title' => $product->title,
@@ -46,19 +45,17 @@ class CartController extends Controller
         // Save the updated cart in the session
         session()->put('cart', $cart);
 
-        
+        // Database operations for adding to cart
         $cartItem = Cart::where('product_id', $productId)
             ->where(function ($query) use ($userId, $guestId) {
                 $query->where('user_id', $userId)
-                    ->orWhere('guest_id', $guestId);
+                      ->orWhere('guest_id', $guestId);
             })
             ->first();
 
         if ($cartItem) {
-            // Increment quantity if the item is already in the database cart
             $cartItem->increment('quantity');
         } else {
-            // If the item is not in the database cart, create a new entry
             Cart::create([
                 'user_id' => $userId,
                 'guest_id' => $userId ? null : $guestId,
@@ -68,24 +65,72 @@ class CartController extends Controller
         }
 
         return redirect()->back()->with('success', 'Product added to cart successfully');
-
     }
+
     public function viewCart()
     {
-        // $cartItems = Cart::with('products')->where('user_id', Auth::user()->id)->get();
         $cartItems = session()->get('cart', []);
         return view('front.cart', compact('cartItems'));
     }
 
-    public function removeFromCart($productId)
+
+    public function update(Request $request)
     {
         $cart = session()->get('cart');
+        $userId = auth()->check() ? auth()->id() : null; 
+        $guestId = session()->getId(); 
 
-        if (isset($cart[$productId])) {
-            unset($cart[$productId]);
-            session()->put('cart', $cart);
+        // Handle item removal from the cart
+        if ($request->has('remove_item')) {
+            $productId = $request->input('remove_item');
+
+            if (isset($cart[$productId])) {
+                unset($cart[$productId]);
+                session()->put('cart', $cart); 
+
+                // Remove from the database
+                $idToUse = $userId ?? $guestId;
+
+                if ($idToUse) {
+                    Cart::where('product_id', $productId)
+                        ->where(function ($query) use ($userId, $guestId) {
+                            $query->where('user_id', $userId)
+                                  ->orWhere('guest_id', $guestId);
+                        })
+                        ->delete();
+                }
+
+                return response()->json(['success' => true, 'message' => 'Product removed from cart successfully!']);
+            }
         }
 
-        return redirect()->back()->with('success', 'Product removed from cart successfully!');
+        // Handle quantity updates
+        if ($request->has('quantities')) {
+            foreach ($request->input('quantities') as $productId => $quantity) {
+                if (isset($cart[$productId])) {
+                    // Update quantity in session cart
+                    $cart[$productId]['quantity'] = $quantity;
+                }
+            }
+
+            // Save the updated cart back to the session
+            session()->put('cart', $cart);
+
+            // Update quantities in the database
+            foreach ($request->input('quantities') as $productId => $quantity) {
+                $idToUse = $userId ?? $guestId;
+
+                if ($idToUse) {
+                    Cart::updateOrCreate(
+                        ['product_id' => $productId, 'user_id' => $userId, 'guest_id' => $guestId],
+                        ['quantity' => $quantity]
+                    );
+                }
+            }
+
+            return redirect()->back()->with('success', 'Product quantity updated successfully!');
+        }
+
+        return redirect()->back()->with('error', 'Product not found in cart!');
     }
 }
