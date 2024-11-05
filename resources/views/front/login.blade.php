@@ -53,6 +53,15 @@
                     <div class="form-group">
                         <p>Not a member? <a href="{{ route('front.register') }}">Register</a></p>
                     </div>
+
+                    {{-- login with google --}}
+                    <div class="form-group">
+                        <div class="col-md-8 col-md-offset-4">
+                            <a href="{{ route('login.google') }}" class="btn btn-danger">
+                                Login with Google
+                            </a>
+                        </div>
+                    </div>
                 </form>
 
 
