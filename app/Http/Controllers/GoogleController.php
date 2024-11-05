@@ -31,7 +31,7 @@ class GoogleController extends Controller
             }
 
             Auth::login($finduser);
-            return redirect()->route('front.home');
+            return redirect()->route('front.shop');
         } catch (\Exception $e) {
             dd($e->getMessage());
         }
