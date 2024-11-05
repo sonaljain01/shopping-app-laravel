@@ -1,6 +1,19 @@
 @extends('front.layouts.app')
 
 @section('content')
+<div class="container">
+    <div class="row align-items-center justify-content-between">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ route('front.home') }}">Home</a></li>
+                    <li class="breadcrumb-item"><a href="#">Shop</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Women's</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+</div>
 <section class="bg-cover" style="background:url({{ asset('front-assets/img/banner-2.png') }}) no-repeat;">
     <div class="container">
         <div class="row align-items-center justify-content-center">

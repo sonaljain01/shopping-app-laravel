@@ -14,6 +14,21 @@
 @extends('front.layouts.app')
 
 @section('content')
+<div class="gray py-3">
+    <div class="container">
+        <div class="row">
+            <div class="colxl-12 col-lg-12 col-md-12">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{{ route('front.home') }}">Home</a></li>
+                        <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">My Order</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+</div>
     <div class="container">
         <div class="row align-items-start justify-content-between">
             @include('front.layouts.sidebar_two')
