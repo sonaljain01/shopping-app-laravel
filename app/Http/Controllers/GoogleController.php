@@ -22,16 +22,16 @@ class GoogleController extends Controller
             $finduser = User::where('google_id', $user->id)->first();
 
             if (!$finduser) {
+                $username = $user->getName() ?: 'user_' . $user->getId();
                 $finduser = User::create([
-                    'name' => $user->getName(),
+                    'username' => $username,
                     'email' => $user->getEmail(),
                     'google_id' => $user->getId(),
                     // Add any other necessary fields
                 ]);
             }
-            \Log::info('User from Google:', [$user]);
 
-            Auth::login($finduser);
+            Auth::login($finduser, true);
             return redirect()->route('front.shop');
         } catch (\Exception $e) {
             dd($e->getMessage());
