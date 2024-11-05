@@ -10,6 +10,7 @@
 
     <!-- Custom CSS -->
     <link href="{{ asset('front-assets/css/styles.css') }}" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.css">
 
 </head>
 
@@ -131,7 +132,7 @@
                                 </li>
                                 <li>
                                     <a href="#" onclick="openWishlist()">
-                                        <i class="lni lni-heart"></i><span class="dn-counter">2</span>
+                                        <i class="lni lni-heart"></i><span class="dn-counter"></span>
                                     </a>
                                 </li>
                                 <li>
@@ -226,9 +227,7 @@
                                 <a href="{{ route('wishlist.index') }}" onclick="openWishlist()">
                                     <i class="lni lni-heart"></i>
                                     <span class="dn-counter bg-danger">
-                                        {{ \App\Models\Wishlist::where('user_id', auth()->id())->orWhere('guest_id', session('guest_id'))->count() }}
-
-
+                                        {{ auth()->check() ? \App\Models\Wishlist::where('user_id', auth()->id())->count() : \App\Models\Wishlist::where('guest_id', session('guest_id'))->count() }}
                                     </span>
                                 </a>
                             </li>
@@ -842,6 +841,8 @@
     <script src="{{ asset('front-assets/js/snackbar.min.js') }}"></script>
     <script src="{{ asset('front-assets/js/jQuery.style.switcher.js') }}"></script>
     <script src="{{ asset('front-assets/js/custom.js') }}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.js"></script>
+
     <!-- ============================================================== -->
     <!-- This page plugins -->
     <!-- ============================================================== -->

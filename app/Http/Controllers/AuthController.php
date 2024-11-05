@@ -55,4 +55,17 @@ class AuthController extends Controller
             return back()->with('error', 'Invalid email or password');
         }
     }
+
+    public function logout(Request $request)
+    {
+        Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+        return redirect()->route('front.home');
+    }
+
+    public function showLoginForm()
+    {
+        return view('front.login');
+    }
 }

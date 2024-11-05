@@ -40,10 +40,14 @@
                     </a>
                 </li>
                 <li>
-                    <a href="login.html" class="{{ request()->is('login') ? 'text-danger' : '' }}">
+                    <form id="logout-form" action="{{ route('auth.logout') }}" method="POST" style="display: none;">
+                        @csrf
+                    </form>
+                    <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" class="{{ request()->is('login') ? 'text-danger' : '' }}">
                         <i class="lni lni-power-switch mr-2"></i>Log Out
                     </a>
                 </li>
+                
             </ul>
         </div>
     </div>

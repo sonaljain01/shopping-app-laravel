@@ -30,9 +30,9 @@ Route::get('register', function(){
 })->name('front.register');
 
 Route::post('/login', [AuthController::class, 'login'])->name('front.login');
-Route::get('login', function () {
-    return view('front.login');
-})->name('front.login');
+
+Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
+Route::post('/logout', [AuthController::class, 'logout'])->name('auth.logout');
 
 
 Route::get('/checkout', [OrderController::class, 'checkout'])->name('front.checkout');
@@ -40,8 +40,12 @@ Route::post('/checkout/place-order', [OrderController::class, 'placeOrder'])->na
 Route::get('/my-orders', [OrderController::class, 'myOrders'])->name('front.index');
 
 Route::post('/wishlist/add', [WishlistController::class, 'add'])->name('wishlist.add');
-Route::get('/wishlist', [WishlistController::class, 'index'])->name('wishlist.index');
-Route::delete('/wishlist/remove/{id}', [WishlistController::class, 'remove'])->name('wishlist.remove');
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/wishlist', [WishlistController::class, 'index'])->name('wishlist.index');
+    Route::delete('/wishlist/remove/{id}', [WishlistController::class, 'remove'])->name('wishlist.remove');
+
+});
 
 
 
