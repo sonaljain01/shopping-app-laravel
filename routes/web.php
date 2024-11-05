@@ -35,8 +35,8 @@ Route::post('/login', [AuthController::class, 'login'])->name('front.login');
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/logout', [AuthController::class, 'logout'])->name('auth.logout');
 
-Route::get('login/google', [GoogleController::class, 'redirectToGoogle'])->name('login.google');
-Route::get('login/google/callback', [GoogleController::class, 'handleGoogleCallback']);
+Route::get('/google', [GoogleController::class, 'redirectToGoogle'])->name('login.google');
+Route::get('/google/callback', [GoogleController::class, 'handleGoogleCallback']);
 
 Route::get('/checkout', [OrderController::class, 'checkout'])->name('front.checkout');
 Route::post('/checkout/place-order', [OrderController::class, 'placeOrder'])->name('checkout.placeOrder');

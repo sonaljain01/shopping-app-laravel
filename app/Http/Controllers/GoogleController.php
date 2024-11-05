@@ -29,6 +29,7 @@ class GoogleController extends Controller
                     // Add any other necessary fields
                 ]);
             }
+            \Log::info('User from Google:', [$user]);
 
             Auth::login($finduser);
             return redirect()->route('front.shop');
