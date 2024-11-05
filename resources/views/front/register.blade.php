@@ -49,6 +49,10 @@
                 <div class="form-group">
                     <button type="submit" class="btn btn-md full-width bg-dark text-light fs-md ft-medium">Create An Account</button>
                 </div>
+
+                <div class="form-group">
+                    <p>Already have an account? <a href="{{ route('front.login') }}">Login</a></p>
+                </div>
             </form>
         </div>
     </div>
