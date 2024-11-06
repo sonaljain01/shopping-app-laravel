@@ -114,7 +114,8 @@
                             <li class="list-group-item d-flex text-dark fs-sm ft-regular">
                                 <span>Subtotal</span>
                                 <span class="ml-auto text-dark ft-medium">
-                                    Rs.{{ array_reduce(session('cart'), fn($total, $item) => $total + $item['price'] * $item['quantity'], 0) }}
+                                    {{-- Rs.{{ array_reduce(session('cart'), fn($total, $item) => $total + $item['price'] * $item['quantity'], 0) }} --}}
+                                    Rs.{{ array_reduce(session('cart', []), fn($total, $item) => $total + $item['price'] * $item['quantity'], 0) }}
                                 </span>
                             </li>
                             <li class="list-group-item d-flex text-dark fs-sm ft-regular">
@@ -124,7 +125,7 @@
                             <li class="list-group-item d-flex text-dark fs-sm ft-regular">
                                 <span>Total</span>
                                 <span class="ml-auto text-dark ft-medium">
-                                    Rs.{{ array_reduce(session('cart'), fn($total, $item) => $total + $item['price'] * $item['quantity'], 0) + 10.1 }}
+                                    Rs.{{ array_reduce(session('cart', []), fn($total, $item) => $total + $item['price'] * $item['quantity'], 0) + 10.1 }}
                                 </span>
                             </li>
                             <li class="list-group-item fs-sm text-center">
