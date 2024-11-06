@@ -54,6 +54,8 @@ Route::middleware(['auth'])->group(function () {
 
 });
 
+Route::post('/price/filter', [ShopController::class, 'filterByPrice'])->name('price.filter');
+Route::get('/product/{slug}/show', [ShopController::class, 'show'])->name('product.specific');
 
 
 Route::group(['prefix'=>'admin'], function () {
