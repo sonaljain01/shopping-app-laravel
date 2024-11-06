@@ -40,8 +40,7 @@ class OrderController extends Controller
     {
         // dd(session('cart'));
         $validatedData = $request->validate([
-            'first_name' => 'required|string',
-            'last_name' => 'required|string',
+            'username' => 'required|string',
             'email' => 'required|email',
             'company' => 'nullable',
             'address_1' => 'required',
@@ -63,7 +62,7 @@ class OrderController extends Controller
 
                 // Create the new user account
                 $user = User::create([
-                    'username' => $validatedData['first_name'] . ' ' . $validatedData['last_name'],
+                    'username' => $validatedData['username'],
                     'email' => $validatedData['email'],
                     'password' => Hash::make($validatedData['password']),
                 ]);
@@ -73,8 +72,7 @@ class OrderController extends Controller
             }
             // Create Billing Address
             $billingAddress = BillingAddress::create([
-                'first_name' => $validatedData['first_name'],
-                'last_name' => $validatedData['last_name'],
+                'username' => $validatedData['username'],    
                 'email' => $validatedData['email'],
                 'company' => $validatedData['company'],
                 'address_1' => $validatedData['address_1'],
@@ -141,12 +139,13 @@ class OrderController extends Controller
     public function myOrders()
     {
         $orders = Order::where('user_id', auth()->id())
-            ->orWhere('guest_id', session('guest_id'))
+            // ->orWhere('guest_id', session('guest_id'))
             ->with('orderItems.product')
             ->get();
 
 
         return view('front.index', compact('orders'));
+        
     }
 
 

@@ -10,8 +10,7 @@ class BillingAddress extends Model
 
     protected $fillable = [
         'order_id',
-        'first_name',
-        'last_name',
+        'username',
         'email',
         'company',
         'address_1',

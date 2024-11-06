@@ -14,11 +14,11 @@
                 <form action="{{ route('checkout.placeOrder') }}" method="POST">
                     @csrf
                     <div class="row mb-2">
-                        @foreach (['first_name', 'last_name', 'email', 'company', 'address_1', 'address_2', 'city', 'zip', 'phone'] as $field)
-                            <div class="col-{{ in_array($field, ['first_name', 'last_name']) ? '6' : '12' }}">
+                        @foreach (['username', 'email', 'company', 'address_1', 'address_2', 'city', 'zip', 'phone'] as $field)
+                            <div class="col-{{ in_array($field, ['username']) ? '6' : '12' }}">
                                 <div class="form-group">
                                     <label class="text-dark">{{ ucfirst(str_replace('_', ' ', $field)) }}
-                                        {{ in_array($field, ['first_name', 'last_name', 'email', 'address_1', 'zip', 'phone']) ? '*' : '' }}</label>
+                                        {{ in_array($field, ['username', 'email', 'address_1', 'zip', 'phone']) ? '*' : '' }}</label>
                                     <input type="{{ in_array($field, ['email']) ? 'email' : 'text' }}"
                                         name="{{ $field }}" class="form-control"
                                         placeholder="{{ ucfirst(str_replace('_', ' ', $field)) }}" required />
@@ -49,6 +49,7 @@
 
                     {{-- <div class="row mb-4">
                         <div class="col-12 d-block">
+                            
                             <input id="createaccount" class="checkbox-custom" name="createaccount" type="checkbox" onclick="redirectToRegister()">
                             <label for="createaccount" class="checkbox-custom-label">Create An Account?</label>
                         </div>
@@ -64,7 +65,7 @@
                             }
                         }
                     </script> --}}
-                    <!-- Checkbox and Conditional Password Field for Account Creation -->
+                    
                     <div class="row mb-4">
                         <div class="col-12 d-block">
                             <input id="createaccount" class="checkbox-custom" name="createaccount" type="checkbox"
@@ -86,6 +87,7 @@
                             passwordField.style.display = document.getElementById('createaccount').checked ? 'block' : 'none';
                         }
                     </script>
+
 
                     <h5 class="mb-4 ft-medium">Payments</h5>
                     <div class="row mb-4">
@@ -117,7 +119,7 @@
                                 <div class="row align-items-center">
                                     <div class="col-3">
                                         <a href="{{ route('product.show', $product->id) }}">
-                                            <img src="{{ asset('uploads/products/' . $product->image) }}"
+                                            <img src="{{ asset('public/uploads/products/' . $product->image) }}"
                                                 alt="{{ $product->name }}" class="img-fluid">
                                         </a>
                                     </div>
