@@ -13,6 +13,7 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Wishlistcontroller;
 use App\Http\Controllers\GoogleController;
+use App\Http\Controllers\FacebookController;
 
 Route::get('/', [FrontController::class, 'index'])->name('front.home');
 Route::get('/shop/{categorySlug?}/{subcategorySlug?}', [ShopController::class, 'index'])->name('front.shop');
@@ -37,6 +38,9 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('auth.logout');
 
 Route::get('/google', [GoogleController::class, 'redirectToGoogle'])->name('login.google');
 Route::get('/google/callback', [GoogleController::class, 'handleGoogleCallback']);
+
+Route::get('/facebook', [FacebookController::class, 'redirectToFacebook'])->name('login.facebook');
+Route::get('/facebook/callback', [FacebookController::class, 'handleFacebookCallback']);
 
 Route::get('/checkout', [OrderController::class, 'checkout'])->name('front.checkout');
 Route::post('/checkout/place-order', [OrderController::class, 'placeOrder'])->name('checkout.placeOrder');

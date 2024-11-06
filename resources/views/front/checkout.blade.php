@@ -17,8 +17,11 @@
                         @foreach (['first_name', 'last_name', 'email', 'company', 'address_1', 'address_2', 'city', 'zip', 'phone'] as $field)
                             <div class="col-{{ in_array($field, ['first_name', 'last_name']) ? '6' : '12' }}">
                                 <div class="form-group">
-                                    <label class="text-dark">{{ ucfirst(str_replace('_', ' ', $field)) }} {{ in_array($field, ['first_name', 'last_name', 'email', 'address_1', 'zip', 'phone']) ? '*' : '' }}</label>
-                                    <input type="{{ in_array($field, ['email']) ? 'email' : 'text' }}" name="{{ $field }}" class="form-control" placeholder="{{ ucfirst(str_replace('_', ' ', $field)) }}" required />
+                                    <label class="text-dark">{{ ucfirst(str_replace('_', ' ', $field)) }}
+                                        {{ in_array($field, ['first_name', 'last_name', 'email', 'address_1', 'zip', 'phone']) ? '*' : '' }}</label>
+                                    <input type="{{ in_array($field, ['email']) ? 'email' : 'text' }}"
+                                        name="{{ $field }}" class="form-control"
+                                        placeholder="{{ ucfirst(str_replace('_', ' ', $field)) }}" required />
                                 </div>
                             </div>
                         @endforeach
@@ -44,12 +47,45 @@
                         </div>
                     </div>
 
-                    <div class="row mb-4">
+                    {{-- <div class="row mb-4">
                         <div class="col-12 d-block">
-                            <input id="createaccount" class="checkbox-custom" name="createaccount" type="checkbox">
+                            <input id="createaccount" class="checkbox-custom" name="createaccount" type="checkbox" onclick="redirectToRegister()">
                             <label for="createaccount" class="checkbox-custom-label">Create An Account?</label>
                         </div>
                     </div>
+
+                    <script>
+                        function redirectToRegister() {
+                            const createAccountCheckbox = document.getElementById('createaccount');
+                            
+                            if (createAccountCheckbox.checked) {
+                                // Redirect to the register page
+                                window.location.href = "{{ route('front.register') }}";
+                            }
+                        }
+                    </script> --}}
+                    <!-- Checkbox and Conditional Password Field for Account Creation -->
+                    <div class="row mb-4">
+                        <div class="col-12 d-block">
+                            <input id="createaccount" class="checkbox-custom" name="createaccount" type="checkbox"
+                                onclick="togglePasswordField()">
+                            <label for="createaccount" class="checkbox-custom-label">Create An Account?</label>
+                        </div>
+                    </div>
+                    <!-- Password Field, initially hidden -->
+                    <div class="form-group" id="passwordField" style="display: none;">
+                        <label for="password">Password</label>
+                        <input type="password" class="form-control" name="password" id="password" minlength="8"
+                            placeholder="Enter password for account creation">
+                    </div>
+
+                    <!-- JavaScript to Show/Hide Password Field -->
+                    <script>
+                        function togglePasswordField() {
+                            const passwordField = document.getElementById('passwordField');
+                            passwordField.style.display = document.getElementById('createaccount').checked ? 'block' : 'none';
+                        }
+                    </script>
 
                     <h5 class="mb-4 ft-medium">Payments</h5>
                     <div class="row mb-4">
@@ -64,7 +100,7 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="col-12">
                         <button type="submit" class="btn btn-block btn-dark mb-3">Place Your Order</button>
                     </div>
@@ -81,14 +117,17 @@
                                 <div class="row align-items-center">
                                     <div class="col-3">
                                         <a href="{{ route('product.show', $product->id) }}">
-                                            <img src="{{ asset('uploads/products/' . $product->image) }}" alt="{{ $product->name }}" class="img-fluid">
+                                            <img src="{{ asset('uploads/products/' . $product->image) }}"
+                                                alt="{{ $product->name }}" class="img-fluid">
                                         </a>
                                     </div>
                                     <div class="col d-flex align-items-center">
                                         <div class="cart_single_caption pl-2">
                                             <h4 class="product_title fs-md ft-medium mb-1 lh-1">{{ $product->title }}</h4>
-                                            <h4 class="fs-md ft-medium mb-3 lh-1">Rs.{{ number_format($product->price, 2) }}</h4>
-                                            <h4 class="fs-md ft-medium mb-3 lh-1">Qty: {{ $cartItems[$product->id]['quantity'] ?? 1 }}</h4>
+                                            <h4 class="fs-md ft-medium mb-3 lh-1">
+                                                Rs.{{ number_format($product->price, 2) }}</h4>
+                                            <h4 class="fs-md ft-medium mb-3 lh-1">Qty:
+                                                {{ $cartItems[$product->id]['quantity'] ?? 1 }}</h4>
                                         </div>
                                     </div>
                                 </div>

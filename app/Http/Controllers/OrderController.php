@@ -9,6 +9,9 @@ use App\Models\PaymentMethod;
 use Illuminate\Http\Request;
 use App\Models\Product;
 use DB;
+use App\Models\User;
+use Hash;
+use Auth;
 class OrderController extends Controller
 {
     public function checkout()
@@ -30,7 +33,7 @@ class OrderController extends Controller
         $total = $subtotal + $tax;
         $paymentMethods = PaymentMethod::all();
         return view('front.checkout', compact('cartItems', 'products', 'subtotal', 'tax', 'total', 'paymentMethods'));
-        // return view('front.checkout');
+
     }
 
     public function placeOrder(Request $request)
@@ -49,8 +52,25 @@ class OrderController extends Controller
             'additional_information' => 'nullable',
             'payment_method' => 'required|in:cod,razorpay',
         ]);
-    
+
         DB::transaction(function () use ($validatedData) {
+            if (isset($validatedData['create_account']) && $validatedData['create_account']) {
+                // Check if the email is already registered
+                $existingUser = User::where('email', $validatedData['email'])->first();
+                if ($existingUser) {
+                    throw new \Exception('Email already exists. Please log in or use a different email.');
+                }
+
+                // Create the new user account
+                $user = User::create([
+                    'username' => $validatedData['first_name'] . ' ' . $validatedData['last_name'],
+                    'email' => $validatedData['email'],
+                    'password' => Hash::make($validatedData['password']),
+                ]);
+
+                // Log in the new user
+                Auth::login($user);
+            }
             // Create Billing Address
             $billingAddress = BillingAddress::create([
                 'first_name' => $validatedData['first_name'],
@@ -64,10 +84,10 @@ class OrderController extends Controller
                 'phone' => $validatedData['phone'],
                 'additional_information' => $validatedData['additional_information'],
             ]);
-    
+
             $cartItems = session('cart', []);
             $totalAmount = collect($cartItems)->sum(fn($item) => $item['price'] * $item['quantity']);
-    
+
             $order = Order::create([
                 'user_id' => auth()->id(),
                 'guest_id' => session('guest_id'),
@@ -76,7 +96,7 @@ class OrderController extends Controller
                 'status' => 'In Progress',
                 'total_amount' => $totalAmount,
             ]);
-    
+
             // Debugging for order creation
             if (!$order || !$order->id) {
                 \Log::error('Order creation failed', [
@@ -85,23 +105,23 @@ class OrderController extends Controller
                 ]);
                 throw new \Exception('Order creation failed');
             }
-    
+
             foreach ($cartItems as $cartItem) {
                 if (!isset($cartItem['product_id'])) {
                     \Log::error('Product ID is missing in cart item', ['cartItem' => $cartItem]);
                     throw new \Exception('Product ID is missing in cart item');
                 }
-            
+
                 if (!isset($cartItem['quantity'])) {
                     \Log::error('Quantity is missing in cart item', ['cartItem' => $cartItem]);
                     throw new \Exception('Quantity is missing in cart item');
                 }
-            
+
                 if (!isset($cartItem['price'])) {
                     \Log::error('Price is missing in cart item', ['cartItem' => $cartItem]);
                     throw new \Exception('Price is missing in cart item');
                 }
-            
+
                 OrderItem::create([
                     'order_id' => $order->id,
                     'product_id' => $cartItem['product_id'],
@@ -109,11 +129,11 @@ class OrderController extends Controller
                     'price' => $cartItem['price'],
                 ]);
             }
-            
-    
+
+
             session()->forget(['cart', 'cart_total']);
         });
-    
+
         return redirect()->route('front.index')->with('success', 'Order placed successfully!');
     }
 
@@ -124,7 +144,7 @@ class OrderController extends Controller
             ->orWhere('guest_id', session('guest_id'))
             ->with('orderItems.product')
             ->get();
-        
+
 
         return view('front.index', compact('orders'));
     }
