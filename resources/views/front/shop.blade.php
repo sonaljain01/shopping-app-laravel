@@ -310,13 +310,6 @@
                         productDescription;
                     document.querySelector("#category").innerText = productCategory;
 
-                    // let galleryHTML = '';
-                    // const basePath = 'public/uploads/product/'
-                    // productGallery.forEach(function(imageFileName) {
-                    //     galleryHTML +=
-                    //         `<div class="single_view_slide"><img src="${basePath + imageFileName}" class="img-fluid" alt="" /></div>`;
-                    // });
-                    // document.querySelector('.quick_view_slide').innerHTML = galleryHTML;
                     let galleryHTML = '';
                     productGallery.forEach(function(imagePath) {
                         galleryHTML +=

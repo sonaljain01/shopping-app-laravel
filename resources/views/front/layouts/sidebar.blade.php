@@ -48,163 +48,50 @@
             </div>
 
             <!-- Single Option -->
-            {{-- <div class="single_search_boxed">
-                <div class="widget-boxed-header">
-                    
-                    <h4><a href="#pricing" data-toggle="collapse" aria-expanded="false"
-                            role="button" >Pricing</a></h4>
-                    
-                </div>
-                <div class="widget-boxed-body collapse show" id="pricing" data-parent="#pricing">
-                    <div class="side-list no-border mb-4">
-                        <div class="rg-slider">
-                            
-                            <input type="text" class="js-range-slider" name="my_range" value="" />
-                        </div>
+
+            <form action="{{ route('price.filter') }}" method="GET" id="priceFilterForm">
+                <div class="single_search_boxed">
+                    <div class="widget-boxed-header">
+                        <h4>
+                            <a href="#pricing" data-toggle="collapse" aria-expanded="false" role="button">Pricing</a>
+                        </h4>
                     </div>
-                </div>
-            </div> --}}
-
-            <div class="single_search_boxed">
-                <div class="widget-boxed-header">
-                    <h4><a href="#pricing" data-toggle="collapse" aria-expanded="false" role="button">Pricing</a></h4>
-                </div>
-                <div class="widget-boxed-body collapse show" id="pricing" data-parent="#pricing">
-                    <div class="side-list no-border mb-4">
-                        <div class="rg-slider">
-                            <input type="text" class="js-range-slider" name="my_range" value="" id="my_range"
-                                onchange="updateTextInput(this.value)" />
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!-- Product list container -->
-            <div id="products" class="row">
-                <!-- Products will be inserted here dynamically -->
-                {{-- diaply products --}}
-
-            </div>
-
-
-
-            <div id="product_count"></div>
-
-            <script>
-                // Initialize noUiSlider
-                var slider = document.getElementById('price-range-slider');
-                noUiSlider.create(slider, {
-                    start: [0, 10000], // Default range
-                    connect: true,
-                    range: {
-                        'min': 0,
-                        'max': 10000
-                    },
-                    step: 10,
-                    format: wNumb({
-                        decimals: 0,
-                        prefix: '₹'
-                    })
-                });
-
-                // Display the selected range
-                slider.noUiSlider.on('update', function(values, handle) {
-                    var value = values.map(function(value) {
-                        return value.replace('₹', ''); // Remove ₹ sign for backend processing
-                    });
-                    document.querySelector('#slider-value').innerText = 'Price Range: ₹' + value[0] + ' - ₹' + value[1];
-                });
-
-                // Fetch filtered products when the slider value changes
-                let debounceTimeout;
-
-                async function updateTextInput(value) {
-                    const productsContainer = document.querySelector('#products');
-                    const productsCount = document.querySelector('#product_count');
-
-                    // Clear any existing products
-                    productsContainer.innerHTML = '';
-
-                    clearTimeout(debounceTimeout);
-                    debounceTimeout = setTimeout(async () => {
-                        const parts = value.split(";");
-                        if (parts.length !== 2) {
-                            console.error("Invalid input format");
-                            return;
-                        }
-
-                        const data = {
-                            min: parts[0],
-                            max: parts[1]
-                        };
-
-                        try {
-                            // Fetch filtered products
-                            const res = await fetch("/price/filter", {
-                                method: 'POST',
-                                headers: {
-                                    "Content-Type": "application/json",
-                                    'X-CSRF-Token': "{{ csrf_token() }}",
-                                },
-                                body: JSON.stringify(data)
-                            });
-
-                            if (!res.ok) {
-                                throw new Error(`Request failed with status ${res.status}`);
-                            }
-
-                            const response = await res.json();
-
-                            // Check if products are returned
-                            if (response.product && response.product.length > 0) {
-                                productsCount.innerText = `${response.product.length} Items Found`;
-
-                                response.product.forEach(product => {
-                                    const productHTML = `
-                        <div class="col-xl-4 col-lg-4 col-md-6 col-6">
-                            <div class="product_grid card b-0">
-                                <div class="badge bg-info text-white position-absolute ft-regular ab-left text-upper">New</div>
-                                <div class="card-body p-0">
-                                    <div class="shop_thumb position-relative">
-                                        <a class="card-img-top d-block overflow-hidden" href="/product/{slug}/show/${product.slug}">
-                                            <img class="card-img-top" src="{{ asset('uploads/product') }}/${product.thumbnail}" alt="${product.title}">
-                                        </a>
-                                    </div>
-                                </div>
-                                <div class="card-footer b-0 p-0 pt-2 bg-white">
-                                    <div class="d-flex align-items-start justify-content-between">
-                                        <div class="text-left"></div>
-                                        <div class="text-right">
-                                            <button class="btn auto btn_love snackbar-wishlist" id="wishlist">
-                                                <i class="far fa-heart"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-                                    <div class="text-left">
-                                        <h5 class="fw-bolder fs-md mb-0 lh-1 mb-1">
-                                            <a href="/product/{slug}/show/${product.slug}">${product.title}</a>
-                                        </h5>
-                                        <div class="elis_rty">
-                                            <span class="ft-bold text-dark fs-sm">₹${product.price}</span>
-                                        </div>
-                                    </div>
-                                </div>
+                    <div class="widget-boxed-body collapse show" id="pricing" data-parent="#pricing">
+                        <div class="side-list no-border mb-4">
+                            <div class="rg-slider">
+                                <!-- Range slider with dynamically set min and max prices -->
+                                <input type="text" class="js-range-slider" value="" />
                             </div>
                         </div>
-                    `;
-                                    productsContainer.insertAdjacentHTML('beforeend', productHTML);
-                                });
-                            } else {
-                                productsContainer.innerHTML = '<p>No products found in this price range.</p>';
-                            }
-
-                        } catch (error) {
-                            console.error("Error fetching products:", error);
-                            productsContainer.innerHTML = '<p>Something went wrong while fetching products.</p>';
+                        <!-- Hidden input to hold the selected price range -->
+                        <input type="hidden" name="price_range" id="priceRange" value="{{ $minPrice ?? 0 }}-{{ $maxPrice ?? 1000 }}">
+            
+                        <!-- Apply Filter Button -->
+                        <button type="submit" class="btn btn-primary">Apply Filter</button>
+                    </div>
+                </div>
+            </form>
+            
+            <script>
+                $(document).ready(function() {
+                    $(".js-range-slider").ionRangeSlider({
+                        type: "double",
+                        min: {{ $minPrice ?? 0 }},
+                        max: {{ $maxPrice ?? 1000 }},
+                        from: {{ request('price_range') ? explode('-', request('price_range'))[0] : ($minPrice ?? 0) }},
+                        to: {{ request('price_range') ? explode('-', request('price_range'))[1] : ($minPrice ?? 1000) }},
+                        grid: true,
+                        onChange: function(data) {
+                            // Update the hidden input with the selected range
+                            $("#priceRange").val(data.from + '-' + data.to);
                         }
-                    }, 300);
-                }
+                    });
+                });
             </script>
-
+            
+            
+            
+            
 
             <!-- Single Option -->
             <div class="single_search_boxed">
@@ -531,4 +418,3 @@
         </div>
     </div>
 </div>
-

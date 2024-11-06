@@ -9,46 +9,35 @@ use App\Models\Brand;
 
 class ShopController extends Controller
 {
+
+
     public function index(Request $request, $categorySlug = null)
     {
-        $categories = $this->getActiveCategories();
-        $brands = $this->getActiveBrands();
+        $categories = $this->getActiveCategories();  // Get active categories
+        $brands = $this->getActiveBrands();  // Get active brands
 
-        // Initialize the product query with status = 1 (active products)
         $productsQuery = Product::where('status', 1);
 
-        // Apply category filter if categorySlug is provided
         if ($categorySlug) {
             $this->applyCategoryFilter($productsQuery, $categorySlug);
         }
 
-        // Apply brand filter if brand is provided
         if ($request->has('brand')) {
             $this->applyBrandFilter($productsQuery, $request->input('brand'));
         }
 
-        // Apply price filter if price range is selected
-        // $this->applyPriceFilter($productsQuery, $request);
-
-        // Apply sorting based on user's selection
         $this->applySorting($productsQuery, $request->input('sort'));
 
-        // Fetch the filtered products, ensuring we always have an empty array if no products are found
+
+
         $products = $productsQuery->get();
 
-        // If no products are found, return an empty collection
         if ($products->isEmpty()) {
-            $products = collect(); // This ensures $products is always defined, even if empty
+            $products = collect(); // Ensure $products is always defined, even if empty
         }
 
-        // If the request is an AJAX request, return a partial view with the products
-        if ($request->ajax()) {
-            return view('front.shop', [
-                'products' => $products,
-            ]);
-        }
 
-        // For non-AJAX requests, return the full page view
+
         return view('front.shop', [
             'categories' => $categories,
             'brands' => $brands,
@@ -58,6 +47,7 @@ class ShopController extends Controller
             'sort' => $request->input('sort'),
         ]);
     }
+
 
     protected function getActiveCategories()
     {
@@ -86,16 +76,7 @@ class ShopController extends Controller
         }
     }
 
-    // protected function applyPriceFilter($query, Request $request)
-    // {
-    //     $minPrice = floatval($request->input('price_min', 0));
-    //     $maxPrice = floatval($request->input('price_max', PHP_INT_MAX));
 
-    //     // Apply price filter only if valid min and max prices are given
-    //     if ($minPrice >= 0 && $minPrice < $maxPrice) {
-    //         $query->whereBetween('price', [$minPrice, $maxPrice]);
-    //     }
-    // }
 
     protected function applySorting($query, $sort)
     {
@@ -119,34 +100,64 @@ class ShopController extends Controller
         }
     }
 
-    public function filterByPrice(Request $request)
+    public function showProducts()
     {
-        $validated = $request->validate([
-            'min' => 'required|numeric|min:0',
-            'max' => 'required|numeric|min:0',
-        ]);
+        // Get the minimum and maximum prices dynamically
+        $minPrice = Product::min('price') ?? 0;
+        $maxPrice = Product::max('price') ?? 1000;
 
-        // Get the price range
-        $minPrice = $validated['min'];
-        $maxPrice = $validated['max'];
+        // Fetch initial products, categories, and brands
+        $products = Product::all();
+        $categories = $this->getActiveCategories();
+        $brands = $this->getActiveBrands();
 
-        // Fetch filtered products based on the price range
-        $products = Product::whereBetween('price', [$minPrice, $maxPrice])->get();
-
-        // Return response in JSON format
-        return response()->json([
-            'product' => [
-                'data' => $products
-            ]
+        return view('front.shop', [
+            'categories' => $categories,
+            'products' => $products,
+            'brands' => $brands,
+            'minPrice' => $minPrice,
+            'maxPrice' => $maxPrice,
         ]);
     }
 
-    public function show($slug)
+    public function filter(Request $request)
     {
-        // Find the product by slug, ensuring it exists
-        $product = Product::where('slug', $slug)->firstOrFail();
+        // Get the selected price range from the request
+        $priceRange = $request->input('price_range');
 
-        // Return a view and pass the product data to it
-        return view('product.show', compact('product'));
+        // Default products to null in case the price range is invalid
+        $products = null;
+
+        if ($priceRange && strpos($priceRange, '-') !== false) {
+            list($minPrice, $maxPrice) = explode('-', $priceRange);
+
+            if (is_numeric($minPrice) && is_numeric($maxPrice)) {
+                // Filter products within the selected range
+                $products = Product::whereBetween('price', [(float) $minPrice, (float) $maxPrice])->get();
+            } else {
+                return redirect()->back()->with('error', 'Invalid price range.');
+            }
+        } else {
+            return redirect()->back()->with('error', 'Please select a valid price range.');
+        }
+        $minPrice = Product::min('price') ?? 0;
+        $maxPrice = Product::max('price') ?? 1000;
+        // Fetch categories and brands for the sidebar filters
+        $categories = $this->getActiveCategories();
+        $brands = $this->getActiveBrands();
+
+        // Also fetch min and max prices for the dynamic slider, in case it's needed again
+        
+
+        return view('front.shop', [
+            'categories' => $categories,
+            'products' => $products,
+            'brands' => $brands,
+            'minPrice' => $minPrice,
+            'maxPrice' => $maxPrice,
+        ]);
     }
+
+
+
 }
