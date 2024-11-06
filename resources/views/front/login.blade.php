@@ -55,7 +55,7 @@
                     </div>
 
                     {{-- login with google --}}
-                    {{-- <div class="form-group">
+                    <div class="form-group">
                         <div class="col-md-8 col-md-offset-4">
                             <a href="{{ route('login.google') }}" class="btn btn-danger">
                                 Login with Google
@@ -69,7 +69,7 @@
                                 Login with Facebook
                             </a>
                         </div>
-                    </div> --}}
+                    </div>
                 </form>
 
 
