@@ -188,6 +188,21 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="card mb-3">
+                            <div class="card-body">
+                                <h2 class="h4 mb-3">Size</h2>
+                                <div class="mb-3">
+                                    <label for="sizes" class="form-label">Select Sizes</label><br>
+                                    @foreach(['S', 'M', 'L', 'XL'] as $size)
+                                        <input type="checkbox" name="sizes[]" value="{{ $size }}" id="size{{ $size }}"
+                                            @if(in_array($size, old('sizes', $sizes))) checked @endif>
+                                        <label for="size{{ $size }}">{{ $size }}</label>
+                                    @endforeach
+                        
+                                    <p class="error"></p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 

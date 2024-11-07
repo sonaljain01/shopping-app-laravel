@@ -107,13 +107,16 @@ class ProductController extends Controller
     public function edit($id, Request $request)
     {
 
-        $product = Product::find($id);
+        // $product = Product::find($id);
+        $product = Product::with('sizes')->findOrFail($id);
         $data = [];
         $data['product'] = $product;
         $categories = Category::orderBy('name', 'ASC')->get();
         $brands = Brand::orderBy('name', 'ASC')->get();
         $data['categories'] = $categories;
         $data['brands'] = $brands;
+        $sizes = $product->sizes()->pluck('size')->toArray(); 
+        $data['sizes'] = $sizes;
         return view('admin.products.edit', $data);
     }
 
@@ -121,7 +124,7 @@ class ProductController extends Controller
 
     public function update(Request $request, $id)
     {
-        $product = Product::with('product_images')->findOrFail($id);
+        $product = Product::with('product_images', 'sizes')->findOrFail($id);
 
         // Validation rules
         $rules = [
@@ -132,7 +135,8 @@ class ProductController extends Controller
             'track_qty' => 'required|in:Yes,No',
             'category' => 'required',
             'is_featured' => 'required|in:Yes,No',
-            'size' => 'required|in:XS,S,M,L,XL,XXL,XXXL',
+            'sizes' => 'nullable|array', // Ensure sizes are an array
+            'sizes.*' => 'string|in:XS,S,M,L,XL',
         ];
 
         // Additional validation if tracking quantity is enabled
@@ -152,6 +156,7 @@ class ProductController extends Controller
         // Begin transaction
         DB::beginTransaction();
         try {
+            // dd($request->input('sizes', []), $product);
             // Update product fields
             $product->update([
                 'title' => $request->title,
@@ -167,9 +172,19 @@ class ProductController extends Controller
                 'status' => $request->status,
                 'barcode' => $request->barcode,
                 'compare_price' => $request->compare_price,
-                'size' => $request->size,
             ]);
 
+            $sizes = $request->input('sizes', []);
+            if (!empty($sizes)) {
+                // Sync sizes, creating new ones if necessary
+                $product->sizes()->delete(); // Clear old sizes
+                foreach ($sizes as $size) {
+                    $product->sizes()->create(['size' => $size]);
+                }
+            } else {
+                // Clear all sizes if none are provided
+                $product->sizes()->delete();
+            }
             // Handle images if any are uploaded
             if ($request->hasFile('image')) {
                 $this->handleProductImages($product, $request->file('image'));
@@ -181,6 +196,9 @@ class ProductController extends Controller
         } catch (\Exception $e) {
             // Rollback if any error occurs
             DB::rollBack();
+        
+            // Log the exception message for debugging
+            \Log::error('Product update failed: ' . $e->getMessage() . ' in ' . $e->getFile() . ' on line ' . $e->getLine());        
             return response()->json([
                 'status' => false,
                 'message' => 'Something went wrong. Please try again.',
