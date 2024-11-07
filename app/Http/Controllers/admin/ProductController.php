@@ -38,7 +38,7 @@ class ProductController extends Controller
 
     public function store(Request $request)
     {
-
+        // Validation rules
         $rules = [
             'title' => 'required|unique:products',
             'slug' => 'nullable|unique:products',
@@ -49,77 +49,58 @@ class ProductController extends Controller
             'is_featured' => 'required|in:Yes,No',
             'description' => 'required',
             'image.*' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            'size' => 'required|in:XS,S,M,L,XL,XXL,XXXL',
+            'sizes' => 'required|array',  // Ensure sizes are an array
+            'sizes.*' => 'required|string', // Ensure each size is a string
         ];
 
-        if (!empty($request->track_qty) && $request->track_qty == 'Yes') { {
-                $rules['qty'] = 'required|numeric';
-            }
-            $validator = Validator::make($request->all(), $rules);
+        // Validate the form data
+        $validator = Validator::make($request->all(), $rules);
 
-
-            if ($validator->fails()) {
-                $request->session()->flash('error', $validator->errors()->first());
-                return redirect()->route('products.index');
-            }
-            $slug = null;
-            if ($request->slug) {
-                $isProductExist = Product::where('slug', $request->slug)->first();
-                if ($isProductExist) {
-                    return response()->json([
-                        'status' => false,
-                        'message' => 'Blog with this slug already exist',
-                    ]);
-                } else {
-                    $slug = $request->slug;
-                }
-            } else {
-                $slug = $this->slug($request->title);
-            }
-
-            // Store product details
-            $product = Product::create([
-                'title' => $request->title,
-                'slug' => $slug,
-                'price' => $request->price,
-                'sku' => $request->sku,
-                'track_qty' => $request->track_qty,
-                'qty' => $request->qty,
-                'category_id' => $request->category,
-                'brand_id' => $request->brand,
-                'is_featured' => $request->is_featured,
-                'description' => $request->description,
-                'status' => $request->status,
-                'barcode' => $request->barcode,
-                'compare_price' => $request->compare_price,
-                'size' => $request->size,
-
-            ]);
-
-            if ($request->hasFile('image')) {
-                foreach ($request->file('image') as $image) {
-                    $ext = $image->getClientOriginalExtension();
-                    $newName = time() . '-' . uniqid() . '.' . $ext;
-
-                    $image->move(public_path('uploads/product'), $newName);
-
-
-                    $product = ProductImage::create([
-                        "product_id" => $product->id,
-                        "image" => 'uploads/product/' . $newName,
-                        "name" => $newName
-                    ]);
-                    if (!$product) {
-                        return back()->with("error", "there is error");
-                    }
-
-                }
-            }
-
-            $request->session()->flash('success', 'Product Created Successfully');
-            return redirect()->route('products.index');
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
         }
+
+        // Create the product
+        $product = Product::create([
+            'title' => $request->title,
+            'slug' => $request->slug ?: Str::slug($request->title),
+            'price' => $request->price,
+            'sku' => $request->sku,
+            'track_qty' => $request->track_qty,
+            'qty' => $request->qty,
+            'category_id' => $request->category,
+            'brand_id' => $request->brand,
+            'is_featured' => $request->is_featured,
+            'description' => $request->description,
+            'status' => $request->status,
+            'barcode' => $request->barcode,
+            'compare_price' => $request->compare_price,
+        ]);
+
+        // Store sizes for the product (assuming you have a sizes table and a `sizes` relationship)
+        foreach ($request->sizes as $size) {
+            $product->sizes()->create(['size' => $size]);
+        }
+
+        // Store product images if any
+        if ($request->hasFile('image')) {
+            foreach ($request->file('image') as $image) {
+                $ext = $image->getClientOriginalExtension();
+                $newName = time() . '-' . uniqid() . '.' . $ext;
+                $image->move(public_path('uploads/product'), $newName);
+
+                ProductImage::create([
+                    'product_id' => $product->id,
+                    'image' => 'uploads/product/' . $newName,
+                    'name' => $newName,
+                ]);
+            }
+        }
+
+        // Redirect back with success message
+        return redirect()->route('products.index')->with('success', 'Product Created Successfully');
     }
+
 
 
 

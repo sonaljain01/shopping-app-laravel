@@ -204,20 +204,29 @@
                             <div class="card-body">
                                 <h2 class="h4 mb-3">Size</h2>
                                 <div class="mb-3">
-                                    <select name="size" id="size" class="form-control">
-                                        <option value="">Select Size</option>
-                                        <option value="XS">XS</option>
-                                        <option value="S">S</option>
-                                        <option value="M">M</option>
-                                        <option value="L">L</option>
-                                        <option value="XL">XL</option>
-                                        <option value="XXL">XXL</option>
-                                        <option value="XXXL">XXXL</option>
-                                    </select>
+                                    <label for="sizes" class="form-label">Select Sizes</label><br>
+                                    <input type="checkbox" name="sizes[]" value="S" id="sizeS" 
+                                        @if(in_array('S', old('sizes', []))) checked @endif>
+                                    <label for="sizeS">S</label>
+                                    
+                                    <input type="checkbox" name="sizes[]" value="M" id="sizeM" 
+                                        @if(in_array('M', old('sizes', []))) checked @endif>
+                                    <label for="sizeM">M</label>
+                        
+                                    <input type="checkbox" name="sizes[]" value="L" id="sizeL" 
+                                        @if(in_array('L', old('sizes', []))) checked @endif>
+                                    <label for="sizeL">L</label>
+                        
+                                    <input type="checkbox" name="sizes[]" value="XL" id="sizeXL" 
+                                        @if(in_array('XL', old('sizes', []))) checked @endif>
+                                    <label for="sizeXL">XL</label>
+                        
                                     <p class="error"></p>
                                 </div>
                             </div>
                         </div>
+                        
+                        
                     </div>
                 </div>
 

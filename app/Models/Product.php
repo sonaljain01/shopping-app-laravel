@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use App\Models\ProductImage;
 use App\Models\Category;
 use App\Models\Brand;
+use App\Models\ProductSize;
 
 class Product extends Model
 {
@@ -35,7 +36,7 @@ class Product extends Model
 
     public function subCategory()
     {
-    return $this->belongsTo(Category::class, 'category_id');
+        return $this->belongsTo(Category::class, 'category_id');
     }
 
     public function category()
@@ -48,6 +49,10 @@ class Product extends Model
         return $this->belongsTo(Brand::class, 'brand_id');
     }
 
-    
+    public function sizes()
+    {
+        return $this->hasMany(ProductSize::class);
+    }
+
     protected $primaryKey = 'id';
 }
