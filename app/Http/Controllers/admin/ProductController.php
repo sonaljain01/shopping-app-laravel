@@ -252,7 +252,7 @@ class ProductController extends Controller
     public function show($slug)
     {
         // Fetch the product using the slug
-        $product = Product::with(['product_images', 'category', 'brand'])
+        $product = Product::with(['product_images', 'category', 'brand', 'sizes'])
             ->where('slug', $slug)
             ->where('status', 1)
             ->first();
