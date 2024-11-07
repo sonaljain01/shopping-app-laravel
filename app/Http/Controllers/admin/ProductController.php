@@ -49,6 +49,7 @@ class ProductController extends Controller
             'is_featured' => 'required|in:Yes,No',
             'description' => 'required',
             'image.*' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'size' => 'required|in:XS,S,M,L,XL,XXL,XXXL',
         ];
 
         if (!empty($request->track_qty) && $request->track_qty == 'Yes') { {
@@ -91,6 +92,7 @@ class ProductController extends Controller
                 'status' => $request->status,
                 'barcode' => $request->barcode,
                 'compare_price' => $request->compare_price,
+                'size' => $request->size,
 
             ]);
 
@@ -149,6 +151,7 @@ class ProductController extends Controller
             'track_qty' => 'required|in:Yes,No',
             'category' => 'required',
             'is_featured' => 'required|in:Yes,No',
+            'size' => 'required|in:XS,S,M,L,XL,XXL,XXXL',
         ];
 
         // Additional validation if tracking quantity is enabled
@@ -183,6 +186,7 @@ class ProductController extends Controller
                 'status' => $request->status,
                 'barcode' => $request->barcode,
                 'compare_price' => $request->compare_price,
+                'size' => $request->size,
             ]);
 
             // Handle images if any are uploaded

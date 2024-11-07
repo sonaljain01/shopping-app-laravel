@@ -54,10 +54,31 @@
                             </div>
 
                             <div class="prt_03 mb-4">
-                                <p>{{ $product->description }}</p>
+                                {!! $product->description !!}
                             </div>
 
-
+                            <div class="prt_04 mb-4">
+                                <p class="d-flex align-items-center mb-0 text-dark ft-medium">Size:</p>
+                                <div class="text-left pb-0 pt-2">
+                                    @php
+                                        // Split the size column values into an array if they are stored as a comma-separated string
+                                        $sizes = $product->size ? explode(',', $product->size) : [];
+                                    @endphp
+                            
+                                    @if (count($sizes))
+                                        @foreach ($sizes as $size)
+                                            <div class="form-check size-option form-option form-check-inline mb-2">
+                                                <input class="form-check-input" type="radio" name="size" id="size-{{ trim($size) }}" value="{{ trim($size) }}">
+                                                <label class="form-option-label" for="size-{{ trim($size) }}">{{ trim($size) }}</label>
+                                            </div>
+                                        @endforeach
+                                    @else
+                                        <p>Free Size</p>
+                                    @endif
+                                </div>
+                            </div>
+                            
+                            
                             <div class="prt_04 mb-4">
                                 <div class="form-row mb-7">
                                     <div class="col-12 col-lg-auto">
@@ -166,7 +187,7 @@
                             <div class="tab-pane fade show active" id="description" role="tabpanel"
                                 aria-labelledby="description-tab">
                                 <div class="description_info">
-                                    <p class="p-0 mb-2">{{ $product->description }}</p>
+                                    <p class="p-0 mb-2">{!! $product->description !!}</p>
                                     <p class="p-0"></p>
                                 </div>
                             </div>

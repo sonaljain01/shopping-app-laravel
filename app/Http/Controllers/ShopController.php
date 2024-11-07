@@ -122,17 +122,15 @@ class ShopController extends Controller
 
     public function filter(Request $request)
     {
-        // Get the selected price range from the request
         $priceRange = $request->input('price_range');
+        $size = $request->input('size');
 
-        // Default products to null in case the price range is invalid
-        $products = null;
+        $products = Product::query();
 
         if ($priceRange && strpos($priceRange, '-') !== false) {
             list($minPrice, $maxPrice) = explode('-', $priceRange);
 
             if (is_numeric($minPrice) && is_numeric($maxPrice)) {
-                // Filter products within the selected range
                 $products = Product::whereBetween('price', [(float) $minPrice, (float) $maxPrice])->get();
             } else {
                 return redirect()->back()->with('error', 'Invalid price range.');
@@ -140,14 +138,18 @@ class ShopController extends Controller
         } else {
             return redirect()->back()->with('error', 'Please select a valid price range.');
         }
+
+        if ($size) {
+            $products->where('size', $size);
+        }
+
+        $products = $products->get();
+
         $minPrice = Product::min('price') ?? 0;
         $maxPrice = Product::max('price') ?? 1000;
-        // Fetch categories and brands for the sidebar filters
-        $categories = $this->getActiveCategories();
-        $brands = $this->getActiveBrands();
 
-        // Also fetch min and max prices for the dynamic slider, in case it's needed again
-        
+        $categories = $this->getActiveCategories();
+        $brands = $this->getActiveBrands();        
 
         return view('front.shop', [
             'categories' => $categories,

@@ -26,6 +26,7 @@ class Product extends Model
         'compare_price',
         'status',
         'barcode',
+        'size',
     ];
     public function product_images()
     {
@@ -47,5 +48,6 @@ class Product extends Model
         return $this->belongsTo(Brand::class, 'brand_id');
     }
 
+    
     protected $primaryKey = 'id';
 }
