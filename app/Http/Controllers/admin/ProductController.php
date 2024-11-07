@@ -12,6 +12,7 @@ use App\Models\ProductImage;
 use Str;
 use Storage;
 use DB;
+use App\Models\ProductAttribute;
 
 class ProductController extends Controller
 {
@@ -38,6 +39,7 @@ class ProductController extends Controller
 
     public function store(Request $request)
     {
+        // dd($request->all());
         // Validation rules
         $rules = [
             'title' => 'required|unique:products',
@@ -49,58 +51,77 @@ class ProductController extends Controller
             'is_featured' => 'required|in:Yes,No',
             'description' => 'required',
             'image.*' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            'sizes' => 'required|array',  // Ensure sizes are an array
-            'sizes.*' => 'required|string', // Ensure each size is a string
+            'attribute.*.name' => 'required|string',
+            'attribute.*.value' => 'required|string',
+            // 'attributes.name' => 'required|string',
+            // 'attributes.value' => 'required|string',
         ];
 
         // Validate the form data
         $validator = Validator::make($request->all(), $rules);
-
         if ($validator->fails()) {
+            // dd($validator->errors());
             return redirect()->back()->withErrors($validator)->withInput();
         }
+        DB::beginTransaction();
+        try {
+            // Create the product
+            $product = Product::create([
+                'title' => $request->title,
+                'slug' => $request->slug ?: Str::slug($request->title),
+                'price' => $request->price,
+                'sku' => $request->sku,
+                'track_qty' => $request->track_qty,
+                'qty' => $request->qty,
+                'category_id' => $request->category,
+                'brand_id' => $request->brand,
+                'is_featured' => $request->is_featured,
+                'description' => $request->description,
+                'status' => $request->status,
+                'barcode' => $request->barcode,
+                'compare_price' => $request->compare_price,
+                
+            ]);
+            // dd($product);
 
-        // Create the product
-        $product = Product::create([
-            'title' => $request->title,
-            'slug' => $request->slug ?: Str::slug($request->title),
-            'price' => $request->price,
-            'sku' => $request->sku,
-            'track_qty' => $request->track_qty,
-            'qty' => $request->qty,
-            'category_id' => $request->category,
-            'brand_id' => $request->brand,
-            'is_featured' => $request->is_featured,
-            'description' => $request->description,
-            'status' => $request->status,
-            'barcode' => $request->barcode,
-            'compare_price' => $request->compare_price,
-        ]);
-
-        // Store sizes for the product (assuming you have a sizes table and a `sizes` relationship)
-        foreach ($request->sizes as $size) {
-            $product->sizes()->create(['size' => $size]);
-        }
-
-        // Store product images if any
-        if ($request->hasFile('image')) {
-            foreach ($request->file('image') as $image) {
-                $ext = $image->getClientOriginalExtension();
-                $newName = time() . '-' . uniqid() . '.' . $ext;
-                $image->move(public_path('uploads/product'), $newName);
-
-                ProductImage::create([
-                    'product_id' => $product->id,
-                    'image' => 'uploads/product/' . $newName,
-                    'name' => $newName,
-                ]);
+            dd($product->attributes);
+            if ($request->has('attributes')) {
+                $attributesData = [];
+                foreach ($request->attributes as $attribute) {
+                    // Associate attributes with the product
+                    $attributesData[] = new ProductAttribute([
+                        'attribute_name' => $attribute['name'],
+                        'attribute_value' => $attribute['value'],
+                        'product_id' => $product->id
+                    ]);
+                }
+                $product->attributes()->saveMany($attributesData);
             }
+
+            // dd($product->attributes);
+            // Store product images if any
+            if ($request->hasFile('image')) {
+                
+                foreach ($request->file('image') as $image) {
+                    $ext = $image->getClientOriginalExtension();
+                    $newName = time() . '-' . uniqid() . '.' . $ext;
+                    $image->move(public_path('uploads/product'), $newName);
+
+                    ProductImage::create([
+                        'product_id' => $product->id,
+                        'image' => 'uploads/product/' . $newName,
+                        'name' => $newName,
+                    ]);
+                }
+            }
+            DB::commit();
+            return redirect()->route('products.index')->with('success', 'Product Created Successfully');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->with('error', 'Something went wrong');
         }
 
-        // Redirect back with success message
-        return redirect()->route('products.index')->with('success', 'Product Created Successfully');
     }
-
 
 
 
@@ -115,7 +136,7 @@ class ProductController extends Controller
         $brands = Brand::orderBy('name', 'ASC')->get();
         $data['categories'] = $categories;
         $data['brands'] = $brands;
-        $sizes = $product->sizes()->pluck('size')->toArray(); 
+        $sizes = $product->sizes()->pluck('size')->toArray();
         $data['sizes'] = $sizes;
         return view('admin.products.edit', $data);
     }
@@ -196,9 +217,9 @@ class ProductController extends Controller
         } catch (\Exception $e) {
             // Rollback if any error occurs
             DB::rollBack();
-        
+
             // Log the exception message for debugging
-            \Log::error('Product update failed: ' . $e->getMessage() . ' in ' . $e->getFile() . ' on line ' . $e->getLine());        
+            \Log::error('Product update failed: ' . $e->getMessage() . ' in ' . $e->getFile() . ' on line ' . $e->getLine());
             return response()->json([
                 'status' => false,
                 'message' => 'Something went wrong. Please try again.',

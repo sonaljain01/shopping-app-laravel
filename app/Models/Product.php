@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use App\Models\ProductImage;
 use App\Models\Category;
 use App\Models\Brand;
-use App\Models\ProductSize;
+use App\Models\ProductAttribute;
 
 class Product extends Model
 {
@@ -27,7 +27,8 @@ class Product extends Model
         'compare_price',
         'status',
         'barcode',
-        'size',
+        
+        
     ];
     public function product_images()
     {
@@ -49,10 +50,10 @@ class Product extends Model
         return $this->belongsTo(Brand::class, 'brand_id');
     }
 
-    public function sizes()
+    public function attributes()
     {
-        return $this->hasMany(ProductSize::class);
+        return $this->hasMany(ProductAttribute::class);
     }
 
-    protected $primaryKey = 'id';
+    // protected $primaryKey = 'id';
 }
