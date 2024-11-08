@@ -18,6 +18,7 @@
     <section class="content">
         <!-- Default box -->
         <div class="container-fluid">
+            @include('admin.message')
             <div class="row">
                 <div class="col-md-9">
                     <div class="card">
@@ -94,26 +95,30 @@
                 </div>
                 <div class="col-md-3">
                     <div class="card">
-                        <div class="card-body">
-                            <h2 class="h4 mb-3">Order Status</h2>
-                            <div class="mb-3">
-                                <select name="status" id="status" class="form-control">
-                                    <option value="in progress" {{ $order->status == 'in progress' ? 'selected' : '' }}>In
-                                        Progress</option>
-                                    <option value="completed" {{ $order->status == 'completed' ? 'selected' : '' }}>
-                                        Completed
-                                    </option>
-                                    <option value="cancelled" {{ $order->status == 'cancelled' ? 'selected' : '' }}>
-                                        Cancelled</option>
-                                    {{-- <option value="">Cancelled</option> --}}
+                        <form action="{{ route('orders.changeOrderStatus', $order->id) }}" method="POST" name="ChangeOrderStatusForm" id="ChangeOrderStatusForm">
+                            @csrf
+                            <div class="card-body">
+                                <h2 class="h4 mb-3">Order Status</h2>
+                                <div class="mb-3">
+                                    <select name="status" id="status" class="form-control">
+                                        <option value="In Progress"
+                                            {{ $order->status == 'In Progress' ? 'selected' : '' }}>In
+                                            Progress</option>
+                                        <option value="completed" {{ $order->status == 'completed' ? 'selected' : '' }}>
+                                            Completed
+                                        </option>
+                                        <option value="cancelled" {{ $order->status == 'cancelled' ? 'selected' : '' }}>
+                                            Cancelled</option>
+                                        {{-- <option value="">Cancelled</option> --}}
 
 
-                                </select>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <button class="btn btn-primary">Update</button>
+                                </div>
                             </div>
-                            <div class="mb-3">
-                                <button class="btn btn-primary">Update</button>
-                            </div>
-                        </div>
+                        </form>
                     </div>
                     <div class="card">
                         <div class="card-body">
@@ -134,4 +139,20 @@
         </div>
         <!-- /.card -->
     </section>
+@endsection
+
+@section('customJs')
+    <script>
+        $("#ChangeOrderStatusForm").submit(function(event) {
+            event.preventDefault();
+            $.ajax({
+                url: "{{ route('orders.changeOrderStatus', $order->id) }}",
+                type: "POST",
+                data: $(this).serializeArray(),
+                dataType: 'json',
+                success: function(response) {
+                    window.location.href = "{{ route('orders.detail', $order->id) }}"
+                }
+            });
+    </script>
 @endsection

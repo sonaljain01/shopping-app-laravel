@@ -69,4 +69,17 @@ class AdminOrderController extends Controller
             'orderItems' => $orderItems
         ]);
     }
+
+    public function changeOrderStatus(Request $request, $orderId)
+    {
+        // Order::find($orderId)->update([
+        //     'status' => $request->status
+        // ]);
+        $order = Order::find($orderId);
+        $order->status = $request->status;
+        $order->save();
+
+        session()->flash('success', 'Order status updated successfully');
+        return redirect()->route('orders.detail', $orderId)->with('success', 'Order status updated successfully');
+    }
 }

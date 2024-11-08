@@ -14,25 +14,25 @@
 @extends('front.layouts.app')
 
 @section('content')
-<div class="gray py-3">
-    <div class="container">
-        <div class="row">
-            <div class="colxl-12 col-lg-12 col-md-12">
-                <nav aria-label="breadcrumb">
-                    <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="{{ route('front.home') }}">Home</a></li>
-                        <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
-                        <li class="breadcrumb-item active" aria-current="page">My Order</li>
-                    </ol>
-                </nav>
+    <div class="gray py-3">
+        <div class="container">
+            <div class="row">
+                <div class="colxl-12 col-lg-12 col-md-12">
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="{{ route('front.home') }}">Home</a></li>
+                            <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">My Order</li>
+                        </ol>
+                    </nav>
+                </div>
             </div>
         </div>
     </div>
-</div>
     <div class="container">
         <div class="row align-items-start justify-content-between">
             @include('front.layouts.sidebar_two')
-            
+
 
             <div class="col-12 col-md-12 col-lg-8 col-xl-8 text-center">
 
@@ -102,7 +102,7 @@
                                                 </p>
                                                 <h4 class="product_title fs-sm ft-medium mb-1 lh-1">
                                                     {{ $item->product->title }}</h4>
-                                                
+
                                                 <h4 class="fs-sm ft-bold mb-0 lh-1">${{ $item->price }}</h4>
                                             </div>
                                         </div>
@@ -110,15 +110,24 @@
                                     <div class="col-xl-3 col-lg-3 col-md-3 col-6">
                                         <p class="mb-1 p-0"><span class="text-muted">Status</span></p>
                                         <div class="delv_status"><span
-                                                class="ft-medium small text-warning bg-light-warning rounded px-3 py-1">In
-                                                Progress</span></div>
+                                                class="ft-medium small text-warning bg-light-warning rounded px-3 py-1">{{ $order->status }}</span></div>
+                                        </div>
+                                        {{-- <div class="delv_status">
+                                            <span class="ft-medium small rounded px-3 py-1 
+                                            {{ $order->status == 'cancelled' ? 'text-danger bg-light-danger'
+                                                : ($order->status == 'completed'
+                                                    ? 'text-success bg-light-success'
+                                                    : 'text-warning bg-light-warning') }}">
+                                                {{ ucfirst($order->status) }}
+                                            </span>
+                                        </div> --}}
+
+                                        <div class="col-xl-4 col-lg-4 col-md-4 col-6">
+                                            <p class="mb-1 p-0"><span class="text-muted">Expected date by:</span></p>
+                                            <h6 class="mb-0 ft-medium fs-sm">{{ $order->expected_delivery_date }}</h6>
+                                            <!-- Adjust this field accordingly -->
+                                        </div>
                                     </div>
-                                    <div class="col-xl-4 col-lg-4 col-md-4 col-6">
-                                        <p class="mb-1 p-0"><span class="text-muted">Expected date by:</span></p>
-                                        <h6 class="mb-0 ft-medium fs-sm">{{ $order->expected_delivery_date }}</h6>
-                                        <!-- Adjust this field accordingly -->
-                                    </div>
-                                </div>
                             @endforeach
                         </div>
                     </div>
