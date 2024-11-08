@@ -30,11 +30,11 @@
                             <div class="form-group">
                                 <label class="text-dark">Country *</label>
                                 <select name="country" class="custom-select" required>
-                                    <option value="1" selected="">India</option>
-                                    <option value="2">United States</option>
-                                    <option value="3">United Kingdom</option>
-                                    <option value="4">China</option>
-                                    <option value="5">Pakistan</option>
+                                    <option value="India" selected="">India</option>
+                                    <option value="United States">United States</option>
+                                    <option value="United Kingdom">United Kingdom</option>
+                                    <option value="China">China</option>
+                                    <option value="Pakistan">Pakistan</option>
                                 </select>
                             </div>
                         </div>

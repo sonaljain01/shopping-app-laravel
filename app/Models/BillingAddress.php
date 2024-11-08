@@ -18,6 +18,7 @@ class BillingAddress extends Model
         'city',
         'zip',
         'phone',
+        'country',
         'additional_information',
     ];
 

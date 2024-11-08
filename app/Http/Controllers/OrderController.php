@@ -50,6 +50,7 @@ class OrderController extends Controller
             'phone' => 'required|numeric',
             'additional_information' => 'nullable',
             'payment_method' => 'required|in:cod,razorpay',
+            'country' => 'required',
         ]);
 
         DB::transaction(function () use ($validatedData) {
@@ -81,6 +82,7 @@ class OrderController extends Controller
                 'zip' => $validatedData['zip'],
                 'phone' => $validatedData['phone'],
                 'additional_information' => $validatedData['additional_information'],
+                'country' => $validatedData['country'],
             ]);
 
             $cartItems = session('cart', []);
