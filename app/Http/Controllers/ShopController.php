@@ -123,15 +123,15 @@ class ShopController extends Controller
     public function filter(Request $request)
     {
         $priceRange = $request->input('price_range');
-        $size = $request->input('size');
+        // $size = $request->input('size');
 
-        $products = Product::query();
+        $products = Product::query()->select('id', 'title', 'slug', 'description','price', 'compare_price', 'category_id', 'brand_id', 'sku');
 
         if ($priceRange && strpos($priceRange, '-') !== false) {
             list($minPrice, $maxPrice) = explode('-', $priceRange);
-
+            dd($minPrice, $maxPrice);
             if (is_numeric($minPrice) && is_numeric($maxPrice)) {
-                $products = Product::whereBetween('price', [(float) $minPrice, (float) $maxPrice])->get();
+                $products = Product::whereBetween('price', [(float) $minPrice, (float) $maxPrice]);
             } else {
                 return redirect()->back()->with('error', 'Invalid price range.');
             }
@@ -139,14 +139,14 @@ class ShopController extends Controller
             return redirect()->back()->with('error', 'Please select a valid price range.');
         }
 
-        if ($size) {
-            $products->where('size', $size);
-        }
+        // if ($size) {
+        //     $products->where('size', $size);
+        // }
 
         $products = $products->get();
 
-        $minPrice = Product::min('price') ?? 0;
-        $maxPrice = Product::max('price') ?? 1000;
+        $minPrice = Product::min('price');
+        $maxPrice = Product::max('price');
 
         $categories = $this->getActiveCategories();
         $brands = $this->getActiveBrands();        

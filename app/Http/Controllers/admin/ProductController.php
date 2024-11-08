@@ -51,10 +51,10 @@ class ProductController extends Controller
             'is_featured' => 'required|in:Yes,No',
             'description' => 'required',
             'image.*' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            'attribute.*.name' => 'required|string',
-            'attribute.*.value' => 'required|string',
-            // 'attributes.name' => 'required|string',
-            // 'attributes.value' => 'required|string',
+            // 'attribute.*.name' => 'required|string',
+            // 'attribute.*.value' => 'required|string',
+            'attribute_name' => 'required|string',
+            'attribute_value' => 'required|string',
         ];
 
         // Validate the form data
@@ -84,10 +84,13 @@ class ProductController extends Controller
             ]);
             // dd($product);
 
-            dd($product->attributes);
-            if ($request->has('attributes')) {
+            // dd($product->attributes);
+            // dd($request->'attribute_name');
+            dd($request->attribute_name && $request->attribute_value);
+            if ($request->has('attribute_name') && $request->has('attribute_value')) {
+                
                 $attributesData = [];
-                foreach ($request->attributes as $attribute) {
+                foreach ($request->attribute_name as $attribute) {
                     // Associate attributes with the product
                     $attributesData[] = new ProductAttribute([
                         'attribute_name' => $attribute['name'],

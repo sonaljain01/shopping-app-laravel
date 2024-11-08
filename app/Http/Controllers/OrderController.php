@@ -47,7 +47,7 @@ class OrderController extends Controller
             'address_2' => 'nullable',
             'city' => 'required',
             'zip' => 'required',
-            'phone' => 'required',
+            'phone' => 'required|numeric',
             'additional_information' => 'nullable',
             'payment_method' => 'required|in:cod,razorpay',
         ]);
@@ -93,6 +93,7 @@ class OrderController extends Controller
                 'payment_method' => $validatedData['payment_method'],
                 'status' => 'In Progress',
                 'total_amount' => $totalAmount,
+                'phone' => $validatedData['phone'],
             ]);
 
             // Debugging for order creation

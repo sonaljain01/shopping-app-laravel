@@ -14,6 +14,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Wishlistcontroller;
 use App\Http\Controllers\GoogleController;
 use App\Http\Controllers\FacebookController;
+use App\Http\Controllers\admin\AdminOrderController;
 
 Route::get('/', [FrontController::class, 'index'])->name('front.home');
 Route::get('/shop/{categorySlug?}/{subcategorySlug?}', [ShopController::class, 'index'])->name('front.shop');
@@ -105,6 +106,11 @@ Route::group(['prefix'=>'admin'], function () {
             ]);
 
         })->name('getSlug');
+
+        // Order routes
+        Route::get('/orders', [AdminOrderController::class, 'index'])->name(name: 'orders.index');
+        Route::get('/orders/{id}', [AdminOrderController::class, 'detail'])->name(name: 'orders.detail');
+
     });
 
 

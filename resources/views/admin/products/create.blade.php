@@ -206,15 +206,15 @@
                                 <div class="mb-3" id="attributes">
                                     <div class="attribute-row">
                                         <label class="form-label">Attribute Name</label>
-                                        <input type="text" name="attribute[0][name]" class="form-control"
+                                        <input type="text" name="attribute_name" class="form-control"
                                             placeholder="Attribute Name">
                                         <label class="form-label">Attribute Value</label>
-                                        <input type="text" name="attribute[0][value]" class="form-control"
+                                        <input type="text" name="attribute_value" class="form-control"
                                             placeholder="Attribute Value">
                                     </div>
                                 </div>
-                                {{-- <button type="button" class="btn btn-outline-primary" onclick="addAttribute()">Add More
-                                    Attributes</button> --}}
+                                <button type="button" class="btn btn-outline-primary" onclick="addAttribute()">Add More
+                                    Attributes</button>
                             </div>
                         </div>
 
@@ -227,9 +227,9 @@
                                 newAttribute.classList.add('attribute-row', 'mt-3');
                                 newAttribute.innerHTML = `
                                     <label class="form-label">Attribute Name</label>
-                                    <input type="text" name="attributes[${attributeCount}][name]" class="form-control" placeholder="Attribute Name">
+                                    <input type="text" name="attribute_name" class="form-control" placeholder="Attribute Name">
                                     <label class="form-label">Attribute Value</label>
-                                    <input type="text" name="attributes[${attributeCount}][value]" class="form-control" placeholder="Attribute Value">
+                                    <input type="text" name="attribute_value" class="form-control" placeholder="Attribute Value">
                                 `;
                                 container.appendChild(newAttribute);
                                 attributeCount++;

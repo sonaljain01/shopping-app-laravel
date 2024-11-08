@@ -79,7 +79,7 @@
                         min: {{ $minPrice ?? 0 }},
                         max: {{ $maxPrice ?? 1000 }},
                         from: {{ request('price_range') ? explode('-', request('price_range'))[0] : ($minPrice ?? 0) }},
-                        to: {{ request('price_range') ? explode('-', request('price_range'))[1] : ($minPrice ?? 1000) }},
+                        to: {{ request('price_range') ? explode('-', request('price_range'))[1] : ($maxPrice ?? 1000) }},
                         grid: true,
                         onChange: function(data) {
                             // Update the hidden input with the selected range
