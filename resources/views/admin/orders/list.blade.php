@@ -65,12 +65,12 @@
                                         <td>{{ $order->email }}</td>
                                         <td>{{ $order->phone }}</td>
                                         <td>
-                                            @if($order->status == 'pending')
-                                                <span class="badge badge-warning">Pending</span>
-                                            @elseif($order->status == 'shipped')
-                                                <span class="badge badge-info">Shipped</span>
+                                            @if($order->status == 'cancelled')
+                                                <span class="badge badge-danger">Cancelled</span>
+                                            @elseif($order->status == 'completed')
+                                                <span class="badge badge-success">Completed</span>
                                             @else
-                                                <span class="badge badge-success">Delivered</span>
+                                                <span class="badge badge-warning">In Progress</span>
                                             @endif
                                         </td>
                                         <td>Rs.{{ number_format($order->total_amount,2) }}</td>

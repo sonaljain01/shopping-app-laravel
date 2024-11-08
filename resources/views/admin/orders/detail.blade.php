@@ -43,12 +43,12 @@
                                     <b>Order ID:</b> {{ $order->id }}<br>
                                     <b>Total:</b> Rs.{{ number_format($order->total_amount) }}<br>
                                     <b>Status:</b>
-                                    @if ($order->status == 'pending')
-                                        <span class="badge badge-danger">Pending</span>
-                                    @elseif($order->status == 'shipped')
-                                        <span class="badge badge-info">Shipped</span>
+                                    @if ($order->status == 'cancelled')
+                                        <span class="badge badge-danger">Cancelled</span>
+                                    @elseif($order->status == 'completed')
+                                        <span class="badge badge-success">Completed</span>
                                     @else
-                                        <span class="badge badge-success">Delivered</span>
+                                        <span class="badge badge-warning">In Progress</span>
                                     @endif
                                     <br>
                                 </div>
@@ -98,12 +98,16 @@
                             <h2 class="h4 mb-3">Order Status</h2>
                             <div class="mb-3">
                                 <select name="status" id="status" class="form-control">
-                                    <option value="pending" {{ ($order->status == 'pending') ? 'selected' : '' }}>Pending</option>
-                                    <option value="shipped" {{ ($order->status == 'shipped') ? 'selected' : '' }}>Shipped</option>
-                                    <option value="delivered" {{ ($order->status == 'delivered') ? 'selected' : '' }}>Delivered</option>
+                                    <option value="in progress" {{ $order->status == 'in progress' ? 'selected' : '' }}>In
+                                        Progress</option>
+                                    <option value="completed" {{ $order->status == 'completed' ? 'selected' : '' }}>
+                                        Completed
+                                    </option>
+                                    <option value="cancelled" {{ $order->status == 'cancelled' ? 'selected' : '' }}>
+                                        Cancelled</option>
                                     {{-- <option value="">Cancelled</option> --}}
-                                   
-                                    
+
+
                                 </select>
                             </div>
                             <div class="mb-3">
