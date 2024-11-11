@@ -91,39 +91,39 @@
                             </div> --}}
                             <div class="prt_04 mb-4">
                                 @foreach ($product->attributes->groupBy('name') as $attributeName => $attributes)
-                                    <div class="form-row mb-7">
-                                        <div class="col-12 col-lg-auto">
-                                            {{ $attributeName }}:
-                                        </div>
-                                        <b class="col-12 col-lg">
+                                    <div class="attribute-item mb-2">
+                                        <strong>{{ $attributeName }}:</strong>
+                                        <span>
                                             @php
                                                 $values = [];
                                             @endphp
                                             @foreach ($attributes as $attribute)
                                                 @php
-                                                    $value = $attribute->values->firstWhere('id', $attribute->pivot->attribute_value_id);
+                                                    // Getting the attribute value from the pivot
+                                                    $value = $attribute->values->firstWhere(
+                                                        'id',
+                                                        $attribute->pivot->attribute_value_id,
+                                                    );
                                                     if ($value) {
                                                         $values[] = $value->value;
                                                     }
                                                 @endphp
                                             @endforeach
-                                            
-                                           
+
                                             @if (count($values) > 0)
                                                 @foreach ($values as $value)
                                                     <span class="badge badge-info">{{ $value }}</span>
-                                                    {{-- <span>{{ $value }}</span> --}}
                                                 @endforeach
                                             @else
                                                 <span class="badge badge-secondary">N/A</span>
                                             @endif
-                                        </b>
+                                        </span>
                                     </div>
                                 @endforeach
                             </div>
-                            
-                             
-                            
+
+
+
 
                             <div class="prt_04 mb-4">
                                 <div class="form-row mb-7">

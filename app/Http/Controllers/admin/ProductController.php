@@ -334,7 +334,7 @@ class ProductController extends Controller
 
     public function destroy($id, Request $request)
     {
-        $product = Product::with('product_images')->find($id);
+        $product = Product::with('product_images', 'attributes')->find($id);
         if (empty($product)) {
             return redirect()->route('products.index');
         }
@@ -346,6 +346,8 @@ class ProductController extends Controller
             }
             $image->delete(); // Delete the image record from the database
         }
+
+        $product->attributes()->detach();
         $product->delete();
 
         $request->session()->flash('success', 'Product deleted successfully');

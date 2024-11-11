@@ -243,6 +243,42 @@
 
                                         </div>
                                     </div>
+                                    <div class="prt_06 mb-3">
+                                        <h5>Attributes:</h5>
+                                        <div class="attributes">
+                                            @foreach ($product->attributes->groupBy('name') as $attributeName => $attributes)
+                                                <div class="attribute-item mb-2">
+                                                    <strong>{{ $attributeName }}:</strong>
+                                                    <span>
+                                                        @php
+                                                            $values = [];
+                                                        @endphp
+                                                        @foreach ($attributes as $attribute)
+                                                            @php
+                                                                // Getting the attribute value from the pivot
+                                                                $value = $attribute->values->firstWhere(
+                                                                    'id',
+                                                                    $attribute->pivot->attribute_value_id,
+                                                                );
+                                                                if ($value) {
+                                                                    $values[] = $value->value;
+                                                                }
+                                                            @endphp
+                                                        @endforeach
+
+                                                        @if (count($values) > 0)
+                                                            @foreach ($values as $value)
+                                                                <span class="badge badge-info">{{ $value }}</span>
+                                                            @endforeach
+                                                        @else
+                                                            <span class="badge badge-secondary">N/A</span>
+                                                        @endif
+                                                    </span>
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                    
 
                                     <div class="prt_06">
                                         <p class="mb-0 d-flex align-items-center">
@@ -270,6 +306,8 @@
             </div>
         </div>
     @endforeach
+   
+
     <!-- End Modal -->
 
 
@@ -299,7 +337,8 @@
 
                     // Set product details in the modal
                     document.getElementById('quickview-image').src = productGallery[0] ?
-                        productGallery[0] : '{{ asset('uploads/product/3f1dc5b8e3abc5dfdca48097118b84f2.png') }}';
+                        productGallery[0] :
+                        '{{ asset('uploads/product/3f1dc5b8e3abc5dfdca48097118b84f2.png') }}';
                     document.querySelector('#quickviewmodal .ft-bold.mb-1').innerText = productName;
                     document.querySelector('#quickviewmodal .ft-bold.theme-cl.fs-lg.mr-2')
                         .innerText = `Rs.${newPrice}`;
