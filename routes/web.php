@@ -124,6 +124,11 @@ Route::group(['prefix'=>'admin'], function () {
         Route::get('/customer/{user}/profile', [UserController::class, 'showProfile'])->name('customer.profile');
         Route::get('/admin/restore-session', [UserController::class, 'restoreAdminSession'])->name('admin.restoreAdminSession');
 
+
+
+        Route::get('/admin/orders/{orderId}/download-invoice', [AdminOrderController::class, 'downloadInvoice'])
+            ->name('admin.orders.downloadInvoice');
+
     });
 
 

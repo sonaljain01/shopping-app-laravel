@@ -122,16 +122,14 @@
                     </div>
                     <div class="card">
                         <div class="card-body">
-                            <h2 class="h4 mb-3">Send Inovice Email</h2>
+                            <h2 class="h4 mb-3">Download Invoice</h2>
                             <div class="mb-3">
-                                <select name="status" id="status" class="form-control">
-                                    <option value="">Customer</option>
-                                    <option value="">Admin</option>
-                                </select>
+                                <a href="{{ route('admin.orders.downloadInvoice', $order->id) }}" class="btn btn-primary">
+                                    Download Invoice
+                                </a>
+                                
                             </div>
-                            <div class="mb-3">
-                                <button class="btn btn-primary">Send</button>
-                            </div>
+                            
                         </div>
                     </div>
                 </div>
