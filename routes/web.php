@@ -137,7 +137,9 @@ Route::group(['prefix'=>'admin'], function () {
         Route::post('/admin/attributes/{attributeId}/store-values', [AttributeController::class, 'storeValues'])->name('attributes.storeValues');
         Route::get('/admin/attributes/{attributeId}/values', [AttributeController::class, 'getAttributeValues'])->name('attributes.getValues');
         Route::get('/admin/attributes/form', [AttributeController::class, 'showAttributesForm'])->name('attributes.form');
-
+        Route::get('/attributes/{id}/edit', [AttributeController::class, 'edit'])->name('attributes.edit');
+        Route::put('/attributes/{id}', [AttributeController::class, 'update'])->name('attributes.update');
+        Route::delete('/attributes/{id}', [AttributeController::class, 'destroy'])->name('attributes.destroy');
 
         Route::get('/get-attribute-values/{attribute_id}', function ($attribute_id) {
             $values = \App\Models\AttributeValue::where('attribute_id', $attribute_id)->get();

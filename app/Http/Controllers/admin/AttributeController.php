@@ -80,5 +80,60 @@ class AttributeController extends Controller
         return view('admin.attributes.form', compact('attributes'));
     }
 
+    public function edit($id)
+    {
+        $attribute = Attribute::findOrFail($id);
+
+        // Return the edit view with the attribute data
+        return view('admin.attributes.edit', [
+            'attribute' => $attribute
+        ]);
+    }
+
+    public function update(Request $request, $id)
+    {
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|max:255', // Ensure the name is required and a string
+        ]);
+
+        // If validation passes
+        if ($validator->passes()) {
+            // Find the attribute by its ID
+            $attribute = Attribute::findOrFail($id);
+
+            // Update the attribute's name
+            $attribute->name = $request->name;
+
+            // Save the changes
+            $attribute->save();
+
+            // Flash success message to the session
+            $request->session()->flash('success', 'Attribute updated successfully');
+
+            // Redirect to the attributes index page
+            return redirect()->route('attributes.index');
+        } else {
+            // If validation fails, flash error message to the session
+            $request->session()->flash('error', $validator->errors()->first());
+
+            // Redirect back to the edit form
+            return redirect()->route('attributes.edit', ['id' => $id]);
+        }
+    }
+
+    public function destroy($id)
+    {
+        $attribute = Attribute::findOrFail($id);
+
+        // Deleting associated values
+        foreach ($attribute->values as $value) {
+            $value->delete();
+        }
+
+        // Delete the attribute
+        $attribute->delete();
+
+        return redirect()->route('attributes.index')->with('success', 'Attribute deleted successfully');
+    }
 
 }

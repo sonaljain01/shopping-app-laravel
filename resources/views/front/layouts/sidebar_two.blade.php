@@ -25,7 +25,7 @@
                     </a>
                 </li>
                 <li>
-                    <a href="profile-info.html" class="{{ request()->is('profile-info') ? 'text-danger' : '' }}">
+                    <a href="#" class="{{ request()->is('profile-info') ? 'text-danger' : '' }}">
                         <i class="lni lni-user mr-2"></i>Profile Info
                     </a>
                 </li>

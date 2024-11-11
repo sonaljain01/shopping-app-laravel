@@ -1,5 +1,3 @@
-{{-- DAshboard CHILD LAYOUT, parent layout - app.blade.php --}}
-
 @extends('admin.layouts.app')
 
 @section('content')
@@ -15,25 +13,23 @@
                 </div>
             </div>
         </div>
-        <!-- /.container-fluid -->
     </section>
+
     <!-- Main content -->
     <section class="content">
-        <!-- Default box -->
         <div class="container-fluid">
             @include('admin.message')
             <div class="card">
-                <form action="" method="get">
+                <form action="{{ route('attributes.index') }}" method="get">
                     <div class="card-header">
                         <div class="card-title">
                             <button type="button" onclick="window.location.href='{{ route('attributes.index') }}'"
                                 class="btn btn-default btn-sm">Reset</button>
                         </div>
                         <div class="card-tools">
-                            <div class="input-group input-group" style="width: 250px;">
-                                <input value="{{ Request::get('keyword') }}" type="text" name="keyword"
+                            <div class="input-group" style="width: 250px;">
+                                <input value="{{ request('keyword') }}" type="text" name="keyword"
                                     class="form-control float-right" placeholder="Search">
-
                                 <div class="input-group-append">
                                     <button type="submit" class="btn btn-default">
                                         <i class="fas fa-search"></i>
@@ -41,9 +37,9 @@
                                 </div>
                             </div>
                         </div>
-
                     </div>
                 </form>
+
                 <div class="card-body table-responsive p-0">
                     <table class="table table-hover text-nowrap">
                         <thead>
@@ -51,52 +47,59 @@
                                 <th width="60">ID</th>
                                 <th>Name</th>
                                 <th>Values</th>
+                                <th>Action</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @if ($attributes->isNotEmpty())
-                                @foreach ($attributes as $attribute)
-                                    <tr>
-                                        <td>{{ $attribute->id }}</td>
-                                        <td>{{ $attribute->name }}</td> 
-                                        <td>
-                                            <!-- Display the values of the attribute -->
-                                            @if ($attribute->values->isNotEmpty())
-                                                @foreach ($attribute->values as $value)
-                                                    <span class="badge badge-info">{{ $value->value }}</span>
-                                                @endforeach
-                                            @else
-                                                <span class="badge badge-secondary">No values available</span>
-                                            @endif
-                                        </td>
-                                        <td>
-                                            <a href="{{ route('attributes.addValues', $attribute->id) }}" class="btn btn-sm btn-success">
-                                                Add Values
-                                            </a>
-                                        </td>  
-                                    </tr>
-                                @endforeach
-                            @else
+                            @forelse ($attributes as $attribute)
                                 <tr>
-                                    <td colspan="5" class="text-center">No attribute found</td>
+                                    <td>{{ $attribute->id }}</td>
+                                    <td>{{ $attribute->name }}</td>
+                                    <td>
+                                        <!-- Display the values of the attribute -->
+                                        @forelse ($attribute->values as $value)
+                                            <span class="badge badge-info">{{ $value->value }}</span>
+                                        @empty
+                                            <span class="badge badge-secondary">No values available</span>
+                                        @endforelse
+                                    </td>
+                                    <td>
+                                        <a href="{{ route('attributes.addValues', $attribute->id) }}"
+                                            class="btn btn-sm btn-success">
+                                            Add Values
+                                        </a>
+                                        <a href="{{ route('attributes.edit', $attribute->id) }}">
+                                            <svg class="filament-link-icon w-4 h-4 mr-1" xmlns="http://www.w3.org/2000/svg"
+                                                viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                                <path
+                                                    d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z">
+                                                </path>
+                                            </svg>
+                                        </a>
+                                        <form action="{{ route('attributes.destroy', $attribute->id) }}" method="POST" style="display:inline;">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this attribute?')">
+                                                <i class="fas fa-trash"></i> Delete
+                                            </button>
+                                            
+                                        </form>
+                                    </td>
                                 </tr>
-                            @endif
-
-
+                            @empty
+                                <tr>
+                                    <td colspan="4" class="text-center">No attributes found</td>
+                                </tr>
+                            @endforelse
                         </tbody>
                     </table>
                 </div>
+
                 <div class="card-footer clearfix">
                     {{ $attributes->links() }}
-
                 </div>
             </div>
         </div>
-        <!-- /.card -->
     </section>
-    <!-- /.content -->
 @endsection
 
-@section('customJs')
-    
-@endsection

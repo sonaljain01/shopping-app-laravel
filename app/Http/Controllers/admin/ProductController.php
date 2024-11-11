@@ -160,82 +160,9 @@ class ProductController extends Controller
 
 
 
-    // public function update(Request $request, $id)
-    // {
-    //     $product = Product::with('product_images', 'attributes')->findOrFail($id);
-
-    //     // Validation rules
-    //     $rules = [
-    //         'title' => 'required|unique:products,title,' . $product->id,
-    //         'slug' => 'required|unique:products,slug,' . $product->id,
-    //         'price' => 'required|numeric',
-    //         'sku' => 'required',
-    //         'track_qty' => 'required|in:Yes,No',
-    //         'category' => 'required',
-    //         'is_featured' => 'required|in:Yes,No',
-
-
-    //     ];
-
-    //     // Additional validation if tracking quantity is enabled
-    //     if ($request->track_qty === 'Yes') {
-    //         $rules['qty'] = 'required|numeric';
-    //     }
-
-    //     // Validation
-    //     $validator = Validator::make($request->all(), $rules);
-    //     if ($validator->fails()) {
-    //         return response()->json([
-    //             'status' => false,
-    //             'errors' => $validator->errors(),
-    //         ]);
-    //     }
-
-    //     // Begin transaction
-    //     DB::beginTransaction();
-    //     try {
-
-    //         // Update product fields
-    //         $product->update([
-    //             'title' => $request->title,
-    //             'slug' => $request->slug,
-    //             'price' => $request->price,
-    //             'sku' => $request->sku,
-    //             'track_qty' => $request->track_qty,
-    //             'qty' => $request->qty,
-    //             'category_id' => $request->category,
-    //             'brand_id' => $request->brand,
-    //             'is_featured' => $request->is_featured,
-    //             'description' => $request->description,
-    //             'status' => $request->status,
-    //             'barcode' => $request->barcode,
-    //             'compare_price' => $request->compare_price,
-    //         ]);
-
-
-    //         // Handle images if any are uploaded
-    //         if ($request->hasFile('image')) {
-    //             $this->handleProductImages($product, $request->file('image'));
-    //         }
-
-    //         DB::commit();
-    //         $request->session()->flash('success', 'Product Updated Successfully');
-    //         return redirect()->route('products.index');
-    //     } catch (\Exception $e) {
-    //         // Rollback if any error occurs
-    //         DB::rollBack();
-
-    //         // Log the exception message for debugging
-    //         \Log::error('Product update failed: ' . $e->getMessage() . ' in ' . $e->getFile() . ' on line ' . $e->getLine());
-    //         return response()->json([
-    //             'status' => false,
-    //             'message' => 'Something went wrong. Please try again.',
-    //         ]);
-    //     }
-    // }
     public function update(Request $request, $id)
     {
-        $product = Product::with('product_images')->findOrFail($id);
+        $product = Product::with('product_images', 'attributes')->findOrFail($id);
 
         // Validation rules
         $rules = [
@@ -246,7 +173,8 @@ class ProductController extends Controller
             'track_qty' => 'required|in:Yes,No',
             'category' => 'required',
             'is_featured' => 'required|in:Yes,No',
-            'attribute_values' => 'array', // Ensure it's an array of attributes and values
+
+
         ];
 
         // Additional validation if tracking quantity is enabled
@@ -266,6 +194,7 @@ class ProductController extends Controller
         // Begin transaction
         DB::beginTransaction();
         try {
+
             // Update product fields
             $product->update([
                 'title' => $request->title,
@@ -281,10 +210,13 @@ class ProductController extends Controller
                 'status' => $request->status,
                 'barcode' => $request->barcode,
                 'compare_price' => $request->compare_price,
+                
             ]);
 
-            
-
+            if ($request->has('attributes') && is_array($request->attributes)) {
+                // Sync attributes with the product
+                $product->attributes()->sync($request->attributes); // This assumes attributes is an array of attribute IDs
+            }
             // Handle images if any are uploaded
             if ($request->hasFile('image')) {
                 $this->handleProductImages($product, $request->file('image'));
@@ -305,7 +237,7 @@ class ProductController extends Controller
             ]);
         }
     }
-
+    
     /**
      * Handle product image upload and deletion.
      */
