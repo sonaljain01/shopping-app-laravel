@@ -50,7 +50,7 @@
                             <tr>
                                 <th width="60">ID</th>
                                 <th>Name</th>
-                                
+                                <th>Values</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -59,6 +59,16 @@
                                     <tr>
                                         <td>{{ $attribute->id }}</td>
                                         <td>{{ $attribute->name }}</td> 
+                                        <td>
+                                            <!-- Display the values of the attribute -->
+                                            @if ($attribute->values->isNotEmpty())
+                                                @foreach ($attribute->values as $value)
+                                                    <span class="badge badge-info">{{ $value->value }}</span>
+                                                @endforeach
+                                            @else
+                                                <span class="badge badge-secondary">No values available</span>
+                                            @endif
+                                        </td>
                                         <td>
                                             <a href="{{ route('attributes.addValues', $attribute->id) }}" class="btn btn-sm btn-success">
                                                 Add Values
