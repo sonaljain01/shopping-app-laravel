@@ -16,6 +16,7 @@ use App\Http\Controllers\GoogleController;
 use App\Http\Controllers\FacebookController;
 use App\Http\Controllers\admin\AdminOrderController;
 use App\Http\Controllers\admin\UserController;
+use App\Http\Controllers\admin\AttributeController; 
 
 Route::get('/', [FrontController::class, 'index'])->name('front.home');
 Route::get('/shop/{categorySlug?}/{subcategorySlug?}', [ShopController::class, 'index'])->name('front.shop');
@@ -129,6 +130,9 @@ Route::group(['prefix'=>'admin'], function () {
         Route::get('/admin/orders/{orderId}/download-invoice', [AdminOrderController::class, 'downloadInvoice'])
             ->name('admin.orders.downloadInvoice');
 
+        Route::get('/attributes', [AttributeController::class, 'index'])->name('attributes.index');
+        Route::get('attributes/create', [AttributeController::class, 'create'])->name('attributes.create');
+        Route::post('/attributes', [AttributeController::class, 'store'])->name('attributes.store');    
     });
 
 
