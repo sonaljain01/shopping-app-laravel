@@ -133,6 +133,9 @@ Route::group(['prefix'=>'admin'], function () {
         Route::get('/attributes', [AttributeController::class, 'index'])->name('attributes.index');
         Route::get('attributes/create', [AttributeController::class, 'create'])->name('attributes.create');
         Route::post('/attributes', [AttributeController::class, 'store'])->name('attributes.store');    
+        Route::get('/admin/attributes/{attributeId}/add-values', [AttributeController::class, 'showAddValuesForm'])->name('attributes.addValues');
+        Route::post('/admin/attributes/{attributeId}/store-values', [AttributeController::class, 'storeValues'])->name('attributes.storeValues');
+
     });
 
 

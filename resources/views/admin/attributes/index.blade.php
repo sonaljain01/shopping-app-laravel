@@ -58,12 +58,12 @@
                                 @foreach ($attributes as $attribute)
                                     <tr>
                                         <td>{{ $attribute->id }}</td>
-                                        <td>{{ $attribute->name }}</td>
-                                        
-                                        
-                                        
-                                            
-                                        
+                                        <td>{{ $attribute->name }}</td> 
+                                        <td>
+                                            <a href="{{ route('attributes.addValues', $attribute->id) }}" class="btn btn-sm btn-success">
+                                                Add Values
+                                            </a>
+                                        </td>  
                                     </tr>
                                 @endforeach
                             @else
@@ -88,28 +88,5 @@
 @endsection
 
 @section('customJs')
-    <script>
-        function deleteCategory(id) {
-            var url = '{{ route('categories.delete', 'ID') }}';
-            var newUrl = url.replace("ID", id);
-            if (confirm("Are you sure you want to delete this category?")) {
-                $.ajax({
-                    url: newUrl,
-                    type: 'DELETE',
-                    data: {},
-                    dataType: 'json',
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                    },
-                    success: function(response) {
-
-                        if (response["status"]) {
-
-                            window.location.href = "{{ route('categories.index') }}"
-                        }
-                    }
-                });
-            }
-        }
-    </script>
+    
 @endsection

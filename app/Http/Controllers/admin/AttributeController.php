@@ -8,14 +8,16 @@ use App\Models\Attribute;
 use Validator;
 class AttributeController extends Controller
 {
-    public function index(){
+    public function index()
+    {
         $attributes = Attribute::latest();
         return view('admin.attributes.index', [
             'attributes' => $attributes->paginate(10)
         ]);
     }
 
-    public function create(){
+    public function create()
+    {
         return view('admin.attributes.create');
     }
 
@@ -23,13 +25,13 @@ class AttributeController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'name' => 'required',
-           
+
         ]);
 
-        if($validator->passes()){
+        if ($validator->passes()) {
             $attribute = new Attribute();
             $attribute->name = $request->name;
-           
+
             $attribute->save();
 
             $request->session()->flash('success', 'Attribute created successfully');
@@ -39,6 +41,28 @@ class AttributeController extends Controller
             $request->session()->flash('error', $validator->errors()->first());
             return redirect()->route('attributes.index');
         }
+    }
+
+    public function showAddValuesForm($attributeId)
+    {
+        $attribute = Attribute::findOrFail($attributeId);
+        return view('admin.attributes.add-values', ['attribute' => $attribute]);
+    }
+
+    public function storeValues(Request $request, $attributeId)
+    {
+        $request->validate([
+            'values' => 'required|array',
+            'values.*' => 'required|string|max:255',
+        ]);
+
+        $attribute = Attribute::findOrFail($attributeId);
+
+        foreach ($request->values as $value) {
+            $attribute->values()->create(['value' => $value]);
+        }
+
+        return redirect()->route('attributes.index')->with('success', 'Values added successfully');
     }
 
 }
