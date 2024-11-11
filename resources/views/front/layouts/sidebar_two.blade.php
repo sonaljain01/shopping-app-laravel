@@ -5,7 +5,7 @@
                 <img src="assets/img/team-1.jpg" class="img-fluid circle" width="100" alt="" />
             </div>
             <div class="dash_caption">
-                <h4 class="fs-md ft-medium mb-0 lh-1">Adam Wishnoi</h4>
+                <h4 class="fs-md ft-medium mb-0 lh-1">John Doe</h4>
                 <span class="text-muted smalls">Australia</span>
             </div>
         </div>

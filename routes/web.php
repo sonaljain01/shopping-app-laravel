@@ -15,6 +15,7 @@ use App\Http\Controllers\Wishlistcontroller;
 use App\Http\Controllers\GoogleController;
 use App\Http\Controllers\FacebookController;
 use App\Http\Controllers\admin\AdminOrderController;
+use App\Http\Controllers\admin\UserController;
 
 Route::get('/', [FrontController::class, 'index'])->name('front.home');
 Route::get('/shop/{categorySlug?}/{subcategorySlug?}', [ShopController::class, 'index'])->name('front.shop');
@@ -112,6 +113,16 @@ Route::group(['prefix'=>'admin'], function () {
         Route::get('/orders/{id}', [AdminOrderController::class, 'detail'])->name(name: 'orders.detail');
         Route::post('/order/change-status/{id}', [AdminOrderController::class, 'changeOrderStatus'])->name(name: 'orders.changeOrderStatus');
         
+        //users
+        Route::get('/users', [UserController::class, 'index'])->name('users.index');
+        Route::get('users/create', [UserController::class, 'create'])->name('users.create');
+        Route::post('/users', [UserController::class, 'store'])->name('users.store');
+        Route::get('/users/{user}/edit', [UserController::class, 'edit'])->name('users.edit');
+        Route::post('/users/{user}', [UserController::class, 'update'])->name('users.update');
+        Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.delete');
+        Route::get('/admin/users/{user}/login-as-customer', [UserController::class, 'loginAsCustomer'])->name('admin.loginAsCustomer');
+        Route::get('/customer/{user}/profile', [UserController::class, 'showProfile'])->name('customer.profile');
+        Route::get('/admin/restore-session', [UserController::class, 'restoreAdminSession'])->name('admin.restoreAdminSession');
 
     });
 
