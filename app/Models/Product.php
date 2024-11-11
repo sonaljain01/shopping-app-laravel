@@ -8,7 +8,8 @@ use App\Models\ProductImage;
 use App\Models\Category;
 use App\Models\Brand;
 use App\Models\ProductAttribute;
-
+use App\Models\AttributeValue;
+use App\Models\Attribute;
 class Product extends Model
 {
     use HasFactory;
@@ -28,7 +29,7 @@ class Product extends Model
         'status',
         'barcode',
         
-        
+
     ];
     public function product_images()
     {
@@ -52,8 +53,10 @@ class Product extends Model
 
     public function attributes()
     {
-        return $this->hasMany(ProductAttribute::class);
+        return $this->belongsToMany(Attribute::class, 'product_attributes')
+            ->withPivot('attribute_value_id')
+            ->withTimestamps();
     }
 
-    // protected $primaryKey = 'id';
+
 }

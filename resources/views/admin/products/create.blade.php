@@ -203,38 +203,81 @@
                         <div class="card mb-3">
                             <div class="card-body">
                                 <h2 class="h4 mb-3">Product Attributes</h2>
-                                <div class="mb-3" id="attributes">
-                                    <div class="attribute-row">
+                                <div id="attributes-container">
+                                    <!-- Default Attribute Form -->
+                                    <div class="mb-3 attribute-row">
                                         <label class="form-label">Attribute Name</label>
-                                        <input type="text" name="attribute_name" class="form-control"
-                                            placeholder="Attribute Name">
-                                        <label class="form-label">Attribute Value</label>
-                                        <input type="text" name="attribute_value" class="form-control"
-                                            placeholder="Attribute Value">
+                                        <select name="attribute_name[]" class="form-control attribute-select" onchange="showAttributeValues(this)">
+                                            <option value="">Select Attribute</option>
+                                            @foreach ($attributes as $attribute)
+                                                <option value="{{ $attribute->id }}">{{ $attribute->name }}</option>
+                                            @endforeach
+                                        </select>
+                        
+                                        <div class="mt-3">
+                                            <label class="form-label">Attribute Values</label>
+                                            <select name="attribute_value[]" class="form-control attribute-values">
+                                                <option value="">Select a value</option>
+                                            </select>
+                                        </div>
                                     </div>
                                 </div>
-                                <button type="button" class="btn btn-outline-primary" onclick="addAttribute()">Add More
-                                    Attributes</button>
+                                <button type="button" class="btn btn-outline-primary" onclick="addAttribute()">Add More Attributes</button>
                             </div>
                         </div>
-
-                        {{-- <script>
-                            let attributeCount = 1;
-
-                            function addAttribute() {
-                                const container = document.getElementById('attributes');
-                                const newAttribute = document.createElement('div');
-                                newAttribute.classList.add('attribute-row', 'mt-3');
-                                newAttribute.innerHTML = `
-                                    <label class="form-label">Attribute Name</label>
-                                    <input type="text" name="attribute_name" class="form-control" placeholder="Attribute Name">
-                                    <label class="form-label">Attribute Value</label>
-                                    <input type="text" name="attribute_value" class="form-control" placeholder="Attribute Value">
-                                `;
-                                container.appendChild(newAttribute);
-                                attributeCount++;
+                        
+                        <!-- Preload attribute values in a hidden format -->
+                        @foreach ($attributes as $attribute)
+                            <div id="attribute-{{ $attribute->id }}" class="d-none">
+                                @foreach ($attribute->values as $value)
+                                    <span class="attribute-value">{{ $value->value }}</span>
+                                @endforeach
+                            </div>
+                        @endforeach
+                        
+                        <script>
+                            // Show values for the selected attribute
+                            function showAttributeValues(selectElement) {
+                                const attributeId = selectElement.value;
+                                const valuesSelect = selectElement.closest('.attribute-row').querySelector('.attribute-values');
+                        
+                                valuesSelect.innerHTML = '<option value="">Select a value</option>'; // Clear existing options
+                        
+                                if (attributeId) {
+                                    const valuesContainer = document.getElementById(`attribute-${attributeId}`);
+                                    if (valuesContainer) {
+                                        const values = valuesContainer.querySelectorAll('.attribute-value');
+                                        values.forEach(value => {
+                                            const option = document.createElement('option');
+                                            option.value = value.textContent;
+                                            option.textContent = value.textContent;
+                                            valuesSelect.appendChild(option);
+                                        });
+                                    }
+                                }
                             }
-                        </script> --}}
+                        
+                            // Add new attribute row
+                            function addAttribute() {
+                                const container = document.getElementById('attributes-container');
+                        
+                                // Clone the first attribute row
+                                const newRow = container.querySelector('.attribute-row').cloneNode(true);
+                        
+                                // Clear the selected options of the cloned row
+                                newRow.querySelector('.attribute-select').value = '';
+                                newRow.querySelector('.attribute-values').innerHTML = '<option value="">Select a value</option>';
+                        
+                                // Append the cloned row to the container
+                                container.appendChild(newRow);
+                        
+                                // Optionally, you can also attach event listeners to the new select elements
+                            }
+                        </script>
+                        
+                        
+                        
+                       
 
                     </div>
                 </div>

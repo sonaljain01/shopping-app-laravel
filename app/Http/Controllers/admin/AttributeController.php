@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Attribute;
 use Validator;
+use App\Models\AttributeValue;
 class AttributeController extends Controller
 {
     public function index()
@@ -64,5 +65,20 @@ class AttributeController extends Controller
 
         return redirect()->route('attributes.index')->with('success', 'Values added successfully');
     }
+
+    public function getAttributeValues($attributeId)
+    {
+        $values = AttributeValue::where('attribute_id', $attributeId)->pluck('value');
+        return response()->json($values);
+    }
+
+    public function showAttributesForm()
+    {
+        $attributes = Attribute::with('values')->get();
+        dd($attributes);
+
+        return view('admin.attributes.form', compact('attributes'));
+    }
+
 
 }

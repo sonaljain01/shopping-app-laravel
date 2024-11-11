@@ -12,7 +12,9 @@ use App\Models\ProductImage;
 use Str;
 use Storage;
 use DB;
-use App\Models\ProductAttribute;
+use App\Models\Attribute;
+use App\Models\AttributeValue;
+
 
 class ProductController extends Controller
 {
@@ -34,13 +36,15 @@ class ProductController extends Controller
         $brands = Brand::orderBy('name', 'ASC')->get();
         $data['categories'] = $categories;
         $data['brands'] = $brands;
+        $data['attributes'] = Attribute::all();
         return view('admin.products.create', $data);
     }
 
     public function store(Request $request)
     {
         // dd($request->all());
-        // Validation rules
+
+
         $rules = [
             'title' => 'required|unique:products',
             'slug' => 'nullable|unique:products',
@@ -50,11 +54,12 @@ class ProductController extends Controller
             'category' => 'required',
             'is_featured' => 'required|in:Yes,No',
             'description' => 'required',
+            'attribute_name' => 'required|array',
+            'attribute_value' => 'required|array',
+            // 'attribute_name.*' => 'exists:attributes,id',
+            // 'attribute_value.*' => 'exists:attribute_values,id',
             'image.*' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            // 'attribute.*.name' => 'required|string',
-            // 'attribute.*.value' => 'required|string',
-            'attribute_name' => 'required|string',
-            'attribute_value' => 'required|string',
+
         ];
 
         // Validate the form data
@@ -82,29 +87,24 @@ class ProductController extends Controller
                 'compare_price' => $request->compare_price,
                 
             ]);
-            // dd($product);
 
-            // dd($product->attributes);
-            // dd($request->'attribute_name');
-            dd($request->attribute_name && $request->attribute_value);
-            if ($request->has('attribute_name') && $request->has('attribute_value')) {
-                
-                $attributesData = [];
-                foreach ($request->attribute_name as $attribute) {
-                    // Associate attributes with the product
-                    $attributesData[] = new ProductAttribute([
-                        'attribute_name' => $attribute['name'],
-                        'attribute_value' => $attribute['value'],
-                        'product_id' => $product->id
-                    ]);
-                }
-                $product->attributes()->saveMany($attributesData);
+            // foreach ($request->attribute_name as $key => $attribute_id) {
+            //     $attribute_value_id = $request->attribute_value[$key];
+            //     $product->attributes()->attach($attribute_id, ['attribute_value_id' => $attribute_value_id]);
+            // }
+            foreach ($request->attribute_name as $key => $attribute_id) {
+                $attribute_value = $request->attribute_value[$key]; // Value for this attribute
+                $attribute_value_id = AttributeValue::where('attribute_id', $attribute_id)
+                    ->where('value', $attribute_value)
+                    ->first()
+                    ->id;
+    
+                // Attach the attribute and its value to the product
+                $product->attributes()->attach($attribute_id, ['attribute_value_id' => $attribute_value_id]);
             }
-
-            // dd($product->attributes);
             // Store product images if any
             if ($request->hasFile('image')) {
-                
+
                 foreach ($request->file('image') as $image) {
                     $ext = $image->getClientOriginalExtension();
                     $newName = time() . '-' . uniqid() . '.' . $ext;
