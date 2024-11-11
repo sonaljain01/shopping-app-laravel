@@ -1,21 +1,21 @@
 @extends('front.layouts.app')
 
 @section('content')
-<div class="gray py-3">
-    <div class="container">
-        <div class="row">
-            <div class="colxl-12 col-lg-12 col-md-12">
-                <nav aria-label="breadcrumb">
-                    <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="{{ route('front.home') }}">Home</a></li>
-                        <li class="breadcrumb-item"><a href="#">Library</a></li>
-                        <li class="breadcrumb-item active" aria-current="page">Data</li>
-                    </ol>
-                </nav>
+    <div class="gray py-3">
+        <div class="container">
+            <div class="row">
+                <div class="colxl-12 col-lg-12 col-md-12">
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="{{ route('front.home') }}">Home</a></li>
+                            <li class="breadcrumb-item"><a href="#">Library</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">Data</li>
+                        </ol>
+                    </nav>
+                </div>
             </div>
         </div>
     </div>
-</div>
     <div id = "main-wrapper">
         <section class="middle">
             <div class="container">
@@ -57,23 +57,9 @@
                                 {!! $product->description !!}
                             </div>
 
-                            <div class="prt_04 mb-4">
-                                <p class="d-flex align-items-center mb-0 text-dark ft-medium">Size:</p>
-                                <div class="text-left pb-0 pt-2">
-                                    @if ($product->sizes->isNotEmpty())
-                                        @foreach ($product->sizes as $size)
-                                            <div class="form-check size-option form-option form-check-inline mb-2">
-                                                <input class="form-check-input" type="radio" name="size" id="size-{{ $size->id }}" value="{{ $size->size }}">
-                                                <label class="form-option-label" for="size-{{ $size->id }}">{{ $size->size }}</label>
-                                            </div>
-                                        @endforeach
-                                    @else
-                                        <p>Free Size</p>
-                                    @endif
-                                </div>
-                            </div>
-                            
-                            
+
+
+
                             <div class="prt_04 mb-4">
                                 <div class="form-row mb-7">
                                     <div class="col-12 col-lg-auto">
@@ -84,6 +70,26 @@
                                     </b>
                                 </div>
                             </div>
+                            <div class="prt_04 mb-4">
+                                @foreach ($product->attributes as $attribute)
+                                    <div class="form-row mb-7">
+                                        <div class="col-12 col-lg-auto">
+                                            {{ $attribute->name }}:
+                                        </div>
+                                        <b class="col-12 col-lg">
+                                            {{-- {{ $attribute->pivot->attribute_value->value ?? 'N/A' }} --}}
+                                            @php
+                                                $value = $attribute->values->firstWhere(
+                                                    'id',
+                                                    $attribute->pivot->attribute_value_id,
+                                                );
+                                            @endphp
+                                            {{ $value ? $value->value : 'N/A' }}
+                                        </b>
+                                    </div>
+                                @endforeach
+                            </div>
+
                             <div class="prt_04 mb-4">
                                 <div class="form-row mb-7">
                                     <div class="col-12 col-lg-auto">
@@ -119,14 +125,15 @@
                                         <form action="{{ route('wishlist.add') }}" method="POST">
                                             @csrf
                                             <input type="hidden" name="product_id" value="{{ $product->id }}">
-                                            <button type="submit" class="btn custom-height btn-default btn-block mb-2 text-dark">
+                                            <button type="submit"
+                                                class="btn custom-height btn-default btn-block mb-2 text-dark">
                                                 <i class="lni lni-heart mr-2"></i>Wishlist
                                             </button>
                                         </form>
                                     </div>
                                 </div>
                             </div>
-                            
+
 
                             <div class="prt_06">
                                 <p class="mb-0 d-flex align-items-center">
@@ -439,7 +446,8 @@
                                         <div class="shop_thumb position-relative">
                                             <a class="card-img-top d-block overflow-hidden"
                                                 href="shop-single-v1.html"><img class="card-img-top"
-                                                    src="{{ asset('front-assets/img/product/8.jpg') }}" alt="..."></a>
+                                                    src="{{ asset('front-assets/img/product/8.jpg') }}"
+                                                    alt="..."></a>
                                             <div
                                                 class="product-hover-overlay bg-dark d-flex align-items-center justify-content-center">
                                                 <div class="edlio"><a href="#" data-toggle="modal"
@@ -453,7 +461,8 @@
                                             <div class="text-center">
                                                 <h5 class="fw-bolder fs-md mb-0 lh-1 mb-1"><a
                                                         href="shop-single-v1.html">Half Running Set</a></h5>
-                                                <div class="elis_rty"><span class="ft-bold fs-md text-dark">Rs.119.00</span>
+                                                <div class="elis_rty"><span
+                                                        class="ft-bold fs-md text-dark">Rs.119.00</span>
                                                 </div>
                                             </div>
                                         </div>
@@ -472,7 +481,8 @@
                                         <div class="shop_thumb position-relative">
                                             <a class="card-img-top d-block overflow-hidden"
                                                 href="shop-single-v1.html"><img class="card-img-top"
-                                                    src="{{ asset('front-assets/img/product/9.jpg') }}" alt="..."></a>
+                                                    src="{{ asset('front-assets/img/product/9.jpg') }}"
+                                                    alt="..."></a>
                                             <div
                                                 class="product-hover-overlay bg-dark d-flex align-items-center justify-content-center">
                                                 <div class="edlio"><a href="#" data-toggle="modal"
@@ -504,7 +514,8 @@
                                         <div class="shop_thumb position-relative">
                                             <a class="card-img-top d-block overflow-hidden"
                                                 href="shop-single-v1.html"><img class="card-img-top"
-                                                    src="{{ asset('front-assets/img/product/10.jpg') }}" alt="..."></a>
+                                                    src="{{ asset('front-assets/img/product/10.jpg') }}"
+                                                    alt="..."></a>
                                             <div
                                                 class="product-hover-overlay bg-dark d-flex align-items-center justify-content-center">
                                                 <div class="edlio"><a href="#" data-toggle="modal"
@@ -518,7 +529,8 @@
                                             <div class="text-center">
                                                 <h5 class="fw-bolder fs-md mb-0 lh-1 mb-1"><a
                                                         href="shop-single-v1.html">Half Running Suit</a></h5>
-                                                <div class="elis_rty"><span class="ft-bold fs-md text-dark">Rs.80.00</span>
+                                                <div class="elis_rty"><span
+                                                        class="ft-bold fs-md text-dark">Rs.80.00</span>
                                                 </div>
                                             </div>
                                         </div>
@@ -538,7 +550,8 @@
                                         <div class="shop_thumb position-relative">
                                             <a class="card-img-top d-block overflow-hidden"
                                                 href="shop-single-v1.html"><img class="card-img-top"
-                                                    src="{{ asset('front-assets/img/product/11.jpg') }}" alt="..."></a>
+                                                    src="{{ asset('front-assets/img/product/11.jpg') }}"
+                                                    alt="..."></a>
                                             <div
                                                 class="product-hover-overlay bg-dark d-flex align-items-center justify-content-center">
                                                 <div class="edlio"><a href="#" data-toggle="modal"
@@ -570,7 +583,8 @@
                                         <div class="shop_thumb position-relative">
                                             <a class="card-img-top d-block overflow-hidden"
                                                 href="shop-single-v1.html"><img class="card-img-top"
-                                                    src="{{ asset('front-assets/img/product/12.jpg') }}" alt="..."></a>
+                                                    src="{{ asset('front-assets/img/product/12.jpg') }}"
+                                                    alt="..."></a>
                                             <div
                                                 class="product-hover-overlay bg-dark d-flex align-items-center justify-content-center">
                                                 <div class="edlio"><a href="#" data-toggle="modal"
@@ -605,7 +619,8 @@
                                         <div class="shop_thumb position-relative">
                                             <a class="card-img-top d-block overflow-hidden"
                                                 href="shop-single-v1.html"><img class="card-img-top"
-                                                    src="{{ asset('front-assets/img/product/13.jpg') }}" alt="..."></a>
+                                                    src="{{ asset('front-assets/img/product/13.jpg') }}"
+                                                    alt="..."></a>
                                             <div
                                                 class="product-hover-overlay bg-dark d-flex align-items-center justify-content-center">
                                                 <div class="edlio"><a href="#" data-toggle="modal"
@@ -619,7 +634,8 @@
                                             <div class="text-center">
                                                 <h5 class="fw-bolder fs-md mb-0 lh-1 mb-1"><a
                                                         href="shop-single-v1.html">Fancy Salwar Suits</a></h5>
-                                                <div class="elis_rty"><span class="ft-bold fs-md text-dark">Rs.114.00</span>
+                                                <div class="elis_rty"><span
+                                                        class="ft-bold fs-md text-dark">Rs.114.00</span>
                                                 </div>
                                             </div>
                                         </div>
@@ -639,7 +655,8 @@
                                         <div class="shop_thumb position-relative">
                                             <a class="card-img-top d-block overflow-hidden"
                                                 href="shop-single-v1.html"><img class="card-img-top"
-                                                    src="{{ asset('front-assets/img/product/14.jpg') }}" alt="..."></a>
+                                                    src="{{ asset('front-assets/img/product/14.jpg') }}"
+                                                    alt="..."></a>
                                             <div
                                                 class="product-hover-overlay bg-dark d-flex align-items-center justify-content-center">
                                                 <div class="edlio"><a href="#" data-toggle="modal"

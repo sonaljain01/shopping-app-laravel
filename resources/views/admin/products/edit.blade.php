@@ -18,7 +18,8 @@
     <!-- Main content -->
     <section class="content">
         <!-- Default box -->
-        <form action="{{ route('products.update', $product->id) }}" method="post" id="productForm" name="productForm" enctype="multipart/form-data">
+        <form action="{{ route('products.update', $product->id) }}" method="post" id="productForm" name="productForm"
+            enctype="multipart/form-data">
             @csrf
             <div class="container-fluid">
                 <div class="row">
@@ -79,7 +80,8 @@
                                         <div class="mb-3">
                                             <label for="compare_price">Original Price</label>
                                             <input type="text" name="compare_price" id="compare_price"
-                                                class="form-control" placeholder="Compare Price" value="{{ $product->compare_price }}">
+                                                class="form-control" placeholder="Compare Price"
+                                                value="{{ $product->compare_price }}">
                                             <p class="text-muted mt-3">
                                                 To show a reduced price, move the product’s original price here.
                                                 Enter a lower value into Price.
@@ -113,7 +115,8 @@
                                             <div class="custom-control custom-checkbox">
                                                 <input type="hidden" name="track_qty" value="No">
                                                 <input class="custom-control-input" type="checkbox" id="track_qty"
-                                                    value="Yes" {{ ($product->track_qty == 'Yes') ? 'checked' : '' }} name="track_qty"  checked>
+                                                    value="Yes" {{ $product->track_qty == 'Yes' ? 'checked' : '' }}
+                                                    name="track_qty" checked>
                                                 <label for="track_qty" class="custom-control-label">Track Quantity</label>
                                                 <p class="error"></p>
                                             </div>
@@ -134,8 +137,10 @@
                                 <h2 class="h4 mb-3">Product status</h2>
                                 <div class="mb-3">
                                     <select name="status" id="status" class="form-control">
-                                        <option {{ ($product->status == 1) ? 'selected' : '' }} value="1">Active</option>
-                                        <option {{ ($product->status == 0) ? 'selected' : '' }} value="0">Block</option>
+                                        <option {{ $product->status == 1 ? 'selected' : '' }} value="1">Active
+                                        </option>
+                                        <option {{ $product->status == 0 ? 'selected' : '' }} value="0">Block
+                                        </option>
                                     </select>
                                 </div>
                             </div>
@@ -150,7 +155,8 @@
 
                                         @if ($categories->isNotEmpty())
                                             @foreach ($categories as $category)
-                                                <option {{ ($product->category_id == $category->id) ? 'selected' : ''}} value="{{ $category->id }}">{{ $category->name }}</option>
+                                                <option {{ $product->category_id == $category->id ? 'selected' : '' }}
+                                                    value="{{ $category->id }}">{{ $category->name }}</option>
                                             @endforeach
                                         @endif
                                     </select>
@@ -168,7 +174,8 @@
 
                                         @if ($brands->isNotEmpty())
                                             @foreach ($brands as $brand)
-                                                <option {{ ($product->brand_id == $brand->id) ? 'selected' : ''}} value="{{ $brand->id }}">{{ $brand->name }}</option>
+                                                <option {{ $product->brand_id == $brand->id ? 'selected' : '' }}
+                                                    value="{{ $brand->id }}">{{ $brand->name }}</option>
                                             @endforeach
                                         @endif
 
@@ -181,8 +188,10 @@
                                 <h2 class="h4 mb-3">Featured product</h2>
                                 <div class="mb-3">
                                     <select name="is_featured" id="is_featured" class="form-control">
-                                        <option {{ ($product->is_featured == 'No') ? 'selected' : ''}} value="No">No</option>
-                                        <option {{ ($product->is_featured == 'Yes') ? 'selected' : ''}} value="Yes">Yes</option>
+                                        <option {{ $product->is_featured == 'No' ? 'selected' : '' }} value="No">No
+                                        </option>
+                                        <option {{ $product->is_featured == 'Yes' ? 'selected' : '' }} value="Yes">
+                                            Yes</option>
                                     </select>
                                     <p class="error"></p>
                                 </div>
@@ -190,19 +199,110 @@
                         </div>
                         <div class="card mb-3">
                             <div class="card-body">
-                                <h2 class="h4 mb-3">Size</h2>
-                                <div class="mb-3">
-                                    <label for="sizes" class="form-label">Select Sizes</label><br>
-                                    @foreach(['S', 'M', 'L', 'XL'] as $size)
-                                        <input type="checkbox" name="sizes[]" value="{{ $size }}" id="size{{ $size }}"
-                                            @if(in_array($size, old('sizes', $sizes))) checked @endif>
-                                        <label for="size{{ $size }}">{{ $size }}</label>
+                                <h2 class="h4 mb-3">Product Attributes</h2>
+                                <div id="attributes-container">
+                                    <!-- Populate Existing Attributes if in Edit Mode -->
+                                    @foreach ($product->attributes as $index => $productAttribute)
+                                        <div class="mb-3 attribute-row">
+                                            <label class="form-label">Attribute Name</label>
+                                            <select name="attribute_name[]" class="form-control attribute-select"
+                                                onchange="showAttributeValues(this)">
+                                                <option value="">Select Attribute</option>
+                                                @foreach ($attributes as $attribute)
+                                                    <option value="{{ $attribute->id }}"
+                                                        {{ $productAttribute->id == $attribute->id ? 'selected' : '' }}>
+                                                        {{ $attribute->name }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+
+                                            <div class="mt-3">
+                                                <label class="form-label">Attribute Values</label>
+                                                <select name="attribute_value[]" class="form-control attribute-values">
+                                                    <option value="">Select a value</option>
+                                                    @if ($productAttribute->values)
+                                                        @foreach ($productAttribute->values as $value)
+                                                            <option value="{{ $value->value }}"
+                                                                {{ $value->value == $productAttribute->pivot->value ? 'selected' : '' }}>
+                                                                {{ $value->value }}
+                                                            </option>
+                                                        @endforeach
+                                                    @endif
+                                                </select>
+                                            </div>
+                                        </div>
                                     @endforeach
-                        
-                                    <p class="error"></p>
+
+                                    <!-- Default Attribute Row for Adding New Attributes -->
+                                    <div class="mb-3 attribute-row">
+                                        <label class="form-label">Attribute Name</label>
+                                        <select name="attribute_name[]" class="form-control attribute-select"
+                                            onchange="showAttributeValues(this)">
+                                            <option value="">Select Attribute</option>
+                                            @foreach ($attributes as $attribute)
+                                                <option value="{{ $attribute->id }}">{{ $attribute->name }}</option>
+                                            @endforeach
+                                        </select>
+
+                                        <div class="mt-3">
+                                            <label class="form-label">Attribute Values</label>
+                                            <select name="attribute_value[]" class="form-control attribute-values">
+                                                <option value="">Select a value</option>
+                                            </select>
+                                        </div>
+                                    </div>
                                 </div>
+                                <button type="button" class="btn btn-outline-primary" onclick="addAttribute()">Add More
+                                    Attributes</button>
                             </div>
                         </div>
+
+                        <!-- Preload attribute values in a hidden format -->
+                        @foreach ($attributes as $attribute)
+                            <div id="attribute-{{ $attribute->id }}" class="d-none">
+                                @foreach ($attribute->values as $value)
+                                    <span class="attribute-value">{{ $value->value }}</span>
+                                @endforeach
+                            </div>
+                        @endforeach
+
+                        <script>
+                            // Show values for the selected attribute
+                            function showAttributeValues(selectElement) {
+                                const attributeId = selectElement.value;
+                                const valuesSelect = selectElement.closest('.attribute-row').querySelector('.attribute-values');
+
+                                valuesSelect.innerHTML = '<option value="">Select a value</option>'; // Clear existing options
+
+                                if (attributeId) {
+                                    const valuesContainer = document.getElementById(`attribute-${attributeId}`);
+                                    if (valuesContainer) {
+                                        const values = valuesContainer.querySelectorAll('.attribute-value');
+                                        values.forEach(value => {
+                                            const option = document.createElement('option');
+                                            option.value = value.textContent;
+                                            option.textContent = value.textContent;
+                                            valuesSelect.appendChild(option);
+                                        });
+                                    }
+                                }
+                            }
+
+                            // Add new attribute row
+                            function addAttribute() {
+                                const container = document.getElementById('attributes-container');
+
+                                // Clone the first attribute row
+                                const newRow = container.querySelector('.attribute-row').cloneNode(true);
+
+                                // Clear the selected options of the cloned row
+                                newRow.querySelector('.attribute-select').value = '';
+                                newRow.querySelector('.attribute-values').innerHTML = '<option value="">Select a value</option>';
+
+                                // Append the cloned row to the container
+                                container.appendChild(newRow);
+                            }
+                        </script>
                     </div>
                 </div>
 
@@ -216,5 +316,3 @@
     </section>
     <!-- /.content -->
 @endsection
-
-

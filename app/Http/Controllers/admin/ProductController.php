@@ -131,16 +131,16 @@ class ProductController extends Controller
     public function edit($id, Request $request)
     {
 
-        // $product = Product::find($id);
-        $product = Product::with('sizes')->findOrFail($id);
+        $product = Product::find($id);
+       
         $data = [];
         $data['product'] = $product;
         $categories = Category::orderBy('name', 'ASC')->get();
         $brands = Brand::orderBy('name', 'ASC')->get();
         $data['categories'] = $categories;
         $data['brands'] = $brands;
-        $sizes = $product->sizes()->pluck('size')->toArray();
-        $data['sizes'] = $sizes;
+        $attributes = Attribute::orderBy('name', 'ASC')->get();
+        $data['attributes'] = $attributes;
         return view('admin.products.edit', $data);
     }
 
@@ -148,19 +148,18 @@ class ProductController extends Controller
 
     public function update(Request $request, $id)
     {
-        $product = Product::with('product_images', 'sizes')->findOrFail($id);
+        $product = Product::with('product_images', 'attributes')->findOrFail($id);
 
         // Validation rules
         $rules = [
             'title' => 'required|unique:products,title,' . $product->id,
             'slug' => 'required|unique:products,slug,' . $product->id,
             'price' => 'required|numeric',
-            'sku' => 'required|unique:products,sku,' . $product->id,
+            'sku' => 'required',
             'track_qty' => 'required|in:Yes,No',
             'category' => 'required',
             'is_featured' => 'required|in:Yes,No',
-            'sizes' => 'nullable|array', // Ensure sizes are an array
-            'sizes.*' => 'string|in:XS,S,M,L,XL',
+            
         ];
 
         // Additional validation if tracking quantity is enabled
@@ -180,7 +179,7 @@ class ProductController extends Controller
         // Begin transaction
         DB::beginTransaction();
         try {
-            // dd($request->input('sizes', []), $product);
+           
             // Update product fields
             $product->update([
                 'title' => $request->title,
@@ -198,17 +197,22 @@ class ProductController extends Controller
                 'compare_price' => $request->compare_price,
             ]);
 
-            $sizes = $request->input('sizes', []);
-            if (!empty($sizes)) {
-                // Sync sizes, creating new ones if necessary
-                $product->sizes()->delete(); // Clear old sizes
-                foreach ($sizes as $size) {
-                    $product->sizes()->create(['size' => $size]);
-                }
-            } else {
-                // Clear all sizes if none are provided
-                $product->sizes()->delete();
-            }
+            // if ($request->has('attribute_name') && is_array($request->attribute_name)) {
+            //     // Detach existing attributes
+            //     $product->attributes()->detach();
+    
+            //     // Attach new attributes and their values
+            //     foreach ($request->attribute_name as $index => $attribute_id) {
+            //         $attribute_value = $request->attribute_value[$index];
+            //         $attribute_value_id = AttributeValue::where('attribute_id', $attribute_id)
+            //             ->where('value', $attribute_value)
+            //             ->first()
+            //             ->id;
+    
+            //         // Attach the new attribute-value relationship
+            //         $product->attributes()->attach($attribute_id, ['attribute_value_id' => $attribute_value_id]);
+            //     }
+            // }   
             // Handle images if any are uploaded
             if ($request->hasFile('image')) {
                 $this->handleProductImages($product, $request->file('image'));
@@ -294,7 +298,7 @@ class ProductController extends Controller
     public function show($slug)
     {
         // Fetch the product using the slug
-        $product = Product::with(['product_images', 'category', 'brand', 'sizes'])
+        $product = Product::with(['product_images', 'category', 'brand', 'attributes.values'])
             ->where('slug', $slug)
             ->where('status', 1)
             ->first();

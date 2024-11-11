@@ -28,7 +28,7 @@ class Product extends Model
         'compare_price',
         'status',
         'barcode',
-        
+
 
     ];
     public function product_images()
@@ -55,8 +55,12 @@ class Product extends Model
     {
         return $this->belongsToMany(Attribute::class, 'product_attributes')
             ->withPivot('attribute_value_id')
+            ->with('values')
             ->withTimestamps();
     }
 
-
+    public function attributeValues()
+    {
+        return $this->hasManyThrough(AttributeValue::class, ProductAttribute::class, 'product_id', 'id', 'id', 'attribute_value_id');
+    }
 }
