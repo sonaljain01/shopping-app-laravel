@@ -43,11 +43,15 @@
                 <script>
                     document.getElementById('add-more').addEventListener('click', function() {
                         let container = document.getElementById('values-container');
-                        let input = document.createElement('div');
-                        input.classList.add('form-group');
-                        input.innerHTML =
+                        if (container) {
+                            let input = document.createElement('div');
+                            input.classList.add('form-group');
+                            input.innerHTML =
                             '<label for="value">Value</label><input type="text" name="values[]" class="form-control" placeholder="Enter value" required>';
-                        container.appendChild(input);
+                            container.appendChild(input);
+                        } else {
+                            console.error('Container with id "values-container" not found.');
+                        }
                     });
                 </script>
             </div>

@@ -85,7 +85,7 @@ class ProductController extends Controller
                 'status' => $request->status,
                 'barcode' => $request->barcode,
                 'compare_price' => $request->compare_price,
-                
+
             ]);
 
             // foreach ($request->attribute_name as $key => $attribute_id) {
@@ -98,7 +98,7 @@ class ProductController extends Controller
                     ->where('value', $attribute_value)
                     ->first()
                     ->id;
-    
+
                 // Attach the attribute and its value to the product
                 $product->attributes()->attach($attribute_id, ['attribute_value_id' => $attribute_value_id]);
             }
@@ -131,24 +131,111 @@ class ProductController extends Controller
     public function edit($id, Request $request)
     {
 
-        $product = Product::find($id);
-       
+        // $product = Product::find($id);
+
+        // $data = [];
+        // $data['product'] = $product;
+        // $categories = Category::orderBy('name', 'ASC')->get();
+        // $brands = Brand::orderBy('name', 'ASC')->get();
+        // $data['categories'] = $categories;
+        // $data['brands'] = $brands;
+        // $attributes = Attribute::orderBy('name', 'ASC')->get();
+        // $data['attributes'] = $attributes;
+        // return view('admin.products.edit', $data);
+        $product = Product::with(['attributes.values'])->find($id);
+
+        if (!$product) {
+            abort(404, 'Product not found');
+        }
+
+        // Prepare data for the view
         $data = [];
         $data['product'] = $product;
-        $categories = Category::orderBy('name', 'ASC')->get();
-        $brands = Brand::orderBy('name', 'ASC')->get();
-        $data['categories'] = $categories;
-        $data['brands'] = $brands;
-        $attributes = Attribute::orderBy('name', 'ASC')->get();
-        $data['attributes'] = $attributes;
+        $data['categories'] = Category::orderBy('name', 'ASC')->get();
+        $data['brands'] = Brand::orderBy('name', 'ASC')->get();
+        $data['attributes'] = Attribute::with('values')->orderBy('name', 'ASC')->get();
+
         return view('admin.products.edit', $data);
     }
 
 
 
+    // public function update(Request $request, $id)
+    // {
+    //     $product = Product::with('product_images', 'attributes')->findOrFail($id);
+
+    //     // Validation rules
+    //     $rules = [
+    //         'title' => 'required|unique:products,title,' . $product->id,
+    //         'slug' => 'required|unique:products,slug,' . $product->id,
+    //         'price' => 'required|numeric',
+    //         'sku' => 'required',
+    //         'track_qty' => 'required|in:Yes,No',
+    //         'category' => 'required',
+    //         'is_featured' => 'required|in:Yes,No',
+
+
+    //     ];
+
+    //     // Additional validation if tracking quantity is enabled
+    //     if ($request->track_qty === 'Yes') {
+    //         $rules['qty'] = 'required|numeric';
+    //     }
+
+    //     // Validation
+    //     $validator = Validator::make($request->all(), $rules);
+    //     if ($validator->fails()) {
+    //         return response()->json([
+    //             'status' => false,
+    //             'errors' => $validator->errors(),
+    //         ]);
+    //     }
+
+    //     // Begin transaction
+    //     DB::beginTransaction();
+    //     try {
+
+    //         // Update product fields
+    //         $product->update([
+    //             'title' => $request->title,
+    //             'slug' => $request->slug,
+    //             'price' => $request->price,
+    //             'sku' => $request->sku,
+    //             'track_qty' => $request->track_qty,
+    //             'qty' => $request->qty,
+    //             'category_id' => $request->category,
+    //             'brand_id' => $request->brand,
+    //             'is_featured' => $request->is_featured,
+    //             'description' => $request->description,
+    //             'status' => $request->status,
+    //             'barcode' => $request->barcode,
+    //             'compare_price' => $request->compare_price,
+    //         ]);
+
+
+    //         // Handle images if any are uploaded
+    //         if ($request->hasFile('image')) {
+    //             $this->handleProductImages($product, $request->file('image'));
+    //         }
+
+    //         DB::commit();
+    //         $request->session()->flash('success', 'Product Updated Successfully');
+    //         return redirect()->route('products.index');
+    //     } catch (\Exception $e) {
+    //         // Rollback if any error occurs
+    //         DB::rollBack();
+
+    //         // Log the exception message for debugging
+    //         \Log::error('Product update failed: ' . $e->getMessage() . ' in ' . $e->getFile() . ' on line ' . $e->getLine());
+    //         return response()->json([
+    //             'status' => false,
+    //             'message' => 'Something went wrong. Please try again.',
+    //         ]);
+    //     }
+    // }
     public function update(Request $request, $id)
     {
-        $product = Product::with('product_images', 'attributes')->findOrFail($id);
+        $product = Product::with('product_images')->findOrFail($id);
 
         // Validation rules
         $rules = [
@@ -159,7 +246,7 @@ class ProductController extends Controller
             'track_qty' => 'required|in:Yes,No',
             'category' => 'required',
             'is_featured' => 'required|in:Yes,No',
-            
+            'attribute_values' => 'array', // Ensure it's an array of attributes and values
         ];
 
         // Additional validation if tracking quantity is enabled
@@ -179,7 +266,6 @@ class ProductController extends Controller
         // Begin transaction
         DB::beginTransaction();
         try {
-           
             // Update product fields
             $product->update([
                 'title' => $request->title,
@@ -197,22 +283,8 @@ class ProductController extends Controller
                 'compare_price' => $request->compare_price,
             ]);
 
-            // if ($request->has('attribute_name') && is_array($request->attribute_name)) {
-            //     // Detach existing attributes
-            //     $product->attributes()->detach();
-    
-            //     // Attach new attributes and their values
-            //     foreach ($request->attribute_name as $index => $attribute_id) {
-            //         $attribute_value = $request->attribute_value[$index];
-            //         $attribute_value_id = AttributeValue::where('attribute_id', $attribute_id)
-            //             ->where('value', $attribute_value)
-            //             ->first()
-            //             ->id;
-    
-            //         // Attach the new attribute-value relationship
-            //         $product->attributes()->attach($attribute_id, ['attribute_value_id' => $attribute_value_id]);
-            //     }
-            // }   
+            
+
             // Handle images if any are uploaded
             if ($request->hasFile('image')) {
                 $this->handleProductImages($product, $request->file('image'));
