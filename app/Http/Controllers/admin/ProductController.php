@@ -88,10 +88,7 @@ class ProductController extends Controller
 
             ]);
 
-            // foreach ($request->attribute_name as $key => $attribute_id) {
-            //     $attribute_value_id = $request->attribute_value[$key];
-            //     $product->attributes()->attach($attribute_id, ['attribute_value_id' => $attribute_value_id]);
-            // }
+
             foreach ($request->attribute_name as $key => $attribute_id) {
                 $attribute_value = $request->attribute_value[$key]; // Value for this attribute
                 $attribute_value_id = AttributeValue::where('attribute_id', $attribute_id)
@@ -324,7 +321,7 @@ class ProductController extends Controller
             return response()->json(['message' => 'Product not found'], 404);
         }
 
-        // Load a view with product details for the quick view modal
+
         return view('front.quick-view-product', compact('product'));
     }
 
@@ -349,8 +346,8 @@ class ProductController extends Controller
             'compare_price',
             'status',
             'barcode',
-            'attribute_id',
-            'attribute_value_id',
+            'attribute_ids',
+            'attribute_value_ids',
             'image_urls'
         ];
         return response()->streamDownload(function () use ($headers) {
@@ -358,31 +355,66 @@ class ProductController extends Controller
             fputcsv($file, $headers);
             fclose($file);
         }, 'product_template.csv');
-        
+
     }
 
-    // Download Categories CSV
+
     public function downloadCategories()
     {
         $categories = Category::select('id', 'name')->get();
-        return $this->downloadCSV($categories, 'categories.csv');
+        $headers = [
+            'id',
+            'name'
+        ];
+        return response()->streamDownload(function () use ($categories, $headers) {
+            $file = fopen('php://output', 'w');
+            fputcsv($file, $headers);
+            foreach ($categories as $category) {
+                fputcsv($file, $category->toArray());
+            }
+            fclose($file);
+        }, 'categories.csv');
     }
 
-    // Download Brands CSV
+
     public function downloadBrands()
     {
         $brands = Brand::select('id', 'name')->get();
-        return $this->downloadCSV($brands, 'brands.csv');
+        $headers = [
+            'id',
+            'name'
+        ];
+        return response()->streamDownload(function () use ($brands, $headers) {
+            $file = fopen('php://output', 'w');
+            fputcsv($file, $headers);
+            foreach ($brands as $brand) {
+                fputcsv($file, $brand->toArray());
+            }
+            fclose($file);
+        }, 'brands.csv');
     }
 
-    // Download Attributes CSV
+
     public function downloadAttributes()
     {
         $attributes = Attribute::select('id', 'name')->get();
-        return $this->downloadCSV($attributes, 'attributes.csv');
+        $headers = [
+            'id',
+            'name'
+        ];
+       
+        return response()->streamDownload(function () use ($attributes, $headers) {
+            $file = fopen('php://output', 'w');
+            fputcsv($file, $headers);
+            foreach ($attributes as $attribute) {
+                fputcsv($file, $attribute->toArray());
+            }
+            fclose($file);
+        }, 'attributes.csv');
+        
     }
 
-    // Helper function to download any CSV data
+
     private function downloadCSV($data, $filename)
     {
         return response()->streamDownload(function () use ($data) {
@@ -394,47 +426,38 @@ class ProductController extends Controller
         }, $filename);
     }
 
-    // Handle bulk product import
-
     public function importProducts(Request $request)
     {
-        // Validate the uploaded file
         $request->validate([
-            'file' => 'required|mimes:csv,txt|max:10240', // 10MB max file size
+            'file' => 'required|mimes:csv,txt|max:10240',
         ]);
 
-        // Open the uploaded file
         $file = $request->file('file');
         $handle = fopen($file->getRealPath(), 'r');
 
-        // Check if the file was opened successfully
         if ($handle === false) {
             return redirect()->route('admin.bulk-import')->with('error', 'Failed to open the CSV file.');
         }
 
-        // Read the first row as the header
         $header = fgetcsv($handle);
+        $duplicateEntries = [];
 
-        // Loop through each row in the CSV file
         while (($row = fgetcsv($handle)) !== false) {
-            $data = array_combine($header, $row); // Combine headers with row values
+            $data = array_combine($header, $row);
+            $slug = Str::slug($data['title']);
 
-            // Check if category and brand exist or create them
+            if ($this->isDuplicateProduct($data['title'], $slug)) {
+                $duplicateEntries[] = $data['title'];
+                continue; // Skip duplicate entry
+            }
+
             $category = Category::find($data['category_id']);
             $brand = Brand::find($data['brand_id']);
-
-            if (!$category) {
-                $category = Category::create(['name' => $data['category_name']]); // You can adjust this logic
-            }
-
-            if (!$brand) {
-                $brand = Brand::create(['name' => $data['brand_name']]); // Adjust as needed
-            }
 
             // Create the product
             $product = Product::create([
                 'title' => $data['title'],
-                'slug' => Str::slug($data['title']),
+                'slug' => $slug,
                 'price' => $data['price'],
                 'sku' => $data['sku'],
                 'track_qty' => $data['track_qty'] ?? 0,
@@ -448,48 +471,83 @@ class ProductController extends Controller
                 'barcode' => $data['barcode'] ?? null,
             ]);
 
-            if (!empty($data['attribute_ids']) && !empty($data['attribute_value_ids'])) {
-                $attributeIds = explode(',', $data['attribute_ids']); // Multiple attribute IDs
-                $attributeValueIds = explode(',', $data['attribute_value_ids']); // Multiple attribute value IDs
-
-                foreach ($attributeIds as $index => $attributeId) {
-                    $attribute = Attribute::find($attributeId);
-                    if ($attribute) {
-                        // Find or create the attribute value
-                        $attributeValue = AttributeValue::find($attributeValueIds[$index]);
-
-                        if ($attributeValue) {
-                            // Attach the attribute to the product with the corresponding attribute value
-                            $product->attributes()->attach($attribute, ['attribute_value_id' => $attributeValue->id]);
-                        }
-                    }
-                }
-            }
-
-            if (!empty($data['image_urls'])) {
-                $imageUrls = explode(',', $data['image_urls']); // Comma-separated image URLs in CSV
-                foreach ($imageUrls as $imageUrl) {
-                    // Assuming the images are stored in a directory like 'uploads/product/filename.jpg'
-                    // Here, we are storing the relative path (e.g., 'uploads/product/image.jpg') in the database.
-                    $imagePath = 'uploads/product/' . trim($imageUrl); // Adjust the path if necessary
-
-                    // Create the image entry in the product_images table
-                    $product->product_images()->create([
-                        'image' => $imagePath, // Save the relative image path
-                    ]);
-                }
-            }
-
+            $this->attachAttributes($product, $data['attribute_id'], $data['attribute_value_id']);
+            $this->addProductImages($product, $data['image_urls']);
         }
 
         fclose($handle);
 
-        return redirect()->route('products.index')->with('success', 'Products imported successfully!');
+        $message = 'Products imported successfully!';
+        if (!empty($duplicateEntries)) {
+            $message .= ' However, some products were skipped due to duplicate titles: ' . implode(', ', $duplicateEntries);
+        }
+
+        return redirect()->route('products.index')->with('success', $message);
+    }
+
+    protected function isDuplicateProduct($title, $slug)
+    {
+        return Product::where('title', $title)->orWhere('slug', $slug)->exists();
+    }
+
+    protected function findOrCreateCategory($id, $name)
+    {
+        return Category::firstOrFail(['id' => $id]);
+    }
+
+    protected function findOrCreateBrand($id, $name)
+    {
+        return Brand::firstOrCreate(['id' => $id], ['name' => $name]);
+    }
+
+    protected function attachAttributes(Product $product, $attributeIds, $attributeValueIds)
+    {
+        if (!empty($attributeIds) && !empty($attributeValueIds)) {
+            $attributeIds = explode(',', $attributeIds);
+            $attributeValueIds = explode(',', $attributeValueIds);
+
+            $attributesData = [];
+            foreach ($attributeIds as $index => $attributeId) {
+                if (!empty($attributeValueIds[$index])) {
+                    $attributesData[$attributeId] = ['attribute_value_id' => $attributeValueIds[$index]];
+                }
+            }
+
+            $product->attributes()->attach($attributesData);
+        }
+    }
+
+    protected function addProductImages(Product $product, $imageUrls)
+    {
+        if (!empty($imageUrls)) {
+            $imageUrls = explode(',', $imageUrls);
+
+            $imageData = array_map(function ($imageUrl) {
+                return ['image' => 'uploads/product/' . trim($imageUrl)];
+            }, $imageUrls);
+
+            $product->product_images()->createMany($imageData);
+        }
     }
 
     public function downloadAttributeValues()
     {
         $attributeValues = AttributeValue::select('id', 'value', 'attribute_id')->get();
-        return $this->downloadCSV($attributeValues, 'attribute_values.csv');
+        $headers = [
+            'id',
+            'value',
+            'attribute_id',
+        ];
+       
+        return response()->streamDownload(function () use ($attributeValues, $headers) {
+            $file = fopen('php://output', 'w');
+            fputcsv($file, $headers);
+            foreach ($attributeValues as $attributeValue) {
+                fputcsv($file, $attributeValue->toArray());
+            }
+            fclose($file);
+        }, 'attribute_values.csv');
     }
+   
+
 }
