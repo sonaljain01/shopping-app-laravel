@@ -57,9 +57,17 @@ Route::middleware(['auth'])->group(function () {
 
 });
 
+//track orders
+Route::get('/track-orders', [OrderController::class, 'showTrackOrderForm'])->name('track.orders.form');
+Route::post('/track-orders', [OrderController::class, 'trackOrder'])->name('track.orders');
 
+
+//price filter
 Route::get('price/filter', [ShopController::class, 'filter'])->name('price.filter');
 
+
+
+// admin routes
 Route::group(['prefix'=>'admin'], function () {
     Route::middleware(['admin.guest'])->group(function () {
         Route::get('/login', [AdminLoginController::class, 'index'])->name('admin.login');

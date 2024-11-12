@@ -8,6 +8,7 @@ use App\Models\Order;
 use App\Models\OrderItem;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
+use App\Models\OrderHistory;
 
 class AdminOrderController extends Controller
 {
@@ -56,10 +57,26 @@ class AdminOrderController extends Controller
 
     public function changeOrderStatus(Request $request, $orderId)
     {
-        $order = Order::find($orderId);
+        // $order = Order::find($orderId);
+        // $order->status = $request->status;
+        // $order->save();
+
+        // session()->flash('success', 'Order status updated successfully');
+        // return redirect()->route('orders.detail', $orderId)->with('success', 'Order status updated successfully');
+        $order = Order::findOrFail($orderId);
+        $previousStatus = $order->status;
+    
+        // Update the order status
         $order->status = $request->status;
         $order->save();
-
+    
+        // Log the status update in the order_histories table
+        OrderHistory::create([
+            'order_id' => $order->id,
+            'status' => $order->status,
+            'changed_at' => now(), // Stores the current timestamp
+        ]);
+    
         session()->flash('success', 'Order status updated successfully');
         return redirect()->route('orders.detail', $orderId)->with('success', 'Order status updated successfully');
     }

@@ -73,7 +73,7 @@ class OrderController extends Controller
             }
             // Create Billing Address
             $billingAddress = BillingAddress::create([
-                'username' => $validatedData['username'],    
+                'username' => $validatedData['username'],
                 'email' => $validatedData['email'],
                 'company' => $validatedData['company'],
                 'address_1' => $validatedData['address_1'],
@@ -148,8 +148,23 @@ class OrderController extends Controller
 
 
         return view('front.index', compact('orders'));
-        
+
     }
 
+    public function showTrackOrderForm()
+    {
+        return view('orders.track');
+    }
+
+    public function trackOrder(Request $request)
+    {
+        $request->validate([
+            'order_id' => 'required|exists:orders,id',
+        ]);
+
+        $order = Order::with('orderHistories')->findOrFail($request->order_id);
+
+        return view('orders.track-details', compact('order'));
+    }
 
 }

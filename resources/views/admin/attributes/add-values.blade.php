@@ -36,7 +36,7 @@
                     </div>
 
 
-                    <button type="button" id="add-more" class="btn btn-secondary">Add More</button>
+                    
                     <button type="submit" class="btn btn-primary">Submit</button>
                 </form>
 

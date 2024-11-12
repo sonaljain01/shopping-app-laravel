@@ -11,7 +11,7 @@
     <!-- Custom CSS -->
     <link href="{{ asset('front-assets/css/styles.css') }}" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.css">
-    
+
 </head>
 
 <body>
@@ -390,8 +390,16 @@
                                     <li><a href="#">Affiliate</a></li>
                                     <li><a href="#">Login</a></li>
                                 </ul>
+                                <br>
+                                <h4 class="widget_title">Track orders</h4>
+                                <ul class="footer-menu">
+                                    <li><a href="{{ route('track.orders.form') }}">Track your order</a></li>
+                                    
+                                </ul>
                             </div>
                         </div>
+
+                        
 
                         <div class="col-xl-3 col-lg-3 col-md-3 col-sm-12">
                             <div class="footer_widget">
