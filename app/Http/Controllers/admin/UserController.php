@@ -11,7 +11,7 @@ class UserController extends Controller
 {
     public function index(Request $request)
     {
-        $users = User::where('role', 1)->latest();
+        $users = User::latest();
         if ($request->get('keyword') != "") {
             $users = $users->where('users.username', 'like', '%' . $request->keyword . '%');
             $users = $users->orWhere('users.email', 'like', '%' . $request->keyword . '%');
