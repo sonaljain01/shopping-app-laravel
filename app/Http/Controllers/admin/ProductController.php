@@ -444,6 +444,9 @@ class ProductController extends Controller
 
         while (($row = fgetcsv($handle)) !== false) {
             $data = array_combine($header, $row);
+            if (!isset($data['title']) || empty($data['title'])) {
+                continue; // Skip if 'title' is missing or empty
+            }
             $slug = Str::slug($data['title']);
 
             if ($this->isDuplicateProduct($data['title'], $slug)) {
@@ -457,7 +460,7 @@ class ProductController extends Controller
             // Create the product
             $product = Product::create([
                 'title' => $data['title'],
-                'slug' => $slug,
+                'slug' => Str::slug($data['title']),
                 'price' => $data['price'],
                 'sku' => $data['sku'],
                 'track_qty' => $data['track_qty'] ?? 0,
@@ -548,6 +551,4 @@ class ProductController extends Controller
             fclose($file);
         }, 'attribute_values.csv');
     }
-   
-
 }
