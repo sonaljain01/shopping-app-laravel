@@ -43,6 +43,12 @@
                         <p>Products</p>
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a href="{{ route('admin.bulk-import') }}" class="nav-link">
+                        <i class="nav-icon fas fa-tag"></i>
+                        <p>Bulk Import</p>
+                    </a>
+                </li>
 
                 <li class="nav-item">
                     <a href="{{ route('attributes.index') }}" class="nav-link">

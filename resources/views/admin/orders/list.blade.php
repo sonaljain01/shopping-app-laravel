@@ -50,7 +50,6 @@
                                 <th width="60">Order#</th>
                                 <th>Customer</th>
                                 <th>Email</th>
-                                <th>Phone</th>
                                 <th>Status</th>
                                 <th>Amount</th>
                                 <th>Date Purchased</th>
@@ -63,7 +62,6 @@
                                         <td><a href="{{ route('orders.detail', $order->id) }}">{{ $order->id }}</a></td>
                                         <td>{{ $order->username }}</td>
                                         <td>{{ $order->email }}</td>
-                                        <td>{{ $order->phone }}</td>
                                         <td>
                                             @if($order->status == 'cancelled')
                                                 <span class="badge badge-danger">Cancelled</span>

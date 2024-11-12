@@ -210,7 +210,7 @@ class ProductController extends Controller
                 'status' => $request->status,
                 'barcode' => $request->barcode,
                 'compare_price' => $request->compare_price,
-                
+
             ]);
 
             if ($request->has('attributes') && is_array($request->attributes)) {
@@ -237,7 +237,7 @@ class ProductController extends Controller
             ]);
         }
     }
-    
+
     /**
      * Handle product image upload and deletion.
      */
@@ -328,5 +328,168 @@ class ProductController extends Controller
         return view('front.quick-view-product', compact('product'));
     }
 
+    public function bulkImportDashboard()
+    {
+        return view('admin.bulk-import');
+    }
 
+    public function downloadProductTemplate()
+    {
+        $headers = [
+            'title',
+            'slug',
+            'price',
+            'sku',
+            'track_qty',
+            'qty',
+            'category_id',
+            'brand_id',
+            'description',
+            'is_featured',
+            'compare_price',
+            'status',
+            'barcode',
+            'attribute_id',
+            'attribute_value_id',
+            'image_urls'
+        ];
+        return response()->streamDownload(function () use ($headers) {
+            $file = fopen('php://output', 'w');
+            fputcsv($file, $headers);
+            fclose($file);
+        }, 'product_template.csv');
+        
+    }
+
+    // Download Categories CSV
+    public function downloadCategories()
+    {
+        $categories = Category::select('id', 'name')->get();
+        return $this->downloadCSV($categories, 'categories.csv');
+    }
+
+    // Download Brands CSV
+    public function downloadBrands()
+    {
+        $brands = Brand::select('id', 'name')->get();
+        return $this->downloadCSV($brands, 'brands.csv');
+    }
+
+    // Download Attributes CSV
+    public function downloadAttributes()
+    {
+        $attributes = Attribute::select('id', 'name')->get();
+        return $this->downloadCSV($attributes, 'attributes.csv');
+    }
+
+    // Helper function to download any CSV data
+    private function downloadCSV($data, $filename)
+    {
+        return response()->streamDownload(function () use ($data) {
+            $file = fopen('php://output', 'w');
+            foreach ($data as $row) {
+                fputcsv($file, $row->toArray());
+            }
+            fclose($file);
+        }, $filename);
+    }
+
+    // Handle bulk product import
+
+    public function importProducts(Request $request)
+    {
+        // Validate the uploaded file
+        $request->validate([
+            'file' => 'required|mimes:csv,txt|max:10240', // 10MB max file size
+        ]);
+
+        // Open the uploaded file
+        $file = $request->file('file');
+        $handle = fopen($file->getRealPath(), 'r');
+
+        // Check if the file was opened successfully
+        if ($handle === false) {
+            return redirect()->route('admin.bulk-import')->with('error', 'Failed to open the CSV file.');
+        }
+
+        // Read the first row as the header
+        $header = fgetcsv($handle);
+
+        // Loop through each row in the CSV file
+        while (($row = fgetcsv($handle)) !== false) {
+            $data = array_combine($header, $row); // Combine headers with row values
+
+            // Check if category and brand exist or create them
+            $category = Category::find($data['category_id']);
+            $brand = Brand::find($data['brand_id']);
+
+            if (!$category) {
+                $category = Category::create(['name' => $data['category_name']]); // You can adjust this logic
+            }
+
+            if (!$brand) {
+                $brand = Brand::create(['name' => $data['brand_name']]); // Adjust as needed
+            }
+
+            // Create the product
+            $product = Product::create([
+                'title' => $data['title'],
+                'slug' => Str::slug($data['title']),
+                'price' => $data['price'],
+                'sku' => $data['sku'],
+                'track_qty' => $data['track_qty'] ?? 0,
+                'qty' => $data['qty'] ?? 0,
+                'category_id' => $category->id,
+                'brand_id' => $brand->id,
+                'description' => $data['description'],
+                'is_featured' => $data['is_featured'] ?? 'No',
+                'compare_price' => $data['compare_price'] ?? 0,
+                'status' => $data['status'] ?? '1',
+                'barcode' => $data['barcode'] ?? null,
+            ]);
+
+            if (!empty($data['attribute_ids']) && !empty($data['attribute_value_ids'])) {
+                $attributeIds = explode(',', $data['attribute_ids']); // Multiple attribute IDs
+                $attributeValueIds = explode(',', $data['attribute_value_ids']); // Multiple attribute value IDs
+
+                foreach ($attributeIds as $index => $attributeId) {
+                    $attribute = Attribute::find($attributeId);
+                    if ($attribute) {
+                        // Find or create the attribute value
+                        $attributeValue = AttributeValue::find($attributeValueIds[$index]);
+
+                        if ($attributeValue) {
+                            // Attach the attribute to the product with the corresponding attribute value
+                            $product->attributes()->attach($attribute, ['attribute_value_id' => $attributeValue->id]);
+                        }
+                    }
+                }
+            }
+
+            if (!empty($data['image_urls'])) {
+                $imageUrls = explode(',', $data['image_urls']); // Comma-separated image URLs in CSV
+                foreach ($imageUrls as $imageUrl) {
+                    // Assuming the images are stored in a directory like 'uploads/product/filename.jpg'
+                    // Here, we are storing the relative path (e.g., 'uploads/product/image.jpg') in the database.
+                    $imagePath = 'uploads/product/' . trim($imageUrl); // Adjust the path if necessary
+
+                    // Create the image entry in the product_images table
+                    $product->product_images()->create([
+                        'image' => $imagePath, // Save the relative image path
+                    ]);
+                }
+            }
+
+        }
+
+        fclose($handle);
+
+        return redirect()->route('products.index')->with('success', 'Products imported successfully!');
+    }
+
+    public function downloadAttributeValues()
+    {
+        $attributeValues = AttributeValue::select('id', 'value', 'attribute_id')->get();
+        return $this->downloadCSV($attributeValues, 'attribute_values.csv');
+    }
 }

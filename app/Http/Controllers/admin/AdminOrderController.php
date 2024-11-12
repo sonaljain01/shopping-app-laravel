@@ -57,13 +57,13 @@ class AdminOrderController extends Controller
 
     public function changeOrderStatus(Request $request, $orderId)
     {
-        // $order = Order::find($orderId);
-        // $order->status = $request->status;
-        // $order->save();
-
-        // session()->flash('success', 'Order status updated successfully');
-        // return redirect()->route('orders.detail', $orderId)->with('success', 'Order status updated successfully');
+        
         $order = Order::findOrFail($orderId);
+        if ($order->status === 'cancelled' || $order->status === 'completed') {
+            // If cancelled, return a response indicating the order cannot be updated
+            session()->flash('error', 'You cannot update the order status because the order is ' . $order->status . '.');
+            return redirect()->route('orders.detail', $orderId);
+        }
         $previousStatus = $order->status;
     
         // Update the order status
