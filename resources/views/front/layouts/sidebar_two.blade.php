@@ -1,12 +1,9 @@
 <div class="col-12 col-md-12 col-lg-4 col-xl-4 text-center miliods">
     <div class="d-block border rounded">
         <div class="dashboard_author px-2 py-5">
-            <div class="dash_auth_thumb circle p-1 border d-inline-flex mx-auto mb-2">
-                <img src="assets/img/team-1.jpg" class="img-fluid circle" width="100" alt="" />
-            </div>
+            
             <div class="dash_caption">
-                <h4 class="fs-md ft-medium mb-0 lh-1">John Doe</h4>
-                <span class="text-muted smalls">Australia</span>
+                <h4 class="fs-md ft-medium mb-0 lh-1">User</h4>
             </div>
         </div>
 
