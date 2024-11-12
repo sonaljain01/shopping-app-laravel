@@ -8,11 +8,11 @@
     <div class="mt-4">
         <h4>Download CSV Templates</h4>
         <ul>
-            <li><a href="{{ route('admin.products.template') }}">Download Product Template</a></li>
-            <li><a href="{{ route('admin.products.categories') }}">Download Categories CSV</a></li>
-            <li><a href="{{ route('admin.products.brands') }}">Download Brands CSV</a></li>
-            <li><a href="{{ route('admin.products.attributes') }}">Download Attributes CSV</a></li>
-            <li><a href="{{ route('admin.download.attribute-values') }}">Download Attribute Values</a></li>
+            <li>Product template: <br><a href="{{ route('admin.products.template') }}">Download Product Template</a></li>
+            <li>Categories template: <br><a href="{{ route('admin.products.categories') }}">Download Categories CSV</a></li>
+            <li>Brand template: <br><a href="{{ route('admin.products.brands') }}">Download Brands CSV</a></li>
+            <li>Attributes template: <br><a href="{{ route('admin.products.attributes') }}">Download Attributes CSV</a></li>
+            <li>Attributes Values template: <br><a href="{{ route('admin.download.attribute-values') }}">Download Attribute Values CSV</a></li>
 
         </ul>
     </div>
