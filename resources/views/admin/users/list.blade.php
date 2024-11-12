@@ -104,7 +104,7 @@
                                             
                                         </td>
                                         <td>
-                                            <a href="{{ route('customer.profile', $user->id) }}" target="_blank" class="btn btn-sm btn-warning">
+                                            <a href="{{ route('front.index.user', $user->id) }}" target="_blank" class="btn btn-sm btn-warning">
                                                 Login as Customer
                                             </a>
                                         </td>

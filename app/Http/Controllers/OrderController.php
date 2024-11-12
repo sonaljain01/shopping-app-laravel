@@ -153,7 +153,7 @@ class OrderController extends Controller
 
     public function showTrackOrderForm()
     {
-        
+
         return view('orders.track');
     }
 
@@ -164,9 +164,17 @@ class OrderController extends Controller
         ]);
 
         $order = Order::with('orderHistories')->findOrFail($request->order_id);
-        
+
 
         return view('orders.track-details', compact('order'));
+    }
+
+    public function index($userId)
+    {
+        $user = User::findOrFail($userId);
+        $orders = Order::where('user_id', $user->id)->with('orderItems.product')->get();
+
+        return view('front.index', compact('orders'));
     }
 
 }

@@ -1,15 +1,3 @@
-{{-- @foreach ($orders as $order)
-    <div>
-        <h3>Order #{{ $order->id }} - {{ $order->status }}</h3>
-        <p>Total: {{ $order->total_amount }}</p>
-        <h4>Items:</h4>
-        <ul>
-            @foreach ($order->orderItems as $item)
-                <li>{{ $item->product->name }} ({{ $item->quantity }})</li>
-            @endforeach
-        </ul>
-    </div>
-@endforeach --}}
 
 @extends('front.layouts.app')
 

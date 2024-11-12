@@ -48,6 +48,7 @@ Route::get('/facebook/callback', [FacebookController::class, 'handleFacebookCall
 Route::get('/checkout', [OrderController::class, 'checkout'])->name('front.checkout');
 Route::post('/checkout/place-order', [OrderController::class, 'placeOrder'])->name('checkout.placeOrder');
 Route::get('/my-orders', [OrderController::class, 'myOrders'])->name('front.index');
+Route::get('/front/{user}', [OrderController::class, 'index'])->name('front.index.user');
 
 Route::post('/wishlist/add', [WishlistController::class, 'add'])->name('wishlist.add');
 

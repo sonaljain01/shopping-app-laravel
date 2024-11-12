@@ -122,23 +122,23 @@ class UserController extends Controller
         // Find the user by ID
         $user = User::findOrFail($id);
 
-        // Save current admin ID (or other relevant data) in the session to restore later
+        // Save current admin ID in the session to restore later
         session(['original_admin_id' => auth()->id()]);
 
         // Log in as the selected user
         \Auth::login($user);
 
-        // Redirect to a customer dashboard or profile page
-        return redirect()->route('customer.profile', ['user' => $user->id]);
+        // Redirect to the front.index page with the user's ID
+        return redirect()->route('front.index.user', ['user' => $user->id]);
     }
 
-    public function showProfile($id)
-    {
-        // Fetch customer information and orders
-        $customer = User::with('orders')->findOrFail($id);
+    // public function showProfile($id)
+    // {
+    //     // Fetch customer information and orders
+    //     $customer = User::with('orders')->findOrFail($id);
 
-        return view('customer.profile', compact('customer'));
-    }
+    //     return view('customer.profile', compact('customer'));
+    // }
 
     public function restoreAdminSession()
     {
