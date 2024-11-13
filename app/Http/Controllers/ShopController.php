@@ -26,12 +26,19 @@ class ShopController extends Controller
             $this->applyBrandFilter($productsQuery, $request->input('brand'));
         }
 
+        if($request->filled('keyword')) {
+            $keyword = $request->input('keyword');
+            $productsQuery->where('title', 'LIKE', '%' . $keyword . '%');
+        }
+        
         $this->applySorting($productsQuery, $request->input('sort'));
 
 
 
         $products = $productsQuery->get();
-
+        if ($request->ajax()) {
+            return response()->json(['products' => $products]);
+        }
         if ($products->isEmpty()) {
             $products = collect(); // Ensure $products is always defined, even if empty
         }
@@ -45,6 +52,7 @@ class ShopController extends Controller
             'categorySelected' => $request->input('categorySelected'),
             'subCategorySelected' => $request->input('subCategorySelected'),
             'sort' => $request->input('sort'),
+            // 'keyword' => $keyword ?? null,
         ]);
     }
 
@@ -129,7 +137,7 @@ class ShopController extends Controller
 
         if ($priceRange && strpos($priceRange, '-') !== false) {
             list($minPrice, $maxPrice) = explode('-', $priceRange);
-            dd($minPrice, $maxPrice);
+            // dd($minPrice, $maxPrice);
             if (is_numeric($minPrice) && is_numeric($maxPrice)) {
                 $products = Product::whereBetween('price', [(float) $minPrice, (float) $maxPrice]);
             } else {

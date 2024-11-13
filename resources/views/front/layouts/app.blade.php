@@ -251,12 +251,12 @@
         <!-- ============================================================== -->
 
         <!-- ======================= Shop Style 1 ======================== -->
-        
+
         <!-- ======================= Shop Style 1 ======================== -->
 
 
         <!-- ======================= Filter Wrap Style 1 ======================== -->
-        
+
         <!-- ============================= Filter Wrap ============================== -->
 
         <!-- ======================= All Product List ======================== -->
@@ -394,12 +394,12 @@
                                 <h4 class="widget_title">Track orders</h4>
                                 <ul class="footer-menu">
                                     <li><a href="{{ route('track.orders.form') }}">Track your order</a></li>
-                                    
+
                                 </ul>
                             </div>
                         </div>
 
-                        
+
 
                         <div class="col-xl-3 col-lg-3 col-md-3 col-sm-12">
                             <div class="footer_widget">
@@ -482,7 +482,8 @@
                             </div>
 
                             <div class="form-group text-center mb-0">
-                                <p class="extra">Not a member?<a href="{{ route('front.register') }}" class="text-dark">
+                                <p class="extra">Not a member?<a href="{{ route('front.register') }}"
+                                        class="text-dark">
                                         Register</a></p>
                             </div>
                         </form>
@@ -502,12 +503,13 @@
                 </div>
 
                 <div class="cart_action px-3 py-4">
-                    <form class="form m-0 p-0">
+                    <form id="search-form" class="form m-0 p-0">
                         <div class="form-group">
-                            <input type="text" class="form-control" placeholder="Product Keyword.." />
+                            <input type="text" name="keyword" id="search-keyword" class="form-control"
+                                placeholder="Product Keyword.." />
                         </div>
 
-                        <div class="form-group">
+                        {{-- <div class="form-group">
                             <select class="custom-select">
                                 <option value="1" selected="">Choose Category</option>
                                 <option value="2">Men's Store</option>
@@ -515,19 +517,21 @@
                                 <option value="4">Kid's Fashion</option>
                                 <option value="5">Inner Wear</option>
                             </select>
-                        </div>
+                        </div> --}}
 
                         <div class="form-group mb-0">
-                            <button type="button" class="btn d-block full-width btn-dark">Search Product</button>
+                            <button href="javascript:void(0);" type="button" id="search-button" class="btn d-block full-width btn-dark">Search
+                                Product</button>
                         </div>
                     </form>
+                    <div id="search-results" class="mt-3"></div>
                 </div>
 
-                <div class="d-flex align-items-center justify-content-center br-top br-bottom py-2 px-3">
+                {{-- <div class="d-flex align-items-center justify-content-center br-top br-bottom py-2 px-3">
                     <h4 class="cart_heading fs-md mb-0">Hot Categories</h4>
-                </div>
+                </div> --}}
 
-                <div class="cart_action px-3 py-3">
+                {{-- <div class="cart_action px-3 py-3">
                     <div class="row">
                         <div class="col-xl-4 col-lg-4 col-md-4 col-4 mb-3">
                             <div class="cats_side_wrap text-center">
@@ -535,8 +539,8 @@
                                     <div
                                         class="d-inline-flex align-items-center justify-content-center p-3 circle mb-2 gray">
                                         <a href="javascript:void(0);" class="d-block"><img
-                                                src="{{ asset('front-assets/img/tshirt.png') }}" class="img-fluid"
-                                                width="40" alt="" /></a>
+                                                src="assets/img/tshirt.png" class="img-fluid" width="40"
+                                                alt="" /></a>
                                     </div>
                                 </div>
                                 <div class="sl_cat_02">
@@ -549,9 +553,8 @@
                                 <div class="sl_cat_01">
                                     <div
                                         class="d-inline-flex align-items-center justify-content-center p-3 circle mb-2 gray">
-                                        <a href="javascript:void(0);" class="d-block"><img
-                                                src="{{ asset('front-assets/img/pant.png') }}" class="img-fluid"
-                                                width="40" alt="" /></a>
+                                        <a href="javascript:void(0);" class="d-block"><img src="assets/img/pant.png"
+                                                class="img-fluid" width="40" alt="" /></a>
                                     </div>
                                 </div>
                                 <div class="sl_cat_02">
@@ -565,8 +568,8 @@
                                     <div
                                         class="d-inline-flex align-items-center justify-content-center p-3 circle mb-2 gray">
                                         <a href="javascript:void(0);" class="d-block"><img
-                                                src="{{ asset('front-assets/img/fashion.png') }}" class="img-fluid"
-                                                width="40" alt="" /></a>
+                                                src="assets/img/fashion.png" class="img-fluid" width="40"
+                                                alt="" /></a>
                                     </div>
                                 </div>
                                 <div class="sl_cat_02">
@@ -580,8 +583,8 @@
                                     <div
                                         class="d-inline-flex align-items-center justify-content-center p-3 circle mb-2 gray">
                                         <a href="javascript:void(0);" class="d-block"><img
-                                                src="{{ asset('front-assets/img/sneakers.png') }}" class="img-fluid"
-                                                width="40" alt="" /></a>
+                                                src="assets/img/sneakers.png" class="img-fluid" width="40"
+                                                alt="" /></a>
                                     </div>
                                 </div>
                                 <div class="sl_cat_02">
@@ -595,8 +598,8 @@
                                     <div
                                         class="d-inline-flex align-items-center justify-content-center p-3 circle mb-2 gray">
                                         <a href="javascript:void(0);" class="d-block"><img
-                                                src="{{ asset('front-assets/img/television.png') }}"
-                                                class="img-fluid" width="40" alt="" /></a>
+                                                src="assets/img/television.png" class="img-fluid" width="40"
+                                                alt="" /></a>
                                     </div>
                                 </div>
                                 <div class="sl_cat_02">
@@ -610,8 +613,8 @@
                                     <div
                                         class="d-inline-flex align-items-center justify-content-center p-3 circle mb-2 gray">
                                         <a href="javascript:void(0);" class="d-block"><img
-                                                src="{{ asset('front-assets/img/accessories.png') }}"
-                                                class="img-fluid" width="40" alt="" /></a>
+                                                src="assets/img/accessories.png" class="img-fluid" width="40"
+                                                alt="" /></a>
                                     </div>
                                 </div>
                                 <div class="sl_cat_02">
@@ -620,10 +623,49 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                </div> --}}
 
             </div>
         </div>
+        <script>
+            document.getElementById('search-button').addEventListener('click', function() {
+                const keyword = document.getElementById('search-keyword').value;
+
+                fetch("{{ route('front.shop') }}?keyword=" + encodeURIComponent(keyword), {
+                        method: "GET",
+                        headers: {
+                            "X-Requested-With": "XMLHttpRequest"
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        displayResults(data.products);
+                    })
+                    .catch(error => console.error("Error:", error));
+            });
+
+            function displayResults(products) {
+                const resultsContainer = document.getElementById('search-results');
+                resultsContainer.innerHTML = ""; // Clear previous results
+
+                if (products.length === 0) {
+                    resultsContainer.innerHTML = "<p>No products found.</p>";
+                    return;
+                }
+
+                products.forEach(product => {
+                    const productHTML = `
+                        <div class="product-item">
+                            <img src="${product.image_url}" style="width:100px; height:auto; display:block; margin-bottom:10px;">
+                            <h5><a href="/product/${product.slug}">${product.title}<a></h5>
+
+                            <p><strong>Price:</strong> Rs.${product.price}</p>
+                        </div>
+                    `;
+                    resultsContainer.innerHTML += productHTML;
+                });
+            }
+        </script>
 
         <!-- Wishlist -->
         <div class="w3-ch-sideBar w3-bar-block w3-card-2 w3-animate-right" style="display:none;right:0;"
@@ -843,14 +885,15 @@
 			}
 		</script> --}}
 
-    {{-- <script>
-			function openSearch() {
-				document.getElementById("Search").style.display = "block";
-			}
-			function closeSearch() {
-				document.getElementById("Search").style.display = "none";
-			}
-		</script>		 --}}
+    <script>
+        function openSearch() {
+            document.getElementById("Search").style.display = "block";
+        }
+
+        function closeSearch() {
+            document.getElementById("Search").style.display = "none";
+        }
+    </script>
 
 </body>
 
