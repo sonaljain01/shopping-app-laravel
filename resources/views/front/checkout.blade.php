@@ -14,18 +14,32 @@
                 <form action="{{ route('checkout.placeOrder') }}" method="POST">
                     @csrf
                     <div class="row mb-2">
-                        @foreach (['username', 'email', 'company', 'address_1', 'address_2', 'city', 'zip', 'phone'] as $field)
+                        @foreach (['username', 'email', 'company', 'address_1', 'address_2', 'city', 'state', 'phone'] as $field)
                             <div class="col-{{ in_array($field, ['username']) ? '6' : '12' }}">
                                 <div class="form-group">
                                     <label class="text-dark">{{ ucfirst(str_replace('_', ' ', $field)) }}
-                                        {{ in_array($field, ['username', 'email', 'address_1', 'zip', 'phone']) ? '*' : '' }}</label>
+                                        {{ in_array($field, ['username', 'email', 'address_1', 'phone']) ? '*' : '' }}</label>
                                     <input type="{{ in_array($field, ['email']) ? 'email' : 'text' }}"
                                         name="{{ $field }}" class="form-control"
                                         placeholder="{{ ucfirst(str_replace('_', ' ', $field)) }}" required />
                                 </div>
                             </div>
                         @endforeach
-
+            
+                        <!-- Zip Code Validation -->
+                        <div class="col-12">
+                            <div class="form-group">
+                                <label for="zip" class="text-dark">Zip Code *</label>
+                                <input type="text" name="zip" id="zip" class="form-control" placeholder="Enter your zip code" required />
+                            </div>
+                        </div>
+            
+                        <!-- Delivery Availability Message -->
+                        <div id="delivery-message" class="col-12">
+                            <p id="delivery-status"></p>
+                        </div>
+            
+                        <!-- Country Selection -->
                         <div class="col-12">
                             <div class="form-group">
                                 <label class="text-dark">Country *</label>
@@ -38,7 +52,8 @@
                                 </select>
                             </div>
                         </div>
-
+            
+                        <!-- Additional Information -->
                         <div class="col-12">
                             <div class="form-group">
                                 <label class="text-dark">Additional Information</label>
@@ -46,26 +61,8 @@
                             </div>
                         </div>
                     </div>
-
-                    {{-- <div class="row mb-4">
-                        <div class="col-12 d-block">
-                            
-                            <input id="createaccount" class="checkbox-custom" name="createaccount" type="checkbox" onclick="redirectToRegister()">
-                            <label for="createaccount" class="checkbox-custom-label">Create An Account?</label>
-                        </div>
-                    </div>
-
-                    <script>
-                        function redirectToRegister() {
-                            const createAccountCheckbox = document.getElementById('createaccount');
-                            
-                            if (createAccountCheckbox.checked) {
-                                // Redirect to the register page
-                                window.location.href = "{{ route('front.register') }}";
-                            }
-                        }
-                    </script> --}}
-                    
+            
+                    <!-- Account Creation Toggle -->
                     <div class="row mb-4">
                         <div class="col-12 d-block">
                             <input id="createaccount" class="checkbox-custom" name="createaccount" type="checkbox"
@@ -73,22 +70,14 @@
                             <label for="createaccount" class="checkbox-custom-label">Create An Account?</label>
                         </div>
                     </div>
+            
                     <!-- Password Field, initially hidden -->
                     <div class="form-group" id="passwordField" style="display: none;">
                         <label for="password">Password</label>
                         <input type="password" class="form-control" name="password" id="password" minlength="8"
                             placeholder="Enter password for account creation">
                     </div>
-
-                    <!-- JavaScript to Show/Hide Password Field -->
-                    <script>
-                        function togglePasswordField() {
-                            const passwordField = document.getElementById('passwordField');
-                            passwordField.style.display = document.getElementById('createaccount').checked ? 'block' : 'none';
-                        }
-                    </script>
-
-
+            
                     <h5 class="mb-4 ft-medium">Payments</h5>
                     <div class="row mb-4">
                         <div class="col-12">
@@ -102,12 +91,77 @@
                             </div>
                         </div>
                     </div>
-
+            
                     <div class="col-12">
                         <button type="submit" class="btn btn-block btn-dark mb-3">Place Your Order</button>
                     </div>
                 </form>
             </div>
+            
+            <!-- JavaScript -->
+            <script>
+                // Zip Code Validation and Delivery Availability Check
+                document.getElementById('zip').addEventListener('blur', function () {
+                    var zipCode = this.value.trim();
+            
+                    // Check if zip is not empty
+                    if (zipCode) {
+                        fetch(`https://api.postalpincode.in/pincode/${zipCode}`)
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data[0].Status === 'Success') {
+                                    const city = data[0].PostOffice[0].Division;
+                                    const state = data[0].PostOffice[0].State;
+            
+                                    // Assuming you are dynamically filling city and state
+                                    document.getElementById('city').value = city;
+                                    document.getElementById('state').value = state;
+            
+                                    // Check if delivery is available for this city and state
+                                    checkDeliveryAvailability(city, state);
+                                } else {
+                                    displayMessage("Invalid pincode or no delivery available.");
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Error fetching zip code data:', error);
+                                displayMessage("Error checking delivery availability.");
+                            });
+                    } else {
+                        displayMessage("Please enter a valid zip code.");
+                    }
+                });
+            
+                function checkDeliveryAvailability(city, state) {
+                    // Perform an AJAX request or check against your database
+                    // For simplicity, assume we're checking the city and state in the database
+                    fetch(`/check-delivery/${city}/${state}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.delivery_available) {
+                                displayMessage("Delivery is available to your location.");
+                            } else {
+                                displayMessage("Delivery is not available to this address.");
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error checking delivery availability:', error);
+                            displayMessage("Error checking delivery availability.");
+                        });
+                }
+            
+                function displayMessage(message) {
+                    document.getElementById('delivery-status').textContent = message;
+                    document.getElementById('delivery-status').style.color = message.includes("not available") ? "red" : "green";
+                }
+            
+                // Show/Hide Password Field based on 'Create An Account' checkbox
+                function togglePasswordField() {
+                    const passwordField = document.getElementById('passwordField');
+                    passwordField.style.display = document.getElementById('createaccount').checked ? 'block' : 'none';
+                }
+            </script>
+            
 
             <!-- Sidebar for Order Items -->
             <div class="col-12 col-lg-4 col-md-12">

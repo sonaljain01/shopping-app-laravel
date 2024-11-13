@@ -16,6 +16,7 @@ class BillingAddress extends Model
         'address_1',
         'address_2',
         'city',
+        'state',
         'zip',
         'phone',
         'country',
