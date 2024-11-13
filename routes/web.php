@@ -17,6 +17,8 @@ use App\Http\Controllers\FacebookController;
 use App\Http\Controllers\admin\AdminOrderController;
 use App\Http\Controllers\admin\UserController;
 use App\Http\Controllers\admin\AttributeController;
+use App\Http\Controllers\admin\CityController;
+
 
 Route::get('/', [FrontController::class, 'index'])->name('front.home');
 Route::get('/shop/{categorySlug?}/{subcategorySlug?}', [ShopController::class, 'index'])->name('front.shop');
@@ -166,6 +168,17 @@ Route::group(['prefix' => 'admin'], function () {
         Route::get('/admin/products/brands', [ProductController::class, 'downloadBrands'])->name('admin.products.brands');
         Route::get('/admin/products/attributes', [ProductController::class, 'downloadAttributes'])->name('admin.products.attributes');
         Route::get('download-attribute-values', [ProductController::class, 'downloadAttributeValues'])->name('admin.download.attribute-values');
+
+
+        //cities
+        Route::get('/cities', [CityController::class, 'index'])->name('city.index');
+        Route::post('/cities', [CityController::class, 'storeCity'])->name('city.store');
+        Route::post('/cities/{city}/toggle', [CityController::class, 'toggleCityDelivery'])->name('city.toggle');
+        Route::get('/cities/create', [CityController::class, 'create'])->name('city.create');
+        Route::post('/cities/create', [CityController::class, 'storeCity'])->name('city.store');
+        Route::get('cities/{id}/edit', [CityController::class, 'edit'])->name('city.edit');
+        Route::put('cities/{id}', [CityController::class, 'update'])->name('city.update');
+        Route::delete('/cities/{city}', [CityController::class, 'destroy'])->name('city.delete');
 
     });
 

@@ -19,4 +19,11 @@ class City extends Model
     {
         return $this->belongsTo(State::class);
     }
+    
+  
+
+    public function pincode()
+    {
+        return $this->belongsTo(Pincode::class);
+    }
 }

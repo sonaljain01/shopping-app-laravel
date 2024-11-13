@@ -96,6 +96,3 @@
     <!-- /.content -->
 @endsection
 
-@section('customJs')
-   
-@endsection
