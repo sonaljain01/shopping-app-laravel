@@ -508,7 +508,7 @@
                             <input type="text" name="keyword" id="search-keyword" class="form-control"
                                 placeholder="Product Keyword.." />
                         </div>
-
+                        
                         {{-- <div class="form-group">
                             <select class="custom-select">
                                 <option value="1" selected="">Choose Category</option>
@@ -666,6 +666,7 @@
                 });
             }
         </script>
+        
 
         <!-- Wishlist -->
         <div class="w3-ch-sideBar w3-bar-block w3-card-2 w3-animate-right" style="display:none;right:0;"

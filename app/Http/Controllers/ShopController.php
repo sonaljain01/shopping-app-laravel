@@ -6,7 +6,7 @@ use App\Models\Product;
 use Illuminate\Http\Request;
 use App\Models\Category;
 use App\Models\Brand;
-use App\Models\SearchKeyword; 
+use App\Models\SearchKeyword;
 class ShopController extends Controller
 {
 
@@ -18,10 +18,10 @@ class ShopController extends Controller
 
         if ($request->has('keyword')) {
             $keyword = $request->input('keyword');
-            
+
             // Check if the keyword exists in the database
             $existingKeyword = SearchKeyword::where('keyword', $keyword)->first();
-    
+
             if ($existingKeyword) {
                 // If it exists, increment the count
                 $existingKeyword->increment('count');
@@ -44,14 +44,14 @@ class ShopController extends Controller
             $this->applyBrandFilter($productsQuery, $request->input('brand'));
         }
 
-        if($request->filled('keyword')) {
+        if ($request->filled('keyword')) {
             $keyword = $request->input('keyword');
             $productsQuery->where('title', 'LIKE', '%' . $keyword . '%');
         }
-        
+
         $this->applySorting($productsQuery, $request->input('sort'));
 
-
+        
 
         $products = $productsQuery->get();
         if ($request->ajax()) {
@@ -71,6 +71,7 @@ class ShopController extends Controller
             'subCategorySelected' => $request->input('subCategorySelected'),
             'sort' => $request->input('sort'),
             // 'keyword' => $keyword ?? null,
+            
         ]);
     }
 
@@ -151,7 +152,7 @@ class ShopController extends Controller
         $priceRange = $request->input('price_range');
         // $size = $request->input('size');
 
-        $products = Product::query()->select('id', 'title', 'slug', 'description','price', 'compare_price', 'category_id', 'brand_id', 'sku');
+        $products = Product::query()->select('id', 'title', 'slug', 'description', 'price', 'compare_price', 'category_id', 'brand_id', 'sku');
 
         if ($priceRange && strpos($priceRange, '-') !== false) {
             list($minPrice, $maxPrice) = explode('-', $priceRange);
@@ -175,7 +176,7 @@ class ShopController extends Controller
         $maxPrice = Product::max('price');
 
         $categories = $this->getActiveCategories();
-        $brands = $this->getActiveBrands();        
+        $brands = $this->getActiveBrands();
 
         return view('front.shop', [
             'categories' => $categories,
@@ -186,6 +187,15 @@ class ShopController extends Controller
         ]);
     }
 
+    public function getPopularSearchKeywordsForModal()
+    {
+        // Fetch the top 10 most popular search keywords
+        $popularKeywords = SearchKeyword::orderBy('count', 'desc')
+            ->take(10) // Top 10 results
+            ->get(['keyword']); // Only return the keyword column
 
+        // Return the keywords as a JSON response
+        return response()->json($popularKeywords);
+    }
 
 }
