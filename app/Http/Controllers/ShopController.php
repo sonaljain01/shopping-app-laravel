@@ -6,7 +6,7 @@ use App\Models\Product;
 use Illuminate\Http\Request;
 use App\Models\Category;
 use App\Models\Brand;
-
+use App\Models\SearchKeyword; 
 class ShopController extends Controller
 {
 
@@ -15,6 +15,24 @@ class ShopController extends Controller
     {
         $categories = $this->getActiveCategories();  // Get active categories
         $brands = $this->getActiveBrands();  // Get active brands
+
+        if ($request->has('keyword')) {
+            $keyword = $request->input('keyword');
+            
+            // Check if the keyword exists in the database
+            $existingKeyword = SearchKeyword::where('keyword', $keyword)->first();
+    
+            if ($existingKeyword) {
+                // If it exists, increment the count
+                $existingKeyword->increment('count');
+            } else {
+                // If it doesn't exist, create a new record
+                SearchKeyword::create([
+                    'keyword' => $keyword,
+                    'count' => 1
+                ]);
+            }
+        }
 
         $productsQuery = Product::where('status', 1);
 
