@@ -24,6 +24,6 @@ class City extends Model
 
     public function pincode()
     {
-        return $this->belongsTo(Pincode::class);
+        return $this->belongsTo(PinCode::class);
     }
 }
