@@ -58,6 +58,20 @@
                             </div>
                         </div>
 
+                        <!-- Zip Code Validation -->
+                        <div class="col-12">
+                            <div class="form-group">
+                                <label for="zip">Zip Code *</label>
+                                <input type="text" name="zip" id="zip" class="form-control"
+                                    placeholder="Enter your zip code" required />
+                            </div>
+                        </div>
+
+                        <!-- Delivery Availability Message -->
+                        <div id="delivery-message" class="col-12">
+                            <p id="delivery-status"></p>
+                        </div>
+
                         <!-- City Field -->
                         <div class="col-12">
                             <div class="form-group">
@@ -72,7 +86,7 @@
                             <div class="form-group">
                                 <label for="state">State <span class="text-danger">*</span></label>
                                 <input type="text" id="state" name="state" class="form-control" placeholder="State"
-                                readonly required />
+                                    readonly required />
                             </div>
                         </div>
 
@@ -83,20 +97,6 @@
                                 <input type="text" id="phone" name="phone" class="form-control" placeholder="Phone"
                                     required />
                             </div>
-                        </div>
-
-                        <!-- Zip Code Validation -->
-                        <div class="col-12">
-                            <div class="form-group">
-                                <label for="zip">Zip Code *</label>
-                                <input type="text" name="zip" id="zip" class="form-control"
-                                    placeholder="Enter your zip code" required />
-                            </div>
-                        </div>
-
-                        <!-- Delivery Availability Message -->
-                        <div id="delivery-message" class="col-12">
-                            <p id="delivery-status"></p>
                         </div>
 
                         <!-- Country Selection -->
