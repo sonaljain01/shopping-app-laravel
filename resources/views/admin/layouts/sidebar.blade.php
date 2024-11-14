@@ -93,7 +93,13 @@
                         <i class="nav-icon  far fa-file-alt"></i>
                         <p>Pages</p>
                     </a>
-                </li>							
+                </li>	
+                <li class="nav-item">
+                    <a href="{{ route('admin.menus.index') }}" class="nav-link">
+                        <i class="nav-icon fas fa-list"></i>
+                        <p>Menus</p>
+                    </a>
+                </li>						
             </ul>
         </nav>
         <!-- /.sidebar-menu -->

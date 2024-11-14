@@ -18,6 +18,7 @@ use App\Http\Controllers\admin\AdminOrderController;
 use App\Http\Controllers\admin\UserController;
 use App\Http\Controllers\admin\AttributeController;
 use App\Http\Controllers\admin\CityController;
+use App\Http\Controllers\Admin\MenuController;
 
 Route::get('/', [FrontController::class, 'index'])->name('front.home');
 Route::get('/shop/{categorySlug?}/{subcategorySlug?}', [ShopController::class, 'index'])->name('front.shop');
@@ -179,6 +180,21 @@ Route::group(['prefix' => 'admin'], function () {
         Route::get('cities/{id}/edit', [CityController::class, 'edit'])->name('city.edit');
         Route::put('cities/{id}', [CityController::class, 'update'])->name('city.update');
         Route::delete('/cities/{city}', [CityController::class, 'destroy'])->name('city.delete');
+
+
+        //menu routes
+
+        Route::resource('menus', MenuController::class, [
+            'names' => [
+                'index' => 'admin.menus.index',
+                'create' => 'admin.menus.create',
+                'store' => 'admin.menus.store',
+                'show' => 'admin.menus.show',
+                'edit' => 'admin.menus.edit',
+                'update' => 'admin.menus.update',
+                'destroy' => 'admin.menus.destroy',
+            ]
+        ]);
 
     });
 
