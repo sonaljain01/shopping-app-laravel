@@ -95,12 +95,5 @@ class FrontController extends Controller
 
     }
 
-    public function show()
-    {
-        // Get all menus for header, footer, and both
-
-        // return redirect('/', 301);
-    }
-
-
+ 
 }

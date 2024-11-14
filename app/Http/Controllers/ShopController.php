@@ -52,7 +52,7 @@ class ShopController extends Controller
 
         $this->applySorting($productsQuery, $request->input('sort'));
 
-        
+
 
         $products = $productsQuery->get();
         if ($request->ajax()) {
@@ -62,7 +62,52 @@ class ShopController extends Controller
             $products = collect(); // Ensure $products is always defined, even if empty
         }
 
+        $headerMenus = Menu::with([
+            'children' => function ($query) {
+                $query->where('status', 1)
+                    ->with([
+                        'children' => function ($query) {
+                            $query->where('status', 1)
+                                ->with([
+                                    'children' => function ($query) {
+                                        $query->where('status', 1);
+                                    }
+                                ]);
+                        }
+                    ]);
+            }
+        ])
+            ->whereNull('parent_id') // Ensure only top-level menus are fetched
+            ->where('status', 1) // Only include menus with status = 1
+            ->where(function ($query) {
+                $query->where('location', 'header')
+                    ->orWhere('location', 'both');
+            })
+            ->get();
 
+        // Optionally, for the footer menus, you can follow the same approach
+        $footerMenus = Menu::with([
+            'children' => function ($query) {
+                $query->where('status', 1)
+                    ->with([
+                        'children' => function ($query) {
+                            $query->where('status', 1)
+                                ->with([
+                                    'children' => function ($query) {
+                                        $query->where('status', 1);
+                                    }
+                                ]);
+                        }
+                    ]);
+            }
+        ])
+            ->whereNull('parent_id')
+            ->where('status', 1) // Only include menus with status = 1
+            ->where(function ($query) {
+                $query->where('location', 'footer')
+                    ->orWhere('location', 'both');
+            })
+            ->get();
 
         return view('front.shop', [
             'categories' => $categories,
@@ -72,7 +117,9 @@ class ShopController extends Controller
             'subCategorySelected' => $request->input('subCategorySelected'),
             'sort' => $request->input('sort'),
             // 'keyword' => $keyword ?? null,
-            
+            'headerMenus' => $headerMenus,   // Pass header menus to the view
+            'footerMenus' => $footerMenus,
+
         ]);
     }
 
@@ -199,5 +246,5 @@ class ShopController extends Controller
         return response()->json($popularKeywords);
     }
 
-    
+
 }

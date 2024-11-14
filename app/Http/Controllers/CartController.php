@@ -70,7 +70,8 @@ class CartController extends Controller
     public function viewCart()
     {
         $cartItems = session()->get('cart', []);
-        return view('front.cart', compact('cartItems'));
+        $cartItemsCount = count($cartItems);
+        return view('front.cart', compact('cartItems', 'cartItemsCount'));
     }
 
 

@@ -68,7 +68,7 @@ class OrderController extends Controller
         $validatedData['state'] = $locationDetails['state'];
 
         DB::transaction(function () use ($validatedData) {
-            if (isset($validatedData['create_account']) && $validatedData['create_account']) {
+            if ($validatedData['create_account']) {
                 // Check if the email is already registered
                 $existingUser = User::where('email', $validatedData['email'])->first();
                 if ($existingUser) {
