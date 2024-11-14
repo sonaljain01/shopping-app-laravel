@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "bfca148e044228f8329d8198ed770404",
+    "content-hash": "aa6cab1c5c644cb964bdcee29ba531a0",
     "packages": [
         {
             "name": "barryvdh/laravel-dompdf",
@@ -212,6 +212,7 @@
             ],
             "time": "2024-02-09T16:56:22+00:00"
         },
+       
         {
             "name": "dflydev/dot-access-data",
             "version": "v3.0.3",

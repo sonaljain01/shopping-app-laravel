@@ -6,6 +6,12 @@
             <div class="col-xl-12 text-center mb-5">
                 <h2>Checkout</h2>
             </div>
+
+            @if ($errors->has('delivery_error'))
+                <div class="alert alert-danger">
+                    {{ $errors->first('delivery_error') }}
+                </div>
+            @endif
         </div>
 
         <div class="row justify-content-between">
@@ -70,6 +76,7 @@
                         <!-- Delivery Availability Message -->
                         <div id="delivery-message" class="col-12">
                             <p id="delivery-status"></p>
+
                         </div>
 
                         <!-- City Field -->
@@ -282,60 +289,4 @@
             passwordField.style.display = passwordField.style.display === "none" ? "block" : "none";
         }
     </script>
-
-
-
-    <!-- Sidebar for Order Items -->
-    <div class="col-12 col-lg-4 col-md-12">
-        <div class="d-block mb-3">
-            <h5 class="mb-4">Order Items</h5>
-            <ul class="list-group list-group-sm list-group-flush-y list-group-flush-x mb-4">
-                @foreach ($products as $product)
-                    <li class="list-group-item">
-                        <div class="row align-items-center">
-                            <div class="col-3">
-                                <a href="{{ route('product.show', $product->id) }}">
-                                    <img src="{{ asset('public/uploads/products/' . $product->image) }}"
-                                        alt="{{ $product->name }}" class="img-fluid">
-                                </a>
-                            </div>
-                            <div class="col d-flex align-items-center">
-                                <div class="cart_single_caption pl-2">
-                                    <h4 class="product_title fs-md ft-medium mb-1 lh-1">{{ $product->title }}</h4>
-                                    <h4 class="fs-md ft-medium mb-3 lh-1">
-                                        Rs.{{ number_format($product->price, 2) }}</h4>
-                                    <h4 class="fs-md ft-medium mb-3 lh-1">Qty:
-                                        {{ $cartItems[$product->id]['quantity'] ?? 1 }}</h4>
-                                </div>
-                            </div>
-                        </div>
-                    </li>
-                @endforeach
-            </ul>
-        </div>
-
-        <div class="card mb-4 gray">
-            <div class="card-body">
-                <ul class="list-group list-group-sm list-group-flush-y list-group-flush-x">
-                    <li class="list-group-item d-flex text-dark fs-sm ft-regular">
-                        <span>Subtotal</span>
-                        <span class="ml-auto text-dark ft-medium">Rs.{{ number_format($subtotal, 2) }}</span>
-                    </li>
-                    <li class="list-group-item d-flex text-dark fs-sm ft-regular">
-                        <span>Tax</span>
-                        <span class="ml-auto text-dark ft-medium">Rs.{{ number_format($tax, 2) }}</span>
-                    </li>
-                    <li class="list-group-item d-flex text-dark fs-sm ft-regular">
-                        <span>Total</span>
-                        <span class="ml-auto text-dark ft-medium">Rs.{{ number_format($total, 2) }}</span>
-                    </li>
-                    <li class="list-group-item fs-sm text-center">
-                        Shipping cost calculated at Checkout *
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </div>
-    </div>
-    </div>
 @endsection

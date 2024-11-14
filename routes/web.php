@@ -19,7 +19,6 @@ use App\Http\Controllers\admin\UserController;
 use App\Http\Controllers\admin\AttributeController;
 use App\Http\Controllers\admin\CityController;
 
-
 Route::get('/', [FrontController::class, 'index'])->name('front.home');
 Route::get('/shop/{categorySlug?}/{subcategorySlug?}', [ShopController::class, 'index'])->name('front.shop');
 Route::get('/product/{slug}', [ProductController::class, 'show'])->name('product.show');
@@ -185,3 +184,4 @@ Route::group(['prefix' => 'admin'], function () {
 
 
 });
+

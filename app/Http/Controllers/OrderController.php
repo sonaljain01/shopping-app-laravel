@@ -58,8 +58,9 @@ class OrderController extends Controller
         ]);
         $locationDetails = $this->getLocationFromPincode($validatedData['zip']);
 
-        if (!$locationDetails || $locationDetails['city_enabled']) {
-            return redirect()->back()->withErrors(['pincode' => 'Delivery is not available to this address.']);
+        if (!$locationDetails || !$locationDetails['city_enabled']) {
+            // return redirect()->back()->withErrors(['pincode' => 'Delivery is not available to this address.']);
+            return redirect()->route('front.checkout')->withErrors(['delivery_error' => 'Delivery is not available to this location.']);
         }
 
         // Add city and state details to validated data
@@ -234,14 +235,6 @@ class OrderController extends Controller
 
     public function checkDelivery($cityName, $stateName)
     {
-        // Assuming you have a City model where you store city and state
-        // $cityRecord = City::where('name', $city)->where('state', $state)->where('is_enabled', 1)->first();
-
-        // if ($cityRecord) {
-        //     return response()->json(['delivery_available' => true]);
-        // }
-
-        // return response()->json(['delivery_available' => false]);
         $city = City::where('name', $cityName)
             ->whereHas('state', function ($query) use ($stateName) {
                 $query->where('name', $stateName);
