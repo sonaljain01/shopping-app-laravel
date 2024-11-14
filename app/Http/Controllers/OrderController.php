@@ -12,6 +12,9 @@ use DB;
 use App\Models\User;
 use Hash;
 use Auth;
+use Http;
+use App\Models\City;
+
 class OrderController extends Controller
 {
     public function checkout()
@@ -46,12 +49,22 @@ class OrderController extends Controller
             'address_1' => 'required',
             'address_2' => 'nullable',
             'city' => 'required',
+            'state' => 'required',
             'zip' => 'required',
             'phone' => 'required|numeric',
             'additional_information' => 'nullable',
             'payment_method' => 'required|in:cod,razorpay',
             'country' => 'required',
         ]);
+        $locationDetails = $this->getLocationFromPincode($validatedData['zip']);
+
+        if (!$locationDetails || $locationDetails['city_enabled']) {
+            return redirect()->back()->withErrors(['pincode' => 'Delivery is not available to this address.']);
+        }
+
+        // Add city and state details to validated data
+        $validatedData['city'] = $locationDetails['city'];
+        $validatedData['state'] = $locationDetails['state'];
 
         DB::transaction(function () use ($validatedData) {
             if (isset($validatedData['create_account']) && $validatedData['create_account']) {
@@ -79,6 +92,7 @@ class OrderController extends Controller
                 'address_1' => $validatedData['address_1'],
                 'address_2' => $validatedData['address_2'],
                 'city' => $validatedData['city'],
+                'state' => $validatedData['state'],
                 'zip' => $validatedData['zip'],
                 'phone' => $validatedData['phone'],
                 'additional_information' => $validatedData['additional_information'],
@@ -138,7 +152,48 @@ class OrderController extends Controller
         return redirect()->route('front.index')->with('success', 'Order placed successfully!');
     }
 
+    private function getLocationFromPincode($pincode)
+    {
+        try {
+            // Example API endpoint (replace with a real one)
+            // $apiUrl = "https://api.example.com/pincode/{$pincode}";
+            $apiUrl = "https://api.postalpincode.in/pincode/{$pincode}";
 
+            // Make an API request
+            $response = Http::get($apiUrl);
+
+            if ($response->successful()) {
+                $data = $response->json();
+
+                // Check for valid API response and get location details
+                if (isset($data[0]['Status']) && $data[0]['Status'] === 'Success') {
+                    $postOffice = $data[0]['PostOffice'][0];
+
+                    // Fetch city and state and check if the city is enabled
+                    $city = $postOffice['District'];
+                    $state = $postOffice['State'];
+
+                    // Custom logic to determine if delivery is enabled
+                    $cityEnabled = City::where('name', $city)
+                        ->where('state_id', function ($query) use ($state) {
+                            $query->select('id')->from('states')->where('name', $state);
+                        })
+                        ->where('is_enabled', 1)
+                        ->exists();
+
+                    return [
+                        'city' => $city,
+                        'state' => $state,
+                        'city_enabled' => $cityEnabled
+                    ];
+                }
+            }
+        } catch (\Exception $e) {
+            \Log::error('Failed to fetch location for pincode: ' . $pincode, ['error' => $e->getMessage()]);
+        }
+
+        return null; // Return null if API call fails or if city is not enabled
+    }
     public function myOrders()
     {
         $orders = Order::where('user_id', auth()->id())
@@ -177,4 +232,23 @@ class OrderController extends Controller
         return view('front.index', compact('orders'));
     }
 
+    public function checkDelivery($cityName, $stateName)
+    {
+        // Assuming you have a City model where you store city and state
+        // $cityRecord = City::where('name', $city)->where('state', $state)->where('is_enabled', 1)->first();
+
+        // if ($cityRecord) {
+        //     return response()->json(['delivery_available' => true]);
+        // }
+
+        // return response()->json(['delivery_available' => false]);
+        $city = City::where('name', $cityName)
+            ->whereHas('state', function ($query) use ($stateName) {
+                $query->where('name', $stateName);
+            })
+            ->where('is_enabled', 1)
+            ->first();
+
+        return $city ? ['delivery_available' => true] : ['delivery_available' => false];
+    }
 }

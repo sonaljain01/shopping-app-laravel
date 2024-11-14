@@ -1,5 +1,3 @@
-{{-- DAshboard CHILD LAYOUT, parent layout - app.blade.php --}}
-
 @extends('admin.layouts.app')
 
 @section('content')
