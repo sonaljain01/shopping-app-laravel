@@ -232,15 +232,23 @@ class OrderController extends Controller
         return view('front.index', compact('orders'));
     }
 
-    public function checkDelivery($city, $state)
+    public function checkDelivery($cityName, $stateName)
     {
         // Assuming you have a City model where you store city and state
-        $cityRecord = City::where('name', $city)->where('state', $state)->where('is_enabled', 1)->first();
+        // $cityRecord = City::where('name', $city)->where('state', $state)->where('is_enabled', 1)->first();
 
-        if ($cityRecord) {
-            return response()->json(['delivery_available' => true]);
-        }
+        // if ($cityRecord) {
+        //     return response()->json(['delivery_available' => true]);
+        // }
 
-        return response()->json(['delivery_available' => false]);
+        // return response()->json(['delivery_available' => false]);
+        $city = City::where('name', $cityName)
+            ->whereHas('state', function ($query) use ($stateName) {
+                $query->where('name', $stateName);
+            })
+            ->where('is_enabled', 1)
+            ->first();
+
+        return $city ? ['delivery_available' => true] : ['delivery_available' => false];
     }
 }
