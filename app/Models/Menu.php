@@ -12,6 +12,7 @@ class Menu extends Model
         'parent_id',
         'order',
         'status',
+        'location'
     ];
 
     public function parent()

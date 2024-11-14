@@ -48,6 +48,7 @@
                                 <th>Name</th>
                                 <th>URL</th>
                                 <th>Parent</th>
+                                <th>Location</th>
                                 <th>Status</th>
                                 <th>Actions</th>
                             </tr>
@@ -58,6 +59,7 @@
                                     <td>{{ $menu->name }}</td>
                                     <td>{{ $menu->url }}</td>
                                     <td>{{ $menu->parent ? $menu->parent->name : 'None' }}</td>
+                                    <td>{{ $menu->location }}</td>
                                     <td>
                                         @if ($menu->status == 1)
                                             <span class="badge badge-success">Active</span>

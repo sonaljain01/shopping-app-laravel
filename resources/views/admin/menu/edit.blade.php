@@ -61,6 +61,14 @@
                         <option value="0" @if (!$menu->status) selected @endif>Inactive</option>
                     </select>
                 </div>
+                <div class="form-group">
+                    <label for="location">Menu Location</label>
+                    <select name="location" class="form-control">
+                        <option value="header" @if ($menu->location == 'header') selected @endif>Header</option>
+                        <option value="footer" @if ($menu->location == 'footer') selected @endif>Footer</option>
+                        <option value="both" @if ($menu->location == 'both') selected @endif>Both</option>
+                    </select>
+                </div>
                 <div class="pb-5 pt-3">
                     <button type="submit" class="btn btn-primary">Update</button>
                     <a href="{{ route('admin.menus.index') }}" class="btn btn-outline-dark ml-3">Cancel</a>

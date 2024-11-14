@@ -36,6 +36,7 @@ class MenuController extends Controller
             'parent_id' => 'nullable|exists:menus,id',
             'order' => 'nullable|integer',
             'status' => 'nullable|boolean',
+            'location' => 'required|in:header,footer,both',
         ]);
 
         Menu::create($validated);
@@ -57,6 +58,7 @@ class MenuController extends Controller
             'parent_id' => 'nullable|exists:menus,id',
             'order' => 'nullable|integer',
             'status' => 'nullable|boolean',
+            'location' => 'required|in:header,footer,both',
         ]);
 
         $menu->update($validated);
