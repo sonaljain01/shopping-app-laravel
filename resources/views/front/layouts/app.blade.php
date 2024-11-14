@@ -143,107 +143,53 @@
                             </ul>
                         </div>
                     </div>
-                    <div class="nav-menus-wrapper" style="transition-property: none;">
+                    <div class="nav-menus-wrapper">
                         <ul class="nav-menu">
+                            @if ($headerMenus->isNotEmpty())
+                                <nav class="navbar navbar-expand-lg navbar-light bg-light">
+                                    <ul class="navbar-nav">
+                                        @foreach ($headerMenus as $menu)
+                                            <li class="nav-item">
+                                                <a class="nav-link" href="{{ $menu->url }}">
+                                                    {{ $menu->name }}
+                                                </a>
+                                                {{-- Check if the menu has children and display them --}}
+                                                @if ($menu->children->isNotEmpty())
+                                                    <ul class="nav-dropdown nav-submenu">
+                                                        @foreach ($menu->children as $child)
+                                                            {{-- <li><a href="{{ $child->url }}">{{ $child->name }}</a>
+                                                            </li> --}}
+                                                            <li>
+                                                                <a href="{{ $child->url }}">{{ $child->name }}</a>
+                                                                <!-- Check for grandchildren (sub-submenus) -->
+                                                                @if ($child->children->isNotEmpty())
+                                                                    <ul class="nav-dropdown nav-submenu">
+                                                                        @foreach ($child->children as $grandchild)
+                                                                            <li><a
+                                                                                    href="{{ $grandchild->url }}">{{ $grandchild->name }}</a>
+                                                                            </li>
+                                                                        @endforeach
+                                                                    </ul>
+                                                                @endif
+                                                            </li>
+                                                        @endforeach
+                                                    </ul>
+                                                @endif
+                                            </li>
+                                        @endforeach
+                                    </ul>
+                                </nav>
+                            @else
+                                <p>No menus found.</p>
+                            @endif
 
-                            <li><a href="#">Home</a>
-                                <ul class="nav-dropdown nav-submenu">
-                                    <li><a href="index-2.html">Home 1</a></li>
-                                    <li><a href="home-2.html">Home 2</a></li>
-                                    <li><a href="home-3.html">Home 3</a></li>
-                                    <li><a href="home-4.html">Home 4</a></li>
-                                    <li><a href="home-5.html">Home 5</a></li>
-                                    <li><a href="home-6.html">Home 6</a></li>
-                                    <li><a href="home-7.html">Home 7</a></li>
-                                    <li><a href="home-8.html">Home 8</a></li>
-                                    <li><a href="home-9.html">Home 9</a></li>
-                                    <li><a href="home-10.html">Home 10</a></li>
-                                </ul>
-                            </li>
-
-                            <li><a href="javascript:void(0);">Shop</a>
-                                <ul class="nav-dropdown nav-submenu">
-                                    <li><a href="javascript:void(0);">Account Dashboard</a>
-                                        <ul class="nav-dropdown nav-submenu">
-                                            <li><a href="my-orders.html">My Order</a></li>
-                                            <li><a href="wishlist.html">Wishlist</a></li>
-                                            <li><a href="profile-info.html">Profile Info</a></li>
-                                            <li><a href="addresses.html">Addresses</a></li>
-                                            <li><a href="payment-methode.html">Payment Methode</a></li>
-                                        </ul>
-                                    </li>
-                                    <li><a href="javascript:void(0);">Support</a>
-                                        <ul class="nav-dropdown nav-submenu">
-                                            <li><a href="shoping-cart.html">Shopping Cart</a></li>
-                                            <li><a href="checkout.html">Checkout</a></li>
-                                            <li><a href="complete-order.html">Order Complete</a></li>
-                                        </ul>
-                                    </li>
-                                    <li><a href="shop-style-1.html">Shop Style 01</a></li>
-                                    <li><a href="shop-style-2.html">Shop Style 02</a></li>
-                                    <li><a href="shop-style-3.html">Shop Style 03</a></li>
-                                    <li><a href="shop-style-4.html">Shop Style 04</a></li>
-                                    <li><a href="shop-style-5.html">Shop Style 05</a></li>
-                                    <li><a href="shop-list-view.html">Shop List Style</a></li>
-                                </ul>
-                            </li>
-
-                            <li><a href="javascript:void(0);">Product</a>
-                                <ul class="nav-dropdown nav-submenu">
-                                    <li><a href="shop-single-v1.html">Product Detail v01</a></li>
-                                    <li><a href="shop-single-v2.html">Product Detail v02</a></li>
-                                    <li><a href="shop-single-v3.html">Product Detail v03</a></li>
-                                    <li><a href="shop-single-v4.html">Product Detail v04</a></li>
-                                </ul>
-                            </li>
-
-                            <li><a href="javascript:void(0);">Pages</a>
-                                <ul class="nav-dropdown nav-submenu">
-                                    <li><a href="blog.html">Blog Style</a></li>
-                                    <li><a href="about-us.html">About Us</a></li>
-                                    <li><a href="contact.html">Contact</a></li>
-                                    <li><a href="404.html">404 Page</a></li>
-                                    <li><a href="privacy.html">Privacy Policy</a></li>
-                                    <li><a href="faq.html">FAQs</a></li>
-                                </ul>
-                            </li>
-
-                            <li><a href="docs.html">Docs</a></li>
-
-                        </ul>
-
-                        <ul class="nav-menu nav-menu-social align-to-right">
-                            <li>
-                                <a href="#" onclick="openSearch()">
-                                    <i class="lni lni-search-alt"></i>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="#" data-toggle="modal" data-target="#login">
-                                    <i class="lni lni-user"></i>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="{{ route('wishlist.index') }}" onclick="openWishlist()">
-                                    <i class="lni lni-heart"></i>
-                                    <span class="dn-counter bg-danger">
-                                        {{ auth()->check() ? \App\Models\Wishlist::where('user_id', auth()->id())->count() : \App\Models\Wishlist::where('guest_id', session('guest_id'))->count() }}
-                                    </span>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="{{ route('cart.index') }}" onclick="openCart()">
-                                    <i class="lni lni-shopping-basket"></i>
-                                    <span class="dn-counter bg-success">
-                                        {{ session('cart') ? array_reduce(session('cart'), fn($total, $item) => $total + $item['quantity'], 0) : '0' }}
-                                    </span>
-                                </a>
-                            </li>
                         </ul>
                     </div>
                 </nav>
             </div>
         </div>
+        <!-- End Navigation -->
+
         <!-- End Navigation -->
         <div class="clearfix"></div>
         <!-- ============================================================== -->
@@ -337,179 +283,131 @@
                                 <div class="address mt-3">
                                     1-202-555-0106<br>help@shopper.com
                                 </div>
-                                <div class="address mt-3">
-                                    <ul class="list-inline">
-                                        <li class="list-inline-item"><a href="#"><i
-                                                    class="lni lni-facebook-filled"></i></a></li>
-                                        <li class="list-inline-item"><a href="#"><i
-                                                    class="lni lni-twitter-filled"></i></a></li>
-                                        <li class="list-inline-item"><a href="#"><i
-                                                    class="lni lni-youtube"></i></a></li>
-                                        <li class="list-inline-item"><a href="#"><i
-                                                    class="lni lni-instagram-filled"></i></a></li>
-                                        <li class="list-inline-item"><a href="#"><i
-                                                    class="lni lni-linkedin-original"></i></a></li>
-                                    </ul>
-                                </div>
                             </div>
                         </div>
-
                         <div class="col-xl-2 col-lg-2 col-md-2 col-sm-12">
                             <div class="footer_widget">
                                 <h4 class="widget_title">Supports</h4>
                                 <ul class="footer-menu">
-                                    <li><a href="#">Contact Us</a></li>
-                                    <li><a href="#">About Page</a></li>
-                                    <li><a href="#">Size Guide</a></li>
-                                    <li><a href="#">Shipping & Returns</a></li>
-                                    <li><a href="#">FAQ's Page</a></li>
-                                    <li><a href="#">Privacy</a></li>
+                                    @foreach ($footerMenus as $menu)
+                                        <li>
+                                            <a href="{{ $menu->url }}">{{ $menu->name }}</a>
+                                            @if ($menu->children->isNotEmpty())
+                                                <ul class="nav-dropdown nav-submenu">
+                                                    @foreach ($menu->children as $child)
+                                                        <li>
+                                                            <a href="{{ $child->url }}">{{ $child->name }}</a>
+                                                            @if ($child->children->isNotEmpty())
+                                                                <ul class="nav-dropdown nav-submenu">
+                                                                    @foreach ($child->children as $grandChild)
+                                                                        <li>
+                                                                            <a
+                                                                                href="{{ $grandChild->url }}">{{ $grandChild->name }}</a>
+                                                                            @if ($grandChild->children->isNotEmpty())
+                                                                                <ul class="nav-dropdown nav-submenu">
+                                                                                    @foreach ($grandChild->children as $greatGrandChild)
+                                                                                        <li>
+                                                                                            <a
+                                                                                                href="{{ $greatGrandChild->url }}">{{ $greatGrandChild->name }}</a>
+                                                                                        </li>
+                                                                                    @endforeach
+                                                                                </ul>
+                                                                            @endif
+                                                                        </li>
+                                                                    @endforeach
+
+                                                                </ul>
+                                                            @endif
+                                                        </li>
+                                                    @endforeach
+                                                </ul>
+                                            @endif
+                                        </li>
+                                    @endforeach
                                 </ul>
-                            </div>
-                        </div>
-
-                        <div class="col-xl-2 col-lg-2 col-md-2 col-sm-12">
-                            <div class="footer_widget">
-                                <h4 class="widget_title">Shop</h4>
-                                <ul class="footer-menu">
-                                    <li><a href="#">Men's Shopping</a></li>
-                                    <li><a href="#">Women's Shopping</a></li>
-                                    <li><a href="#">Kids's Shopping</a></li>
-                                    <li><a href="#">Furniture</a></li>
-                                    <li><a href="#">Discounts</a></li>
-                                </ul>
-                            </div>
-                        </div>
-
-                        <div class="col-xl-2 col-lg-2 col-md-2 col-sm-12">
-                            <div class="footer_widget">
-                                <h4 class="widget_title">Company</h4>
-                                <ul class="footer-menu">
-                                    <li><a href="#">About</a></li>
-                                    <li><a href="#">Blog</a></li>
-                                    <li><a href="#">Affiliate</a></li>
-                                    <li><a href="#">Login</a></li>
-                                </ul>
-                                <br>
-                                <h4 class="widget_title">Track orders</h4>
-                                <ul class="footer-menu">
-                                    <li><a href="{{ route('track.orders.form') }}">Track your order</a></li>
-
-                                </ul>
-                            </div>
-                        </div>
-
-
-
-                        <div class="col-xl-3 col-lg-3 col-md-3 col-sm-12">
-                            <div class="footer_widget">
-                                <h4 class="widget_title">Subscribe</h4>
-                                <p>Receive updates, hot deals, discounts sent straignt in your inbox daily</p>
-                                <div class="foot-news-last">
-                                    <div class="input-group">
-                                        <input type="text" class="form-control" placeholder="Email Address">
-                                        <div class="input-group-append">
-                                            <button type="button" class="input-group-text b-0 text-light"><i
-                                                    class="lni lni-arrow-right"></i></button>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="address mt-3">
-                                    <h5 class="fs-sm text-light">Secure Payments</h5>
-                                    <div class="scr_payment"><img src="{{ asset('front-assets/img/card.png') }}"
-                                            class="img-fluid" alt="" /></div>
-                                </div>
                             </div>
                         </div>
 
                     </div>
                 </div>
             </div>
+    </div>
+    </div>
 
-            <div class="footer-bottom">
-                <div class="container">
-                    <div class="row align-items-center">
-                        <div class="col-lg-12 col-md-12 text-center">
-                            <p class="mb-0">© 2021 Kumo. Designd By <a href="https://themezhub.com/">ThemezHub</a>.
-                            </p>
-                        </div>
-                    </div>
+    </footer>
+
+    <!-- ============================ Footer End ================================== -->
+
+
+    <!-- Log In Modal -->
+    <div class="modal fade" id="login" tabindex="-1" role="dialog" aria-labelledby="loginmodal"
+        aria-hidden="true">
+        <div class="modal-dialog modal-xl login-pop-form" role="document">
+            <div class="modal-content" id="loginmodal">
+                <div class="modal-headers">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span class="ti-close"></span>
+                    </button>
                 </div>
-            </div>
-        </footer>
-        <!-- ============================ Footer End ================================== -->
 
-
-        <!-- Log In Modal -->
-        <div class="modal fade" id="login" tabindex="-1" role="dialog" aria-labelledby="loginmodal"
-            aria-hidden="true">
-            <div class="modal-dialog modal-xl login-pop-form" role="document">
-                <div class="modal-content" id="loginmodal">
-                    <div class="modal-headers">
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span class="ti-close"></span>
-                        </button>
+                <div class="modal-body p-5">
+                    <div class="text-center mb-4">
+                        <h2 class="m-0 ft-regular">Login</h2>
                     </div>
 
-                    <div class="modal-body p-5">
-                        <div class="text-center mb-4">
-                            <h2 class="m-0 ft-regular">Login</h2>
+                    <form action="{{ route('front.login') }}" method="POST" id="loginForm">
+                        @csrf
+                        <div class="form-group">
+                            <label>Email</label>
+                            <input type="email" class="form-control" placeholder="your@email.com"
+                                autocomplete="off" name="email" id="email" value="{{ old('email') }}">
+                            @error('email')
+                                <p class="text-red-500">{{ $message }}</p>
+                            @enderror
                         </div>
 
-                        <form action="{{ route('front.login') }}" method="POST" id="loginForm">
-                            @csrf
-                            <div class="form-group">
-                                <label>Email</label>
-                                <input type="email" class="form-control" placeholder="your@email.com"
-                                    autocomplete="off" name="email" id="email" value="{{ old('email') }}">
-                                @error('email')
-                                    <p class="text-red-500">{{ $message }}</p>
-                                @enderror
-                            </div>
+                        <div class="form-group">
+                            <label>Password</label>
+                            <input type="password" class="form-control" placeholder="Password*" name="password"
+                                id="password">
+                            @error('password')
+                                <p class="text-red-500">{{ $message }}</p>
+                            @enderror
+                        </div>
 
-                            <div class="form-group">
-                                <label>Password</label>
-                                <input type="password" class="form-control" placeholder="Password*" name="password"
-                                    id="password">
-                                @error('password')
-                                    <p class="text-red-500">{{ $message }}</p>
-                                @enderror
-                            </div>
+                        <div class="form-group">
+                            <button type="submit"
+                                class="btn btn-md full-width bg-dark text-light fs-md ft-medium">Login</button>
+                        </div>
 
-                            <div class="form-group">
-                                <button type="submit"
-                                    class="btn btn-md full-width bg-dark text-light fs-md ft-medium">Login</button>
-                            </div>
-
-                            <div class="form-group text-center mb-0">
-                                <p class="extra">Not a member?<a href="{{ route('front.register') }}"
-                                        class="text-dark">
-                                        Register</a></p>
-                            </div>
-                        </form>
-                    </div>
+                        <div class="form-group text-center mb-0">
+                            <p class="extra">Not a member?<a href="{{ route('front.register') }}"
+                                    class="text-dark">
+                                    Register</a></p>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
-        <!-- End Modal -->
+    </div>
+    <!-- End Modal -->
 
-        <!-- Search -->
-        <div class="w3-ch-sideBar w3-bar-block w3-card-2 w3-animate-right" style="display:none;right:0;"
-            id="Search">
-            <div class="rightMenu-scroll">
-                <div class="d-flex align-items-center justify-content-between slide-head py-3 px-3">
-                    <h4 class="cart_heading fs-md ft-medium mb-0">Search Products</h4>
-                    <button onclick="closeSearch()" class="close_slide"><i class="ti-close"></i></button>
-                </div>
+    <!-- Search -->
+    <div class="w3-ch-sideBar w3-bar-block w3-card-2 w3-animate-right" style="display:none;right:0;" id="Search">
+        <div class="rightMenu-scroll">
+            <div class="d-flex align-items-center justify-content-between slide-head py-3 px-3">
+                <h4 class="cart_heading fs-md ft-medium mb-0">Search Products</h4>
+                <button onclick="closeSearch()" class="close_slide"><i class="ti-close"></i></button>
+            </div>
 
-                <div class="cart_action px-3 py-4">
-                    <form id="search-form" class="form m-0 p-0">
-                        <div class="form-group">
-                            <input type="text" name="keyword" id="search-keyword" class="form-control"
-                                placeholder="Product Keyword.." />
-                        </div>
-                        
-                        {{-- <div class="form-group">
+            <div class="cart_action px-3 py-4">
+                <form id="search-form" class="form m-0 p-0">
+                    <div class="form-group">
+                        <input type="text" name="keyword" id="search-keyword" class="form-control"
+                            placeholder="Product Keyword.." />
+                    </div>
+
+                    {{-- <div class="form-group">
                             <select class="custom-select">
                                 <option value="1" selected="">Choose Category</option>
                                 <option value="2">Men's Store</option>
@@ -519,19 +417,20 @@
                             </select>
                         </div> --}}
 
-                        <div class="form-group mb-0">
-                            <button href="javascript:void(0);" type="button" id="search-button" class="btn d-block full-width btn-dark">Search
-                                Product</button>
-                        </div>
-                    </form>
-                    <div id="search-results" class="mt-3"></div>
-                </div>
+                    <div class="form-group mb-0">
+                        <button href="javascript:void(0);" type="button" id="search-button"
+                            class="btn d-block full-width btn-dark">Search
+                            Product</button>
+                    </div>
+                </form>
+                <div id="search-results" class="mt-3"></div>
+            </div>
 
-                {{-- <div class="d-flex align-items-center justify-content-center br-top br-bottom py-2 px-3">
+            {{-- <div class="d-flex align-items-center justify-content-center br-top br-bottom py-2 px-3">
                     <h4 class="cart_heading fs-md mb-0">Hot Categories</h4>
                 </div> --}}
 
-                {{-- <div class="cart_action px-3 py-3">
+            {{-- <div class="cart_action px-3 py-3">
                     <div class="row">
                         <div class="col-xl-4 col-lg-4 col-md-4 col-4 mb-3">
                             <div class="cats_side_wrap text-center">
@@ -625,36 +524,36 @@
                     </div>
                 </div> --}}
 
-            </div>
         </div>
-        <script>
-            document.getElementById('search-button').addEventListener('click', function() {
-                const keyword = document.getElementById('search-keyword').value;
+    </div>
+    <script>
+        document.getElementById('search-button').addEventListener('click', function() {
+            const keyword = document.getElementById('search-keyword').value;
 
-                fetch("{{ route('front.shop') }}?keyword=" + encodeURIComponent(keyword), {
-                        method: "GET",
-                        headers: {
-                            "X-Requested-With": "XMLHttpRequest"
-                        }
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        displayResults(data.products);
-                    })
-                    .catch(error => console.error("Error:", error));
-            });
+            fetch("{{ route('front.shop') }}?keyword=" + encodeURIComponent(keyword), {
+                    method: "GET",
+                    headers: {
+                        "X-Requested-With": "XMLHttpRequest"
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    displayResults(data.products);
+                })
+                .catch(error => console.error("Error:", error));
+        });
 
-            function displayResults(products) {
-                const resultsContainer = document.getElementById('search-results');
-                resultsContainer.innerHTML = ""; // Clear previous results
+        function displayResults(products) {
+            const resultsContainer = document.getElementById('search-results');
+            resultsContainer.innerHTML = ""; // Clear previous results
 
-                if (products.length === 0) {
-                    resultsContainer.innerHTML = "<p>No products found.</p>";
-                    return;
-                }
+            if (products.length === 0) {
+                resultsContainer.innerHTML = "<p>No products found.</p>";
+                return;
+            }
 
-                products.forEach(product => {
-                    const productHTML = `
+            products.forEach(product => {
+                const productHTML = `
                         <div class="product-item">
                             <img src="${product.image_url}" style="width:100px; height:auto; display:block; margin-bottom:10px;">
                             <h5><a href="/product/${product.slug}">${product.title}<a></h5>
@@ -662,185 +561,193 @@
                             <p><strong>Price:</strong> Rs.${product.price}</p>
                         </div>
                     `;
-                    resultsContainer.innerHTML += productHTML;
-                });
-            }
-        </script>
-        
+                resultsContainer.innerHTML += productHTML;
+            });
+        }
+    </script>
 
-        <!-- Wishlist -->
-        <div class="w3-ch-sideBar w3-bar-block w3-card-2 w3-animate-right" style="display:none;right:0;"
-            id="Wishlist">
-            <div class="rightMenu-scroll">
-                <div class="d-flex align-items-center justify-content-between slide-head py-3 px-3">
-                    <h4 class="cart_heading fs-md ft-medium mb-0">Saved Products</h4>
-                    <button onclick="closeWishlist()" class="close_slide"><i class="ti-close"></i></button>
-                </div>
-                <div class="right-ch-sideBar">
 
-                    <div class="cart_select_items py-2">
-                        <!-- Single Item -->
-                        <div class="d-flex align-items-center justify-content-between br-bottom px-3 py-3">
-                            <div class="cart_single d-flex align-items-center">
-                                <div class="cart_selected_single_thumb">
-                                    <a href="#"><img src="{{ asset('front-assets/img/product/4.jpg') }}"
-                                            width="60" class="img-fluid" alt="" /></a>
-                                </div>
-                                <div class="cart_single_caption pl-2">
-                                    <h4 class="product_title fs-sm ft-medium mb-0 lh-1">Women Striped Shirt Dress</h4>
-                                    <p class="mb-2"><span class="text-dark ft-medium small">36</span>, <span
-                                            class="text-dark small">Red</span></p>
-                                    <h4 class="fs-md ft-medium mb-0 lh-1">$129</h4>
-                                </div>
+    <!-- Wishlist -->
+    <div class="w3-ch-sideBar w3-bar-block w3-card-2 w3-animate-right" style="display:none;right:0;" id="Wishlist">
+        <div class="rightMenu-scroll">
+            <div class="d-flex align-items-center justify-content-between slide-head py-3 px-3">
+                <h4 class="cart_heading fs-md ft-medium mb-0">Saved Products</h4>
+                <button onclick="closeWishlist()" class="close_slide"><i class="ti-close"></i></button>
+            </div>
+            <div class="right-ch-sideBar">
+
+                <div class="cart_select_items py-2">
+                    <!-- Single Item -->
+                    <div class="d-flex align-items-center justify-content-between br-bottom px-3 py-3">
+                        <div class="cart_single d-flex align-items-center">
+                            <div class="cart_selected_single_thumb">
+                                <a href="#"><img src="{{ asset('front-assets/img/product/4.jpg') }}"
+                                        width="60" class="img-fluid" alt="" /></a>
                             </div>
-                            <div class="fls_last"><button class="close_slide gray"><i class="ti-close"></i></button>
+                            <div class="cart_single_caption pl-2">
+                                <h4 class="product_title fs-sm ft-medium mb-0 lh-1">Women Striped
+                                    Shirt Dress</h4>
+                                <p class="mb-2"><span class="text-dark ft-medium small">36</span>, <span
+                                        class="text-dark small">Red</span></p>
+                                <h4 class="fs-md ft-medium mb-0 lh-1">$129</h4>
                             </div>
                         </div>
-
-                        <!-- Single Item -->
-                        <div class="d-flex align-items-center justify-content-between br-bottom px-3 py-3">
-                            <div class="cart_single d-flex align-items-center">
-                                <div class="cart_selected_single_thumb">
-                                    <a href="#"><img src="{{ asset('front-assets/img/product/7.jpg') }}"
-                                            width="60" class="img-fluid" alt="" /></a>
-                                </div>
-                                <div class="cart_single_caption pl-2">
-                                    <h4 class="product_title fs-sm ft-medium mb-0 lh-1">Girls Floral Print Jumpsuit
-                                    </h4>
-                                    <p class="mb-2"><span class="text-dark ft-medium small">36</span>, <span
-                                            class="text-dark small">Red</span></p>
-                                    <h4 class="fs-md ft-medium mb-0 lh-1">$129</h4>
-                                </div>
-                            </div>
-                            <div class="fls_last"><button class="close_slide gray"><i class="ti-close"></i></button>
-                            </div>
+                        <div class="fls_last"><button class="close_slide gray"><i class="ti-close"></i></button>
                         </div>
-
-                        <!-- Single Item -->
-                        <div class="d-flex align-items-center justify-content-between px-3 py-3">
-                            <div class="cart_single d-flex align-items-center">
-                                <div class="cart_selected_single_thumb">
-                                    <a href="#"><img src="{{ asset('front-assets/img/product/8.jpg') }}"
-                                            width="60" class="img-fluid" alt="" /></a>
-                                </div>
-                                <div class="cart_single_caption pl-2">
-                                    <h4 class="product_title fs-sm ft-medium mb-0 lh-1">Girls Solid A-Line Dress</h4>
-                                    <p class="mb-2"><span class="text-dark ft-medium small">30</span>, <span
-                                            class="text-dark small">Blue</span></p>
-                                    <h4 class="fs-md ft-medium mb-0 lh-1">$100</h4>
-                                </div>
-                            </div>
-                            <div class="fls_last"><button class="close_slide gray"><i class="ti-close"></i></button>
-                            </div>
-                        </div>
-
                     </div>
 
-                    <div class="d-flex align-items-center justify-content-between br-top br-bottom px-3 py-3">
-                        <h6 class="mb-0">Subtotal</h6>
-                        <h3 class="mb-0 ft-medium">$417</h3>
+                    <!-- Single Item -->
+                    <div class="d-flex align-items-center justify-content-between br-bottom px-3 py-3">
+                        <div class="cart_single d-flex align-items-center">
+                            <div class="cart_selected_single_thumb">
+                                <a href="#"><img src="{{ asset('front-assets/img/product/7.jpg') }}"
+                                        width="60" class="img-fluid" alt="" /></a>
+                            </div>
+                            <div class="cart_single_caption pl-2">
+                                <h4 class="product_title fs-sm ft-medium mb-0 lh-1">Girls Floral
+                                    Print Jumpsuit
+                                </h4>
+                                <p class="mb-2"><span class="text-dark ft-medium small">36</span>, <span
+                                        class="text-dark small">Red</span></p>
+                                <h4 class="fs-md ft-medium mb-0 lh-1">$129</h4>
+                            </div>
+                        </div>
+                        <div class="fls_last"><button class="close_slide gray"><i class="ti-close"></i></button>
+                        </div>
                     </div>
 
-                    <div class="cart_action px-3 py-3">
-                        <div class="form-group">
-                            <button type="button" class="btn d-block full-width btn-dark">Move To Cart</button>
+                    <!-- Single Item -->
+                    <div class="d-flex align-items-center justify-content-between px-3 py-3">
+                        <div class="cart_single d-flex align-items-center">
+                            <div class="cart_selected_single_thumb">
+                                <a href="#"><img src="{{ asset('front-assets/img/product/8.jpg') }}"
+                                        width="60" class="img-fluid" alt="" /></a>
+                            </div>
+                            <div class="cart_single_caption pl-2">
+                                <h4 class="product_title fs-sm ft-medium mb-0 lh-1">Girls Solid
+                                    A-Line Dress</h4>
+                                <p class="mb-2"><span class="text-dark ft-medium small">30</span>, <span
+                                        class="text-dark small">Blue</span></p>
+                                <h4 class="fs-md ft-medium mb-0 lh-1">$100</h4>
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <button type="button" class="btn d-block full-width btn-dark-light">Edit or View</button>
+                        <div class="fls_last"><button class="close_slide gray"><i class="ti-close"></i></button>
                         </div>
                     </div>
 
                 </div>
+
+                <div class="d-flex align-items-center justify-content-between br-top br-bottom px-3 py-3">
+                    <h6 class="mb-0">Subtotal</h6>
+                    <h3 class="mb-0 ft-medium">$417</h3>
+                </div>
+
+                <div class="cart_action px-3 py-3">
+                    <div class="form-group">
+                        <button type="button" class="btn d-block full-width btn-dark">Move To
+                            Cart</button>
+                    </div>
+                    <div class="form-group">
+                        <button type="button" class="btn d-block full-width btn-dark-light">Edit
+                            or View</button>
+                    </div>
+                </div>
+
             </div>
         </div>
+    </div>
 
-        <!-- Cart -->
-        <div class="w3-ch-sideBar w3-bar-block w3-card-2 w3-animate-right" style="display:none;right:0;"
-            id="Cart">
-            <div class="rightMenu-scroll">
-                <div class="d-flex align-items-center justify-content-between slide-head py-3 px-3">
-                    <h4 class="cart_heading fs-md ft-medium mb-0">Products List</h4>
-                    <button onclick="closeCart()" class="close_slide"><i class="ti-close"></i></button>
-                </div>
-                <div class="right-ch-sideBar">
+    <!-- Cart -->
+    <div class="w3-ch-sideBar w3-bar-block w3-card-2 w3-animate-right" style="display:none;right:0;" id="Cart">
+        <div class="rightMenu-scroll">
+            <div class="d-flex align-items-center justify-content-between slide-head py-3 px-3">
+                <h4 class="cart_heading fs-md ft-medium mb-0">Products List</h4>
+                <button onclick="closeCart()" class="close_slide"><i class="ti-close"></i></button>
+            </div>
+            <div class="right-ch-sideBar">
 
-                    <div class="cart_select_items py-2">
-                        <!-- Single Item -->
-                        <div class="d-flex align-items-center justify-content-between br-bottom px-3 py-3">
-                            <div class="cart_single d-flex align-items-center">
-                                <div class="cart_selected_single_thumb">
-                                    <a href="#"><img src="{{ asset('front-assets/img/product/4.jpg') }}"
-                                            width="60" class="img-fluid" alt="" /></a>
-                                </div>
-                                <div class="cart_single_caption pl-2">
-                                    <h4 class="product_title fs-sm ft-medium mb-0 lh-1">Women Striped Shirt Dress</h4>
-                                    <p class="mb-2"><span class="text-dark ft-medium small">36</span>, <span
-                                            class="text-dark small">Red</span></p>
-                                    <h4 class="fs-md ft-medium mb-0 lh-1">$129</h4>
-                                </div>
+                <div class="cart_select_items py-2">
+                    <!-- Single Item -->
+                    <div class="d-flex align-items-center justify-content-between br-bottom px-3 py-3">
+                        <div class="cart_single d-flex align-items-center">
+                            <div class="cart_selected_single_thumb">
+                                <a href="#"><img src="{{ asset('front-assets/img/product/4.jpg') }}"
+                                        width="60" class="img-fluid" alt="" /></a>
                             </div>
-                            <div class="fls_last"><button class="close_slide gray"><i class="ti-close"></i></button>
+                            <div class="cart_single_caption pl-2">
+                                <h4 class="product_title fs-sm ft-medium mb-0 lh-1">Women Striped
+                                    Shirt Dress</h4>
+                                <p class="mb-2"><span class="text-dark ft-medium small">36</span>, <span
+                                        class="text-dark small">Red</span></p>
+                                <h4 class="fs-md ft-medium mb-0 lh-1">$129</h4>
                             </div>
                         </div>
-
-                        <!-- Single Item -->
-                        <div class="d-flex align-items-center justify-content-between br-bottom px-3 py-3">
-                            <div class="cart_single d-flex align-items-center">
-                                <div class="cart_selected_single_thumb">
-                                    <a href="#"><img src="{{ asset('front-assets/img/product/7.jpg') }}"
-                                            width="60" class="img-fluid" alt="" /></a>
-                                </div>
-                                <div class="cart_single_caption pl-2">
-                                    <h4 class="product_title fs-sm ft-medium mb-0 lh-1">Girls Floral Print Jumpsuit
-                                    </h4>
-                                    <p class="mb-2"><span class="text-dark ft-medium small">36</span>, <span
-                                            class="text-dark small">Red</span></p>
-                                    <h4 class="fs-md ft-medium mb-0 lh-1">$129</h4>
-                                </div>
-                            </div>
-                            <div class="fls_last"><button class="close_slide gray"><i class="ti-close"></i></button>
-                            </div>
+                        <div class="fls_last"><button class="close_slide gray"><i class="ti-close"></i></button>
                         </div>
-
-                        <!-- Single Item -->
-                        <div class="d-flex align-items-center justify-content-between px-3 py-3">
-                            <div class="cart_single d-flex align-items-center">
-                                <div class="cart_selected_single_thumb">
-                                    <a href="#"><img src="{{ asset('front-assets/img/product/8.jpg') }}"
-                                            width="60" class="img-fluid" alt="" /></a>
-                                </div>
-                                <div class="cart_single_caption pl-2">
-                                    <h4 class="product_title fs-sm ft-medium mb-0 lh-1">Girls Solid A-Line Dress</h4>
-                                    <p class="mb-2"><span class="text-dark ft-medium small">30</span>, <span
-                                            class="text-dark small">Blue</span></p>
-                                    <h4 class="fs-md ft-medium mb-0 lh-1">$100</h4>
-                                </div>
-                            </div>
-                            <div class="fls_last"><button class="close_slide gray"><i class="ti-close"></i></button>
-                            </div>
-                        </div>
-
                     </div>
 
-                    <div class="d-flex align-items-center justify-content-between br-top br-bottom px-3 py-3">
-                        <h6 class="mb-0">Subtotal</h6>
-                        <h3 class="mb-0 ft-medium">$1023</h3>
+                    <!-- Single Item -->
+                    <div class="d-flex align-items-center justify-content-between br-bottom px-3 py-3">
+                        <div class="cart_single d-flex align-items-center">
+                            <div class="cart_selected_single_thumb">
+                                <a href="#"><img src="{{ asset('front-assets/img/product/7.jpg') }}"
+                                        width="60" class="img-fluid" alt="" /></a>
+                            </div>
+                            <div class="cart_single_caption pl-2">
+                                <h4 class="product_title fs-sm ft-medium mb-0 lh-1">Girls Floral
+                                    Print Jumpsuit
+                                </h4>
+                                <p class="mb-2"><span class="text-dark ft-medium small">36</span>, <span
+                                        class="text-dark small">Red</span></p>
+                                <h4 class="fs-md ft-medium mb-0 lh-1">$129</h4>
+                            </div>
+                        </div>
+                        <div class="fls_last"><button class="close_slide gray"><i class="ti-close"></i></button>
+                        </div>
                     </div>
 
-                    <div class="cart_action px-3 py-3">
-                        <div class="form-group">
-                            <button type="button" class="btn d-block full-width btn-dark">Checkout Now</button>
+                    <!-- Single Item -->
+                    <div class="d-flex align-items-center justify-content-between px-3 py-3">
+                        <div class="cart_single d-flex align-items-center">
+                            <div class="cart_selected_single_thumb">
+                                <a href="#"><img src="{{ asset('front-assets/img/product/8.jpg') }}"
+                                        width="60" class="img-fluid" alt="" /></a>
+                            </div>
+                            <div class="cart_single_caption pl-2">
+                                <h4 class="product_title fs-sm ft-medium mb-0 lh-1">Girls Solid
+                                    A-Line Dress</h4>
+                                <p class="mb-2"><span class="text-dark ft-medium small">30</span>, <span
+                                        class="text-dark small">Blue</span></p>
+                                <h4 class="fs-md ft-medium mb-0 lh-1">$100</h4>
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <button type="button" class="btn d-block full-width btn-dark-light">Edit or View</button>
+                        <div class="fls_last"><button class="close_slide gray"><i class="ti-close"></i></button>
                         </div>
                     </div>
 
                 </div>
+
+                <div class="d-flex align-items-center justify-content-between br-top br-bottom px-3 py-3">
+                    <h6 class="mb-0">Subtotal</h6>
+                    <h3 class="mb-0 ft-medium">$1023</h3>
+                </div>
+
+                <div class="cart_action px-3 py-3">
+                    <div class="form-group">
+                        <button type="button" class="btn d-block full-width btn-dark">Checkout
+                            Now</button>
+                    </div>
+                    <div class="form-group">
+                        <button type="button" class="btn d-block full-width btn-dark-light">Edit
+                            or View</button>
+                    </div>
+                </div>
+
             </div>
         </div>
+    </div>
 
-        <a id="back2Top" class="top-scroll" title="Back to top" href="#"><i class="ti-arrow-up"></i></a>
+    <a id="back2Top" class="top-scroll" title="Back to top" href="#"><i class="ti-arrow-up"></i></a>
 
 
     </div>

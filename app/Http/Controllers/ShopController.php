@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Category;
 use App\Models\Brand;
 use App\Models\SearchKeyword;
+use App\Models\Menu;
 class ShopController extends Controller
 {
 
@@ -198,4 +199,5 @@ class ShopController extends Controller
         return response()->json($popularKeywords);
     }
 
+    
 }

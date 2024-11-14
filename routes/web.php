@@ -21,6 +21,7 @@ use App\Http\Controllers\admin\CityController;
 use App\Http\Controllers\Admin\MenuController;
 
 Route::get('/', [FrontController::class, 'index'])->name('front.home');
+
 Route::get('/shop/{categorySlug?}/{subcategorySlug?}', [ShopController::class, 'index'])->name('front.shop');
 Route::get('/product/{slug}', [ProductController::class, 'show'])->name('product.show');
 Route::get('/products/{id}', [ShopController::class, 'show']);
