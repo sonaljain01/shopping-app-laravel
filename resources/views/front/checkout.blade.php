@@ -325,4 +325,81 @@
             passwordField.style.display = passwordField.style.display === "none" ? "block" : "none";
         }
     </script> --}}
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const zipInput = document.getElementById('zip');
+            const deliveryStatus = document.getElementById('delivery-status');
+    
+            if (!deliveryStatus) {
+                console.error("Delivery status element not found!");
+                return;
+            }
+    
+            zipInput.addEventListener('change', function() {
+                const zip = this.value.trim();
+    
+                if (zip) {
+                    fetch(`https://api.postalpincode.in/pincode/${zip}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data[0].Status === 'Success') {
+                                const city = data[0].PostOffice[0].Division;
+                                const state = data[0].PostOffice[0].State;
+    
+                                const cityInput = document.getElementById('city');
+                                const stateInput = document.getElementById('state');
+    
+                                if (cityInput && stateInput) {
+                                    cityInput.value = city;
+                                    stateInput.value = state;
+    
+                                    checkDeliveryAvailability(city, state);
+                                } else {
+                                    console.error('City or State input field not found.');
+                                }
+                            } else {
+                                displayMessage("Invalid pincode or no delivery available.");
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error fetching zip code data:', error);
+                            displayMessage("Error checking delivery availability.");
+                        });
+                } else {
+                    displayMessage("Please enter a valid zip code.");
+                }
+            });
+    
+            function checkDeliveryAvailability(city, state) {
+                const routeTemplate = `{{ route('check-delivery', ['city' => '__CITY__', 'state' => '__STATE__']) }}`;
+                const finalUrl = routeTemplate
+                    .replace('__CITY__', encodeURIComponent(city))
+                    .replace('__STATE__', encodeURIComponent(state));
+    
+                fetch(finalUrl)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.delivery_available) {
+                            displayMessage("Delivery is available to your location.");
+                        } else {
+                            displayMessage("Sorry, we do not deliver to your location.");
+                        }
+                    })
+                    .catch(error => {
+                        console.error("Error checking delivery availability:", error);
+                        displayMessage("Error checking delivery availability.");
+                    });
+            }
+    
+            function displayMessage(message) {
+                deliveryStatus.textContent = message;
+            }
+        });
+    
+        function togglePasswordField() {
+            const passwordField = document.getElementById("passwordField");
+            passwordField.style.display = passwordField.style.display === "none" ? "block" : "none";
+        }
+    </script>
+    
 @endsection
