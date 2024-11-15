@@ -41,12 +41,15 @@ class FrontController extends Controller
         $headerMenus = Menu::with([
             'children' => function ($query) {
                 $query->where('status', 1)
+                ->orderBy('order', 'asc')
                     ->with([
                         'children' => function ($query) {
                             $query->where('status', 1)
+                                ->orderBy('order', 'asc')
                                 ->with([
                                     'children' => function ($query) {
-                                        $query->where('status', 1);
+                                        $query->where('status', 1)
+                                            ->orderBy('order', 'asc');
                                     }
                                 ]);
                         }
@@ -58,20 +61,25 @@ class FrontController extends Controller
             ->where(function ($query) {
                 $query->where('location', 'header')
                     ->orWhere('location', 'both');
-            })
-            
+                    
+                })
+                
+            ->orderBy('order', 'asc')
             ->get();
 
         // Optionally, for the footer menus, you can follow the same approach
         $footerMenus = Menu::with([
             'children' => function ($query) {
                 $query->where('status', 1)
+                ->orderBy('order', 'asc')
                     ->with([
                         'children' => function ($query) {
                             $query->where('status', 1)
+                            ->orderBy('order', 'asc')
                                 ->with([
                                     'children' => function ($query) {
-                                        $query->where('status', 1);
+                                        $query->where('status', 1)
+                                        ->orderBy('order', 'asc');
                                     }
                                 ]);
                         }
@@ -84,6 +92,7 @@ class FrontController extends Controller
                 $query->where('location', 'footer')
                     ->orWhere('location', 'both');
             })
+            ->orderBy('order', 'asc')
             ->get();
         // Pass data to the view
         return view('front.shop', [
