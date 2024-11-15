@@ -14,6 +14,7 @@ use Hash;
 use Auth;
 use Http;
 use App\Models\City;
+use App\Models\Menu;
 
 class OrderController extends Controller
 {
@@ -35,7 +36,53 @@ class OrderController extends Controller
         // Calculate total
         $total = $subtotal + $tax;
         $paymentMethods = PaymentMethod::all();
-        return view('front.checkout', compact('cartItems', 'products', 'subtotal', 'tax', 'total', 'paymentMethods'));
+        $headerMenus = Menu::with([
+            'children' => function ($query) {
+                $query->where('status', 1)
+                    ->with([
+                        'children' => function ($query) {
+                            $query->where('status', 1)
+                                ->with([
+                                    'children' => function ($query) {
+                                        $query->where('status', 1);
+                                    }
+                                ]);
+                        }
+                    ]);
+            }
+        ])
+            ->whereNull('parent_id') // Ensure only top-level menus are fetched
+            ->where('status', 1) // Only include menus with status = 1
+            ->where(function ($query) {
+                $query->where('location', 'header')
+                    ->orWhere('location', 'both');
+            })
+            ->get();
+
+        // Optionally, for the footer menus, you can follow the same approach
+        $footerMenus = Menu::with([
+            'children' => function ($query) {
+                $query->where('status', 1)
+                    ->with([
+                        'children' => function ($query) {
+                            $query->where('status', 1)
+                                ->with([
+                                    'children' => function ($query) {
+                                        $query->where('status', 1);
+                                    }
+                                ]);
+                        }
+                    ]);
+            }
+        ])
+            ->whereNull('parent_id')
+            ->where('status', 1) // Only include menus with status = 1
+            ->where(function ($query) {
+                $query->where('location', 'footer')
+                    ->orWhere('location', 'both');
+            })
+            ->get();
+        return view('front.checkout', compact('cartItems', 'products', 'subtotal', 'tax', 'total', 'paymentMethods', 'headerMenus', 'footerMenus'));
 
     }
 
@@ -202,15 +249,108 @@ class OrderController extends Controller
             ->with('orderItems.product')
             ->get();
 
-
-        return view('front.index', compact('orders'));
+            $headerMenus = Menu::with([
+                'children' => function ($query) {
+                    $query->where('status', 1)
+                        ->with([
+                            'children' => function ($query) {
+                                $query->where('status', 1)
+                                    ->with([
+                                        'children' => function ($query) {
+                                            $query->where('status', 1);
+                                        }
+                                    ]);
+                            }
+                        ]);
+                }
+            ])
+                ->whereNull('parent_id') // Ensure only top-level menus are fetched
+                ->where('status', 1) // Only include menus with status = 1
+                ->where(function ($query) {
+                    $query->where('location', 'header')
+                        ->orWhere('location', 'both');
+                })
+                ->get();
+    
+            // Optionally, for the footer menus, you can follow the same approach
+            $footerMenus = Menu::with([
+                'children' => function ($query) {
+                    $query->where('status', 1)
+                        ->with([
+                            'children' => function ($query) {
+                                $query->where('status', 1)
+                                    ->with([
+                                        'children' => function ($query) {
+                                            $query->where('status', 1);
+                                        }
+                                    ]);
+                            }
+                        ]);
+                }
+            ])
+                ->whereNull('parent_id')
+                ->where('status', 1) // Only include menus with status = 1
+                ->where(function ($query) {
+                    $query->where('location', 'footer')
+                        ->orWhere('location', 'both');
+                })
+                ->get();
+        return view('front.index', compact('orders', 'headerMenus', 'footerMenus'));
 
     }
 
     public function showTrackOrderForm()
     {
+        $headerMenus = Menu::with([
+            'children' => function ($query) {
+                $query->where('status', 1)
+                    ->with([
+                        'children' => function ($query) {
+                            $query->where('status', 1)
+                                ->with([
+                                    'children' => function ($query) {
+                                        $query->where('status', 1);
+                                    }
+                                ]);
+                        }
+                    ]);
+            }
+        ])
+            ->whereNull('parent_id') // Ensure only top-level menus are fetched
+            ->where('status', 1) // Only include menus with status = 1
+            ->where(function ($query) {
+                $query->where('location', 'header')
+                    ->orWhere('location', 'both');
+            })
+            ->get();
 
-        return view('orders.track');
+        // Optionally, for the footer menus, you can follow the same approach
+        $footerMenus = Menu::with([
+            'children' => function ($query) {
+                $query->where('status', 1)
+                    ->with([
+                        'children' => function ($query) {
+                            $query->where('status', 1)
+                                ->with([
+                                    'children' => function ($query) {
+                                        $query->where('status', 1);
+                                    }
+                                ]);
+                        }
+                    ]);
+            }
+        ])
+            ->whereNull('parent_id')
+            ->where('status', 1) // Only include menus with status = 1
+            ->where(function ($query) {
+                $query->where('location', 'footer')
+                    ->orWhere('location', 'both');
+            })
+            ->get();
+        return view('orders.track', [
+            'headerMenus' => $headerMenus,
+            'footerMenus' => $footerMenus
+        ]);
     }
 
     public function trackOrder(Request $request)
@@ -220,9 +360,53 @@ class OrderController extends Controller
         ]);
 
         $order = Order::with('orderHistories')->findOrFail($request->order_id);
+        $headerMenus = Menu::with([
+            'children' => function ($query) {
+                $query->where('status', 1)
+                    ->with([
+                        'children' => function ($query) {
+                            $query->where('status', 1)
+                                ->with([
+                                    'children' => function ($query) {
+                                        $query->where('status', 1);
+                                    }
+                                ]);
+                        }
+                    ]);
+            }
+        ])
+            ->whereNull('parent_id') // Ensure only top-level menus are fetched
+            ->where('status', 1) // Only include menus with status = 1
+            ->where(function ($query) {
+                $query->where('location', 'header')
+                    ->orWhere('location', 'both');
+            })
+            ->get();
 
-
-        return view('orders.track-details', compact('order'));
+        // Optionally, for the footer menus, you can follow the same approach
+        $footerMenus = Menu::with([
+            'children' => function ($query) {
+                $query->where('status', 1)
+                    ->with([
+                        'children' => function ($query) {
+                            $query->where('status', 1)
+                                ->with([
+                                    'children' => function ($query) {
+                                        $query->where('status', 1);
+                                    }
+                                ]);
+                        }
+                    ]);
+            }
+        ])
+            ->whereNull('parent_id')
+            ->where('status', 1) // Only include menus with status = 1
+            ->where(function ($query) {
+                $query->where('location', 'footer')
+                    ->orWhere('location', 'both');
+            })
+            ->get();
+        return view('orders.track-details', compact('order','headerMenus', 'footerMenus'));
     }
 
     public function index($userId)

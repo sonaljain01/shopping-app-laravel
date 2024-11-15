@@ -14,7 +14,7 @@ use Storage;
 use DB;
 use App\Models\Attribute;
 use App\Models\AttributeValue;
-
+use App\Models\Menu;
 
 class ProductController extends Controller
 {
@@ -309,8 +309,54 @@ class ProductController extends Controller
         if (!$product) {
             abort(404);
         }
+        $headerMenus = Menu::with([
+            'children' => function ($query) {
+                $query->where('status', 1)
+                    ->with([
+                        'children' => function ($query) {
+                            $query->where('status', 1)
+                                ->with([
+                                    'children' => function ($query) {
+                                        $query->where('status', 1);
+                                    }
+                                ]);
+                        }
+                    ]);
+            }
+        ])
+            ->whereNull('parent_id') // Ensure only top-level menus are fetched
+            ->where('status', 1) // Only include menus with status = 1
+            ->where(function ($query) {
+                $query->where('location', 'header')
+                    ->orWhere('location', 'both');
+            })
+            ->get();
+
+        // Optionally, for the footer menus, you can follow the same approach
+        $footerMenus = Menu::with([
+            'children' => function ($query) {
+                $query->where('status', 1)
+                    ->with([
+                        'children' => function ($query) {
+                            $query->where('status', 1)
+                                ->with([
+                                    'children' => function ($query) {
+                                        $query->where('status', 1);
+                                    }
+                                ]);
+                        }
+                    ]);
+            }
+        ])
+            ->whereNull('parent_id')
+            ->where('status', 1) // Only include menus with status = 1
+            ->where(function ($query) {
+                $query->where('location', 'footer')
+                    ->orWhere('location', 'both');
+            })
+            ->get();
         // Pass the product details to the view
-        return view('front.product-detail', compact('product'));
+        return view('front.product-detail', compact('product', 'headerMenus', 'footerMenus'));
     }
 
     public function quickView($id)

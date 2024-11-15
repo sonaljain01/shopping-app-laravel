@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Wishlist;
 use Illuminate\Http\Request;
-
+use App\Models\Menu;
 class Wishlistcontroller extends Controller
 {
     // Method to add a product to the wishlist
@@ -53,8 +53,53 @@ class Wishlistcontroller extends Controller
             ->get();
 
         $wishlistCount = $wishlists->count(); // Count items in the user's wishlist
+        $headerMenus = Menu::with([
+            'children' => function ($query) {
+                $query->where('status', 1)
+                    ->with([
+                        'children' => function ($query) {
+                            $query->where('status', 1)
+                                ->with([
+                                    'children' => function ($query) {
+                                        $query->where('status', 1);
+                                    }
+                                ]);
+                        }
+                    ]);
+            }
+        ])
+            ->whereNull('parent_id') // Ensure only top-level menus are fetched
+            ->where('status', 1) // Only include menus with status = 1
+            ->where(function ($query) {
+                $query->where('location', 'header')
+                    ->orWhere('location', 'both');
+            })
+            ->get();
 
-        return view('front.wishlist', compact('wishlists', 'wishlistCount'));
+        // Optionally, for the footer menus, you can follow the same approach
+        $footerMenus = Menu::with([
+            'children' => function ($query) {
+                $query->where('status', 1)
+                    ->with([
+                        'children' => function ($query) {
+                            $query->where('status', 1)
+                                ->with([
+                                    'children' => function ($query) {
+                                        $query->where('status', 1);
+                                    }
+                                ]);
+                        }
+                    ]);
+            }
+        ])
+            ->whereNull('parent_id')
+            ->where('status', 1) // Only include menus with status = 1
+            ->where(function ($query) {
+                $query->where('location', 'footer')
+                    ->orWhere('location', 'both');
+            })
+            ->get();
+        return view('front.wishlist', compact('wishlists', 'wishlistCount', 'headerMenus', 'footerMenus'));
     }
 
     // Method to remove an item from the wishlist

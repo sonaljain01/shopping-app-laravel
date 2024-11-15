@@ -146,20 +146,40 @@
                     <div class="nav-menus-wrapper" style="transition-property: none;">
                         <ul class="nav-menu">
 
-                                {{-- <li><a href="#">Home</a>
-                                    <ul class="nav-dropdown nav-submenu">
-                                        <li><a href="index-2.html">Home 1</a></li>
-                                        <li><a href="home-2.html">Home 2</a></li>
-                                        <li><a href="home-3.html">Home 3</a></li>
-                                        <li><a href="home-4.html">Home 4</a></li>
-                                        <li><a href="home-5.html">Home 5</a></li>
-                                        <li><a href="home-6.html">Home 6</a></li>
-                                        <li><a href="home-7.html">Home 7</a></li>
-                                        <li><a href="home-8.html">Home 8</a></li>
-                                        <li><a href="home-9.html">Home 9</a></li>
-                                        <li><a href="home-10.html">Home 10</a></li>
-                                    </ul>
-                                </li> --}}
+                            @foreach ($headerMenus as $menu)
+                                <li>
+                                    <a href="{{ $menu->url }}">{{ $menu->name }}</a>
+                                    @if ($menu->children->isNotEmpty())
+                                        <ul class="nav-dropdown nav-submenu">
+                                            @foreach ($menu->children as $child)
+                                                <li>
+                                                    <a href="{{ $child->url }}">{{ $child->name }}</a>
+                                                    @if ($child->children->isNotEmpty())
+                                                        <ul class="nav-dropdown nav-submenu">
+                                                            @foreach ($child->children as $grandChild)
+                                                                <li>
+                                                                    <a
+                                                                        href="{{ $grandChild->url }}">{{ $grandChild->name }}</a>
+                                                                    @if ($grandChild->children->isNotEmpty())
+                                                                        <ul class="nav-dropdown nav-submenu">
+                                                                            @foreach ($grandChild->children as $greatGrandChild)
+                                                                                <li>
+                                                                                    <a
+                                                                                        href="{{ $greatGrandChild->url }}">{{ $greatGrandChild->name }}</a>
+                                                                                </li>
+                                                                            @endforeach
+                                                                        </ul>
+                                                                    @endif
+                                                                </li>
+                                                            @endforeach
+                                                        </ul>
+                                                    @endif
+                                                </li>
+                                            @endforeach
+                                        </ul>
+                                    @endif
+                                </li>
+                            @endforeach
 
                         </ul>
 
@@ -309,39 +329,47 @@
                             <div class="footer_widget">
                                 <h4 class="widget_title">Supports</h4>
                                 <ul class="footer-menu">
-                                    <li><a href="#">Contact Us</a></li>
-                                    <li><a href="#">About Page</a></li>
-                                    <li><a href="#">Size Guide</a></li>
-                                    <li><a href="#">Shipping & Returns</a></li>
-                                    <li><a href="#">FAQ's Page</a></li>
-                                    <li><a href="#">Privacy</a></li>
+                                    @foreach ($footerMenus as $menu)
+                                        <li>
+                                            <a href="{{ $menu->url }}">{{ $menu->name }}</a>
+                                            @if ($menu->children->isNotEmpty())
+                                                <ul class="nav-dropdown nav-submenu">
+                                                    @foreach ($menu->children as $child)
+                                                        <li>
+                                                            <a href="{{ $child->url }}">{{ $child->name }}</a>
+                                                            @if ($child->children->isNotEmpty())
+                                                                <ul class="nav-dropdown nav-submenu">
+                                                                    @foreach ($child->children as $grandChild)
+                                                                        <li>
+                                                                            <a
+                                                                                href="{{ $grandChild->url }}">{{ $grandChild->name }}</a>
+                                                                            @if ($grandChild->children->isNotEmpty())
+                                                                                <ul class="nav-dropdown nav-submenu">
+                                                                                    @foreach ($grandChild->children as $greatGrandChild)
+                                                                                        <li>
+                                                                                            <a
+                                                                                                href="{{ $greatGrandChild->url }}">{{ $greatGrandChild->name }}</a>
+                                                                                        </li>
+                                                                                    @endforeach
+                                                                                </ul>
+                                                                            @endif
+                                                                        </li>
+                                                                    @endforeach
+                                                                </ul>
+                                                            @endif
+                                                        </li>
+                                                    @endforeach
+                                                </ul>
+                                            @endif
+                                        </li>
+                                    @endforeach
                                 </ul>
                             </div>
                         </div>
 
                         <div class="col-xl-2 col-lg-2 col-md-2 col-sm-12">
                             <div class="footer_widget">
-                                <h4 class="widget_title">Shop</h4>
-                                <ul class="footer-menu">
-                                    <li><a href="#">Men's Shopping</a></li>
-                                    <li><a href="#">Women's Shopping</a></li>
-                                    <li><a href="#">Kids's Shopping</a></li>
-                                    <li><a href="#">Furniture</a></li>
-                                    <li><a href="#">Discounts</a></li>
-                                </ul>
-                            </div>
-                        </div>
 
-                        <div class="col-xl-2 col-lg-2 col-md-2 col-sm-12">
-                            <div class="footer_widget">
-                                <h4 class="widget_title">Company</h4>
-                                <ul class="footer-menu">
-                                    <li><a href="#">About</a></li>
-                                    <li><a href="#">Blog</a></li>
-                                    <li><a href="#">Affiliate</a></li>
-                                    <li><a href="#">Login</a></li>
-                                </ul>
-                                <br>
                                 <h4 class="widget_title">Track orders</h4>
                                 <ul class="footer-menu">
                                     <li><a href="{{ route('track.orders.form') }}">Track your order</a></li>
@@ -459,7 +487,7 @@
                             <input type="text" name="keyword" id="search-keyword" class="form-control"
                                 placeholder="Product Keyword.." />
                         </div>
-                        
+
                         {{-- <div class="form-group">
                             <select class="custom-select">
                                 <option value="1" selected="">Choose Category</option>
@@ -471,7 +499,8 @@
                         </div> --}}
 
                         <div class="form-group mb-0">
-                            <button href="javascript:void(0);" type="button" id="search-button" class="btn d-block full-width btn-dark">Search
+                            <button href="javascript:void(0);" type="button" id="search-button"
+                                class="btn d-block full-width btn-dark">Search
                                 Product</button>
                         </div>
                     </form>
@@ -617,7 +646,7 @@
                 });
             }
         </script>
-        
+
 
         <!-- Wishlist -->
         <div class="w3-ch-sideBar w3-bar-block w3-card-2 w3-animate-right" style="display:none;right:0;"

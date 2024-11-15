@@ -6,7 +6,7 @@ use App\Models\Cart;
 use Illuminate\Http\Request;
 use App\Models\Product;
 use Auth;
-
+use App\Models\Menu;
 class CartController extends Controller
 {
     public function addToCart(Request $request, $productId)
@@ -71,7 +71,53 @@ class CartController extends Controller
     {
         $cartItems = session()->get('cart', []);
         $cartItemsCount = count($cartItems);
-        return view('front.cart', compact('cartItems', 'cartItemsCount'));
+        $headerMenus = Menu::with([
+            'children' => function ($query) {
+                $query->where('status', 1)
+                    ->with([
+                        'children' => function ($query) {
+                            $query->where('status', 1)
+                                ->with([
+                                    'children' => function ($query) {
+                                        $query->where('status', 1);
+                                    }
+                                ]);
+                        }
+                    ]);
+            }
+        ])
+            ->whereNull('parent_id') // Ensure only top-level menus are fetched
+            ->where('status', 1) // Only include menus with status = 1
+            ->where(function ($query) {
+                $query->where('location', 'header')
+                    ->orWhere('location', 'both');
+            })
+            ->get();
+
+        // Optionally, for the footer menus, you can follow the same approach
+        $footerMenus = Menu::with([
+            'children' => function ($query) {
+                $query->where('status', 1)
+                    ->with([
+                        'children' => function ($query) {
+                            $query->where('status', 1)
+                                ->with([
+                                    'children' => function ($query) {
+                                        $query->where('status', 1);
+                                    }
+                                ]);
+                        }
+                    ]);
+            }
+        ])
+            ->whereNull('parent_id')
+            ->where('status', 1) // Only include menus with status = 1
+            ->where(function ($query) {
+                $query->where('location', 'footer')
+                    ->orWhere('location', 'both');
+            })
+            ->get();
+        return view('front.cart', compact('cartItems', 'cartItemsCount', 'headerMenus', 'footerMenus'));
     }
 
 

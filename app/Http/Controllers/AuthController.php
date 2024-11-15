@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Validator;
 use Illuminate\Http\Request;
+use App\Models\Menu;
 class AuthController extends Controller
 {
 
@@ -20,16 +21,63 @@ class AuthController extends Controller
                 'username' => $request->username,
                 'email' => $request->email,
                 'password' => Hash::make($request->password),
-                'role' => $request->role ?? 1, 
+                'role' => $request->role ?? 1,
             ]);
 
-            
+
             if (!$user) {
                 return back()->with('error', 'Something went wrong');
             }
 
             // Optionally log in the user
             Auth::login($user);
+            $headerMenus = Menu::with([
+                'children' => function ($query) {
+                    $query->where('status', 1)
+                        ->with([
+                            'children' => function ($query) {
+                                $query->where('status', 1)
+                                    ->with([
+                                        'children' => function ($query) {
+                                            $query->where('status', 1);
+                                        }
+                                    ]);
+                            }
+                        ]);
+                }
+            ])
+                ->whereNull('parent_id') // Ensure only top-level menus are fetched
+                ->where('status', 1) // Only include menus with status = 1
+                ->where(function ($query) {
+                    $query->where('location', 'header')
+                        ->orWhere('location', 'both');
+                })
+                ->get();
+
+            // Optionally, for the footer menus, you can follow the same approach
+            $footerMenus = Menu::with([
+                'children' => function ($query) {
+                    $query->where('status', 1)
+                        ->with([
+                            'children' => function ($query) {
+                                $query->where('status', 1)
+                                    ->with([
+                                        'children' => function ($query) {
+                                            $query->where('status', 1);
+                                        }
+                                    ]);
+                            }
+                        ]);
+                }
+            ])
+                ->whereNull('parent_id')
+                ->where('status', 1) // Only include menus with status = 1
+                ->where(function ($query) {
+                    $query->where('location', 'footer')
+                        ->orWhere('location', 'both');
+                })
+                ->get();
+
 
             return redirect()->route('front.home')->with('success', 'User created successfully');
         } catch (\Exception $e) {
@@ -66,6 +114,110 @@ class AuthController extends Controller
 
     public function showLoginForm()
     {
-        return view('front.login');
+        $headerMenus = Menu::with([
+            'children' => function ($query) {
+                $query->where('status', 1)
+                    ->with([
+                        'children' => function ($query) {
+                            $query->where('status', 1)
+                                ->with([
+                                    'children' => function ($query) {
+                                        $query->where('status', 1);
+                                    }
+                                ]);
+                        }
+                    ]);
+            }
+        ])
+            ->whereNull('parent_id') // Ensure only top-level menus are fetched
+            ->where('status', 1) // Only include menus with status = 1
+            ->where(function ($query) {
+                $query->where('location', 'header')
+                    ->orWhere('location', 'both');
+            })
+            ->get();
+
+        // Optionally, for the footer menus, you can follow the same approach
+        $footerMenus = Menu::with([
+            'children' => function ($query) {
+                $query->where('status', 1)
+                    ->with([
+                        'children' => function ($query) {
+                            $query->where('status', 1)
+                                ->with([
+                                    'children' => function ($query) {
+                                        $query->where('status', 1);
+                                    }
+                                ]);
+                        }
+                    ]);
+            }
+        ])
+            ->whereNull('parent_id')
+            ->where('status', 1) // Only include menus with status = 1
+            ->where(function ($query) {
+                $query->where('location', 'footer')
+                    ->orWhere('location', 'both');
+            })
+            ->get();
+        return view('front.login', [
+            'headerMenus' => $headerMenus,
+            'footerMenus' => $footerMenus
+        ]);
+    }
+
+    public function showRegisterForm()
+    {
+        $headerMenus = Menu::with([
+            'children' => function ($query) {
+                $query->where('status', 1)
+                    ->with([
+                        'children' => function ($query) {
+                            $query->where('status', 1)
+                                ->with([
+                                    'children' => function ($query) {
+                                        $query->where('status', 1);
+                                    }
+                                ]);
+                        }
+                    ]);
+            }
+        ])
+            ->whereNull('parent_id') // Ensure only top-level menus are fetched
+            ->where('status', 1) // Only include menus with status = 1
+            ->where(function ($query) {
+                $query->where('location', 'header')
+                    ->orWhere('location', 'both');
+            })
+            ->get();
+
+        // Optionally, for the footer menus, you can follow the same approach
+        $footerMenus = Menu::with([
+            'children' => function ($query) {
+                $query->where('status', 1)
+                    ->with([
+                        'children' => function ($query) {
+                            $query->where('status', 1)
+                                ->with([
+                                    'children' => function ($query) {
+                                        $query->where('status', 1);
+                                    }
+                                ]);
+                        }
+                    ]);
+            }
+        ])
+            ->whereNull('parent_id')
+            ->where('status', 1) // Only include menus with status = 1
+            ->where(function ($query) {
+                $query->where('location', 'footer')
+                    ->orWhere('location', 'both');
+            })
+            ->get();
+
+        return view('front.register', [
+            'headerMenus' => $headerMenus,
+            'footerMenus' => $footerMenus
+        ]);
     }
 }

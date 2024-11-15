@@ -33,9 +33,10 @@ Route::post('/cart/update', [CartController::class, 'update'])->name('cart.updat
 Route::get('/product/{id}/quick-view', [ProductController::class, 'quickView'])->name('product.quickview');
 // Route::get('/register/form', [AuthController::class, 'showRegistrationForm'])->name('front.register');
 Route::post('register', [AuthController::class, 'register'])->name('front.register.store');
-Route::get('register', function () {
-    return view('front.register');
-})->name('front.register');
+// Route::get('register', function () {
+//     return view('front.register');
+// })->name('front.register');
+Route::get('/register', [AuthController::class, 'showRegisterForm'])->name('front.register');
 
 Route::post('/login', [AuthController::class, 'login'])->name('front.login');
 
