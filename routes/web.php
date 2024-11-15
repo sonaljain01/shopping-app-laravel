@@ -18,7 +18,7 @@ use App\Http\Controllers\admin\AdminOrderController;
 use App\Http\Controllers\admin\UserController;
 use App\Http\Controllers\admin\AttributeController;
 use App\Http\Controllers\admin\CityController;
-use App\Http\Controllers\Admin\MenuController;
+use App\Http\Controllers\admin\MenuController;
 
 Route::get('/', [FrontController::class, 'index'])->name('front.home');
 
