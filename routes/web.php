@@ -53,7 +53,7 @@ Route::get('/checkout', [OrderController::class, 'checkout'])->name('front.check
 Route::post('/checkout/place-order', [OrderController::class, 'placeOrder'])->name('checkout.placeOrder');
 Route::get('/my-orders', [OrderController::class, 'myOrders'])->name('front.index');
 Route::get('/front/{user}', [OrderController::class, 'index'])->name('front.index.user');
-Route::get('/check-delivery/{city}/{state}', [OrderController::class, 'checkDelivery']);
+Route::get('/check-delivery/{city}/{state}', [OrderController::class, 'checkDelivery'])->name('check-delivery');
 
 Route::post('/wishlist/add', [WishlistController::class, 'add'])->name('wishlist.add');
 

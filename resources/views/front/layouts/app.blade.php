@@ -607,7 +607,7 @@
 
             </div>
         </div>
-        <script>
+        {{-- <script>
             document.getElementById('search-button').addEventListener('click', function() {
                 const keyword = document.getElementById('search-keyword').value;
 
@@ -637,7 +637,7 @@
                     const productHTML = `
                         <div class="product-item">
                             <img src="${product.image_url}" style="width:100px; height:auto; display:block; margin-bottom:10px;">
-                            <h5><a href="{{ route('product.show', $product->slug) }}">${product.title}<a></h5>
+                                <h5><a href="{{ route('product.show', $product->slug) }}">${product.title}<a></h5>
 
                             <p><strong>Price:</strong> Rs.${product.price}</p>
                         </div>
@@ -645,7 +645,7 @@
                     resultsContainer.innerHTML += productHTML;
                 });
             }
-        </script>
+        </script> --}}
 
 
         <!-- Wishlist -->

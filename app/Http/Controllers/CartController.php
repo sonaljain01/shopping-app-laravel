@@ -117,6 +117,7 @@ class CartController extends Controller
                     ->orWhere('location', 'both');
             })
             ->get();
+        
         return view('front.cart', compact('cartItems', 'cartItemsCount', 'headerMenus', 'footerMenus'));
     }
 

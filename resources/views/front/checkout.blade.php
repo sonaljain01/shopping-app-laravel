@@ -280,6 +280,7 @@
 
             function checkDeliveryAvailability(city, state) {
                 fetch(`/check-delivery/${city}/${state}`)
+                
                     .then(response => response.json())
                     .then(data => {
                         if (data.delivery_available) {
