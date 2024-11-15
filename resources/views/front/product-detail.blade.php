@@ -70,25 +70,7 @@
                                     </b>
                                 </div>
                             </div>
-                            {{-- <div class="prt_04 mb-4">
-                                @foreach ($product->attributes as $attribute)
-                                    <div class="form-row mb-7">
-                                        <div class="col-12 col-lg-auto">
-                                            {{ $attribute->name }}:
-                                        </div>
-                                        <b class="col-12 col-lg">
-                                            
-                                            @php
-                                                $value = $attribute->values->firstWhere(
-                                                    'id',
-                                                    $attribute->pivot->attribute_value_id,
-                                                );
-                                            @endphp
-                                            {{ $value ? $value->value : 'N/A' }}
-                                        </b>
-                                    </div>
-                                @endforeach
-                            </div> --}}
+                           
                             <div class="prt_04 mb-4">
                                 @foreach ($product->attributes->groupBy('name') as $attributeName => $attributes)
                                     <div class="attribute-item mb-2">
