@@ -1,21 +1,21 @@
 @extends('front.layouts.app')
 
 @section('content')
-<div class="gray py-3">
-    <div class="container">
-        <div class="row">
-            <div class="colxl-12 col-lg-12 col-md-12">
-                <nav aria-label="breadcrumb">
-                    <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="{{ route('front.home') }}">Home</a></li>
-                        <li class="breadcrumb-item"><a href="#">Support</a></li>
-                        <li class="breadcrumb-item active" aria-current="page">Checkout</li>
-                    </ol>
-                </nav>
+    <div class="gray py-3">
+        <div class="container">
+            <div class="row">
+                <div class="colxl-12 col-lg-12 col-md-12">
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="{{ route('front.home') }}">Home</a></li>
+                            <li class="breadcrumb-item"><a href="#">Support</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">Checkout</li>
+                        </ol>
+                    </nav>
+                </div>
             </div>
         </div>
     </div>
-</div>
     <div class="container">
         <div class="row">
             <div class="col-xl-12 text-center mb-5">
@@ -116,8 +116,8 @@
                         <div class="col-12">
                             <div class="form-group">
                                 <label for="phone">Phone <span class="text-danger">*</span></label>
-                                <input type="text" id="phone" name="phone" class="form-control" placeholder="Phone"
-                                    required />
+                                <input type="text" id="phone" name="phone" class="form-control"
+                                    placeholder="Phone" required />
                             </div>
                         </div>
 
@@ -231,7 +231,8 @@
         </div>
     </div>
 
-    <script>
+    {{-- <script>
+
         document.addEventListener("DOMContentLoaded", function() {
             const zipInput = document.getElementById('zip');
             const deliveryStatus = document.getElementById('delivery-status');
@@ -278,9 +279,28 @@
                 }
             });
 
+            // function checkDeliveryAvailability(city, state) {
+            //     fetch(`/check-delivery/${city}/${state}`)
+
+            //         .then(response => response.json())
+            //         .then(data => {
+            //             if (data.delivery_available) {
+            //                 displayMessage("Delivery is available to your location.");
+            //             } else {
+            //                 displayMessage("Sorry, we do not deliver to your location.");
+            //             }
+            //         })
+            //         .catch(error => {
+            //             console.error("Error checking delivery availability:", error);
+            //             displayMessage("Error checking delivery availability.");
+            //         });
+            // }
             function checkDeliveryAvailability(city, state) {
-                fetch(`/check-delivery/${city}/${state}`)
-                
+                // Replace placeholders in the route template with the actual city and state
+                fetch(`/{{ route('check-delivery') }}/${city}/${state}`)
+
+
+                fetch(finalUrl)
                     .then(response => response.json())
                     .then(data => {
                         if (data.delivery_available) {
@@ -304,5 +324,5 @@
             const passwordField = document.getElementById("passwordField");
             passwordField.style.display = passwordField.style.display === "none" ? "block" : "none";
         }
-    </script>
+    </script> --}}
 @endsection
