@@ -195,8 +195,11 @@ Route::group(['prefix' => 'admin'], function () {
                 'edit' => 'admin.menus.edit',
                 'update' => 'admin.menus.update',
                 'destroy' => 'admin.menus.destroy',
+               
             ]
         ]);
+        Route::post('/admin/menus/update-order', [MenuController::class, 'updateOrder'])->name('admin.menus.updateOrder');
+
 
     });
 

@@ -12,13 +12,17 @@ class MenuController extends Controller
     {
 
         $menus = Menu::orderBy('name');  // Get cities with state information and paginate get();  // Get cities with state information
-        
+
         if ($request->get('keyword') != "") {
             $menus = $menus->where('menus.name', 'like', '%' . $request->keyword . '%');
-            
+
 
         }
         $menus = $menus->paginate(10);
+        $menus = Menu::whereNull('parent_id')
+        ->with('children')
+        ->orderBy('order') // Order by the 'order' column to display correctly
+        ->get();
         return view('admin.menu.index', compact('menus'));
     }
 
@@ -79,9 +83,26 @@ class MenuController extends Controller
         foreach ($menus as $menu) {
             $menu->depth = $depth;
             $menu->save();
-            $this->getDepth($menu->id, $depth + 1); 
+            $this->getDepth($menu->id, $depth + 1);
         }
 
         return $menus;
     }
+
+    public function updateOrder(Request $request)
+    {
+        $order = $request->input('order');
+
+        // foreach ($order as $menuData) {
+        //     $menu = Menu::find($menuData['id']);
+        //     $menu->order = $menuData['position'];
+        //     $menu->save();
+        // }
+        foreach ($order as $index => $menu) {
+            Menu::where('id', $menu['id'])->update(['order' => $index + 1]);
+        }
+
+        return response()->json(['success' => true, 'message' => 'Menu order updated successfully.']);
+    }
+
 }

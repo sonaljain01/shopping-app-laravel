@@ -59,6 +59,7 @@ class FrontController extends Controller
                 $query->where('location', 'header')
                     ->orWhere('location', 'both');
             })
+            
             ->get();
 
         // Optionally, for the footer menus, you can follow the same approach
