@@ -91,18 +91,31 @@ class MenuController extends Controller
 
     public function updateOrder(Request $request)
     {
-        $order = $request->input('order');
+        // $order = $request->input('order');
 
-        // foreach ($order as $menuData) {
-        //     $menu = Menu::find($menuData['id']);
-        //     $menu->order = $menuData['position'];
-        //     $menu->save();
+        // // foreach ($order as $menuData) {
+        // //     $menu = Menu::find($menuData['id']);
+        // //     $menu->order = $menuData['position'];
+        // //     $menu->save();
+        // // }
+        // foreach ($order as $index => $menu) {
+        //     Menu::where('id', $menu['id'])->update(['order' => $index + 1]);
         // }
-        foreach ($order as $index => $menu) {
-            Menu::where('id', $menu['id'])->update(['order' => $index + 1]);
+        // // $menu = Menu::findOrFail($request->item_id);
+        // // $menu->parent_id = $request->parent_id; // Update the parent_id field
+        // // $menu->save();
+
+        // return response()->json(['success' => true, 'message' => 'Menu order updated successfully.']);
+        $orderData = $request->order;
+        foreach ($orderData as $item) {
+            $menu = Menu::find($item['id']);
+            $menu->update([
+                'order' => $item['order'],
+                'parent_id' => $item['parent_id']
+            ]);
         }
 
-        return response()->json(['success' => true, 'message' => 'Menu order updated successfully.']);
+        return response()->json(['status' => 'success', 'message' => 'Menu order updated successfully']);
     }
 
 }
