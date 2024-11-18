@@ -105,7 +105,6 @@
     </section>
 @endsection
 
-
 @section('customJs')
     <script>
         function deleteState(id) {
@@ -122,9 +121,10 @@
                     },
                     success: function(response) {
 
-                        if (response["status"]) {
-
-                            window.location.href = "{{ route('state.index') }}"
+                        if (response.status == 'error') {
+                            alert(response.message);
+                        } else {
+                            location.reload();
                         }
                     }
                 });

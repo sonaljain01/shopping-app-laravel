@@ -125,8 +125,11 @@ class CityController extends Controller
     {
         $city = City::findOrFail($cityId);
         $city->delete();
-        
-        return redirect()->route('city.index')->with('success', 'City deleted successfully!');
+        $request->session()->flash('success', 'City deleted successfully!');
+        return response()->json([
+            'status' => true,
+            'message' => 'City deleted successfully'
+        ]);
 
     }
 }

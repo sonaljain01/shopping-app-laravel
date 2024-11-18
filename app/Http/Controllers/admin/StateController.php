@@ -109,9 +109,21 @@ class StateController extends Controller
     public function destroy($stateId, Request $request)
     {
         $state = State::findOrFail($stateId);
+        if ($state->cities()->count() > 0) {
+            // If the state has cities, show an error message and don't delete the state
+            $request->session()->flash('error', 'State cannot be deleted because it has associated cities.');
+            return response()->json([
+                'status' => false,
+                'message' => 'State cannot be deleted because it has associated cities.'
+            ]);
+        }
         $state->delete();
-        // $request->session()->flash('success', 'City deleted successfully');
-        return redirect()->route('state.index')->with('success', 'State deleted successfully!');
+        $request->session()->flash('success', 'State deleted successfully');
+        // return redirect()->route('state.index')->with('success', 'State deleted successfully!');
+        return response()->json([
+            'status' => true,
+            'message' => 'State deleted successfully'
+        ]);
 
     }
 }
