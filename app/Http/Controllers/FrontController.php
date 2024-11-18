@@ -3,10 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
+use App\Models\State;
 use Illuminate\Http\Request;
 use App\Models\Category;
 use App\Models\Brand;
 use App\Models\Menu;
+use App\Models\City;
 class FrontController extends Controller
 {
     public function index(Request $request)
@@ -41,7 +43,7 @@ class FrontController extends Controller
         $headerMenus = Menu::with([
             'children' => function ($query) {
                 $query->where('status', 1)
-                ->orderBy('order', 'asc')
+                    ->orderBy('order', 'asc')
                     ->with([
                         'children' => function ($query) {
                             $query->where('status', 1)
@@ -61,9 +63,9 @@ class FrontController extends Controller
             ->where(function ($query) {
                 $query->where('location', 'header')
                     ->orWhere('location', 'both');
-                    
-                })
-                
+
+            })
+
             ->orderBy('order', 'asc')
             ->get();
 
@@ -71,15 +73,15 @@ class FrontController extends Controller
         $footerMenus = Menu::with([
             'children' => function ($query) {
                 $query->where('status', 1)
-                ->orderBy('order', 'asc')
+                    ->orderBy('order', 'asc')
                     ->with([
                         'children' => function ($query) {
                             $query->where('status', 1)
-                            ->orderBy('order', 'asc')
+                                ->orderBy('order', 'asc')
                                 ->with([
                                     'children' => function ($query) {
                                         $query->where('status', 1)
-                                        ->orderBy('order', 'asc');
+                                            ->orderBy('order', 'asc');
                                     }
                                 ]);
                         }
@@ -105,5 +107,5 @@ class FrontController extends Controller
 
     }
 
- 
+
 }
