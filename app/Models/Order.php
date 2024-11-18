@@ -38,4 +38,8 @@ class Order extends Model
         return $this->hasMany(OrderHistory::class);
     }
 
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
+    }
 }

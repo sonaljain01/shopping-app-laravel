@@ -23,13 +23,13 @@ class CategoryController extends Controller
 
         return view('admin.category.list', compact('categories'));
     }
-    
+
 
     public function create()
     {
 
         $categories = Category::with('children')->whereNull('parent_id')->get();
-    
+
         return view('admin.category.create', compact('categories'));
     }
 
@@ -61,7 +61,7 @@ class CategoryController extends Controller
 
             $request->session()->flash('success', 'Category created successfully');
             return redirect()->route('categories.index');
-           
+
         } else {
             $request->session()->flash('error', $validator->errors()->first());
             return redirect()->route('categories.index');
@@ -80,12 +80,12 @@ class CategoryController extends Controller
 
     public function update($id, Request $request)
     {
-        
+
         $category = Category::where('id', $id)->first();
-        
+
         $rules = [
             'name' => 'required',
-            'slug' => 'required|unique:categories,slug,'. $category->id . ',id',
+            'slug' => 'required|unique:categories,slug,' . $category->id . ',id',
             'parent_id' => 'nullable|exists:categories,id',
         ];
 
@@ -103,7 +103,7 @@ class CategoryController extends Controller
             $request->session()->flash('error', $validator->errors()->first());
             return redirect()->route('categories.index');
         }
-           
+
     }
 
     public function destroy($categoryId, Request $request)
@@ -112,7 +112,13 @@ class CategoryController extends Controller
         if (empty($category)) {
             return redirect()->route('categories.index');
         }
-
+        // $orders = $category->orders()->exists(); // Assuming there's a relationship between Category and Order
+        // if ($orders) {
+        //     return response()->json([
+        //         'status' => false,
+        //         'message' => 'Category cannot be deleted as it has associated orders'
+        //     ]);
+        // }
         File::delete(public_path() . '/uploads/category/' . $category->image);
 
         $category->delete();
