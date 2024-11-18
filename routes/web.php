@@ -17,6 +17,8 @@ use App\Http\Controllers\FacebookController;
 use App\Http\Controllers\admin\AdminOrderController;
 use App\Http\Controllers\admin\UserController;
 use App\Http\Controllers\admin\AttributeController;
+use App\Http\Controllers\admin\StateController;
+
 use App\Http\Controllers\admin\CityController;
 use App\Http\Controllers\admin\MenuController;
 
@@ -173,6 +175,14 @@ Route::group(['prefix' => 'admin'], function () {
         Route::get('download-attribute-values', [ProductController::class, 'downloadAttributeValues'])->name('admin.download.attribute-values');
 
 
+        //states
+        Route::get('/states', [StateController::class, 'index'])->name('state.index');
+        Route::patch('/states/{id}/toggle', [StateController::class, 'toggleStatus'])->name('state.toggle');
+        Route::get('/states/create', [StateController::class, 'create'])->name('state.create');
+        Route::post('/states/create', [StateController::class, 'storeState'])->name('state.store');
+        Route::get('states/{id}/edit', [StateController::class, 'edit'])->name('state.edit');
+        Route::put('states/{id}', [StateController::class, 'update'])->name('state.update');
+        Route::delete('/states/{state}', [StateController::class, 'destroy'])->name('state.delete');
         //cities
         Route::get('/cities', [CityController::class, 'index'])->name('city.index');
         Route::post('/cities', [CityController::class, 'storeCity'])->name('city.store');

@@ -11,7 +11,7 @@ class State extends Model
 
     protected $fillable = [
         'name',
-        
+        'is_enabled'
     ];
 
     public function cities()

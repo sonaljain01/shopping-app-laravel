@@ -58,9 +58,16 @@
                 </li>
                 
                 <li class="nav-item">
+                    <a href="{{ route('state.index') }}" class="nav-link">
+                        <i class="fas fa-truck nav-icon"></i>
+                        <p>Shipping States</p>
+                    </a>
+                </li>
+
+                <li class="nav-item">
                     <a href="{{ route('city.index') }}" class="nav-link">
-                        <i class="nav-icon fas fa-columns"></i>
-                        <p>Cities</p>
+                        <i class="fas fa-truck nav-icon"></i>
+                        <p>Shipping Cities</p>
                     </a>
                 </li>
                 <li class="nav-item">
