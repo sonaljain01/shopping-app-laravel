@@ -6,9 +6,12 @@
 </section>
 
 <section class="content">
+    @include('admin.message')
     <div class="card">
         <div class="card-header">
             <a href="{{ route('admin.menus.create') }}" class="btn btn-success">Add Menu</a>
+            <a href="{{ route('admin.menus.manageLocations') }}" class="btn btn-info">Manage Locations</a>
+
         </div>
         <div class="card-body">
             <ul id="menuList" class="list-group">

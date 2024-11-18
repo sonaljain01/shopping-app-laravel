@@ -210,7 +210,8 @@ Route::group(['prefix' => 'admin'], function () {
             ]
         ]);
         Route::post('/admin/menus/update-order', [MenuController::class, 'updateOrder'])->name('admin.menus.updateOrder');
-
+        Route::get('admin/menus/manage-locations', [MenuController::class, 'manageLocations'])->name('admin.menus.manageLocations');
+        Route::post('admin/menus/update-locations', [MenuController::class, 'updateLocations'])->name('admin.menus.updateLocations');
 
     });
 

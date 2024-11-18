@@ -20,9 +20,9 @@ class MenuController extends Controller
         }
         $menus = $menus->paginate(10);
         $menus = Menu::whereNull('parent_id')
-        ->with('children')
-        ->orderBy('order') // Order by the 'order' column to display correctly
-        ->get();
+            ->with('children')
+            ->orderBy('order') // Order by the 'order' column to display correctly
+            ->get();
         return view('admin.menu.index', compact('menus'));
     }
 
@@ -70,8 +70,12 @@ class MenuController extends Controller
         return redirect()->route('admin.menus.index')->with('success', 'Menu updated successfully.');
     }
 
-    public function destroy(Menu $menu)
+    public function destroy(Menu $menu, Request $request)   
     {
+        if ($menu->children()->exists()) {
+            $request->session()->flash('error', 'Menu cannot be deleted as it has child menus.');
+            return redirect()->route('admin.menus.index')->with('error', 'Menu cannot be deleted as it has child menus.');
+        }
         $menu->delete();
         return redirect()->route('admin.menus.index')->with('success', 'Menu deleted successfully.');
     }
@@ -91,21 +95,6 @@ class MenuController extends Controller
 
     public function updateOrder(Request $request)
     {
-        // $order = $request->input('order');
-
-        // // foreach ($order as $menuData) {
-        // //     $menu = Menu::find($menuData['id']);
-        // //     $menu->order = $menuData['position'];
-        // //     $menu->save();
-        // // }
-        // foreach ($order as $index => $menu) {
-        //     Menu::where('id', $menu['id'])->update(['order' => $index + 1]);
-        // }
-        // // $menu = Menu::findOrFail($request->item_id);
-        // // $menu->parent_id = $request->parent_id; // Update the parent_id field
-        // // $menu->save();
-
-        // return response()->json(['success' => true, 'message' => 'Menu order updated successfully.']);
         $orderData = $request->order;
         foreach ($orderData as $item) {
             $menu = Menu::find($item['id']);
@@ -116,6 +105,25 @@ class MenuController extends Controller
         }
 
         return response()->json(['status' => 'success', 'message' => 'Menu order updated successfully']);
+    }
+
+    public function manageLocations()
+    {
+        // Fetch only parent menus
+        $menus = Menu::whereNull('parent_id')->get();
+
+        return view('admin.menu.manage-locations', compact('menus'));
+    }
+
+    public function updateLocations(Request $request)
+    {
+        $data = $request->input('locations', []);
+
+        foreach ($data as $menuId => $location) {
+            Menu::where('id', $menuId)->update(['location' => $location]);
+        }
+
+        return redirect()->route('admin.menus.manageLocations')->with('success', 'Locations updated successfully.');
     }
 
 }
