@@ -70,7 +70,7 @@
                                     </b>
                                 </div>
                             </div>
-                           
+
                             <div class="prt_04 mb-4">
                                 @foreach ($product->attributes->groupBy('name') as $attributeName => $attributes)
                                     <div class="attribute-item mb-2">
@@ -117,6 +117,95 @@
                                     </b>
                                 </div>
                             </div>
+
+                            <div class="prt_04 mb-4">
+                                <div class="form-group">
+                                    <label for="zip">Check Availability:</label>
+                                    <input type="text" id="zip" class="form-control" placeholder="Enter your pincode">
+                                    <div id="delivery-status" class="mt-2"></div>
+                                    <input type="hidden" id="city">
+                                    <input type="hidden" id="state">
+                                </div>
+                            </div>
+                            
+                            <script>
+                                document.addEventListener("DOMContentLoaded", function() {
+                                    const zipInput = document.getElementById('zip');
+                                    const deliveryStatus = document.getElementById('delivery-status');
+                            
+                                    if (!deliveryStatus) {
+                                        console.error("Delivery status element not found!");
+                                        return;
+                                    }
+
+                                    zipInput.addEventListener('input', function() {
+                                        const zip = zipInput.value.trim();
+                            
+                                        if (zip) {
+                                            fetch(`https://api.postalpincode.in/pincode/${zip}`)
+                                                .then(response => response.json())
+                                                .then(data => {
+                                                    if (data[0].Status === 'Success') {
+                                                        const city = data[0].PostOffice[0].Division;
+                                                        const state = data[0].PostOffice[0].State;
+                            
+                                                        const cityInput = document.getElementById('city');
+                                                        const stateInput = document.getElementById('state');
+                            
+                                                        if (cityInput && stateInput) {
+                                                            cityInput.value = city;
+                                                            stateInput.value = state;
+                            
+                                                            checkDeliveryAvailability(city, state);
+                                                        } else {
+                                                            console.error('City or State input field not found.');
+                                                        }
+                                                    } else {
+                                                        displayMessage("Invalid pincode or no delivery available.");
+                                                    }
+                                                })
+                                                .catch(error => {
+                                                    console.error('Error fetching zip code data:', error);
+                                                    displayMessage("Error checking delivery availability.");
+                                                });
+                                        } else {
+                                            displayMessage("Please enter a valid zip code.");
+                                        }
+                                    });
+                            
+                                    function checkDeliveryAvailability(city, state) {
+                                        const routeTemplate = `{{ route('check-delivery', ['city' => '__CITY__', 'state' => '__STATE__']) }}`;
+                                        const finalUrl = routeTemplate
+                                            .replace('__CITY__', encodeURIComponent(city))
+                                            .replace('__STATE__', encodeURIComponent(state));
+                            
+                                        fetch(finalUrl)
+                                            .then(response => response.json())
+                                            .then(data => {
+                                                if (data.delivery_available) {
+                                                    displayMessage("Delivery is available to your location.");
+                                                    deliveryStatus.classList.remove('text-danger');
+                                                    deliveryStatus.classList.add('text-success');
+                                                } else {
+                                                    displayMessage("Sorry, we do not deliver to your location.");
+                                                    deliveryStatus.classList.remove('text-success');
+                                                    deliveryStatus.classList.add('text-danger');
+                                                }
+                                            })
+                                            .catch(error => {
+                                                console.error("Error checking delivery availability:", error);
+                                                displayMessage("Error checking delivery availability.");
+                                                deliveryStatus.classList.remove('text-success');
+                                                deliveryStatus.classList.add('text-danger');
+                                            });
+                                    }
+                            
+                                    function displayMessage(message) {
+                                        deliveryStatus.textContent = message;
+                                    }
+                                });
+                            </script>
+                            
 
                             <div class="prt_05 mb-4">
                                 <div class="form-row mb-7">
@@ -702,4 +791,7 @@
             </div>
         </section>
     </div>
+@endsection
+
+@section('customJs')
 @endsection

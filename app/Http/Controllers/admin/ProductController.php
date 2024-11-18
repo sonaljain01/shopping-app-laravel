@@ -15,6 +15,7 @@ use DB;
 use App\Models\Attribute;
 use App\Models\AttributeValue;
 use App\Models\Menu;
+use App\Models\City;
 
 class ProductController extends Controller
 {
@@ -448,7 +449,7 @@ class ProductController extends Controller
             'id',
             'name'
         ];
-       
+
         return response()->streamDownload(function () use ($attributes, $headers) {
             $file = fopen('php://output', 'w');
             fputcsv($file, $headers);
@@ -457,7 +458,7 @@ class ProductController extends Controller
             }
             fclose($file);
         }, 'attributes.csv');
-        
+
     }
 
 
@@ -587,7 +588,7 @@ class ProductController extends Controller
             'value',
             'attribute_id',
         ];
-       
+
         return response()->streamDownload(function () use ($attributeValues, $headers) {
             $file = fopen('php://output', 'w');
             fputcsv($file, $headers);
@@ -597,4 +598,5 @@ class ProductController extends Controller
             fclose($file);
         }, 'attribute_values.csv');
     }
+
 }

@@ -57,26 +57,31 @@
                     </a>
                 </li>
                 
-                <li class="nav-item">
-                    <a href="{{ route('state.index') }}" class="nav-link">
-                        <i class="fas fa-truck nav-icon"></i>
-                        <p>Shipping States</p>
-                    </a>
-                </li>
-
-                <li class="nav-item">
-                    <a href="{{ route('city.index') }}" class="nav-link">
-                        <i class="fas fa-truck nav-icon"></i>
-                        <p>Shipping Cities</p>
-                    </a>
-                </li>
-                <li class="nav-item">
+                
+                <li class="nav-item {{ request()->routeIs('state.index') || request()->routeIs('city.index') ? 'menu-open' : '' }}">
                     <a href="#" class="nav-link">
-                        <!-- <i class="nav-icon fas fa-tag"></i> -->
                         <i class="fas fa-truck nav-icon"></i>
-                        <p>Shipping</p>
+                        <p>
+                            Shipping
+                            <i class="right fas fa-angle-left"></i>
+                        </p>
                     </a>
-                </li>							
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="{{ route('state.index') }}" class="nav-link {{ request()->routeIs('state.index') ? 'active' : '' }}">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Shipping States</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('city.index') }}" class="nav-link {{ request()->routeIs('city.index') ? 'active' : '' }}">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Shipping Cities</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                                        
                 <li class="nav-item">
                     <a href="{{ route('orders.index') }}" class="nav-link">
                         <i class="nav-icon fas fa-shopping-bag"></i>
