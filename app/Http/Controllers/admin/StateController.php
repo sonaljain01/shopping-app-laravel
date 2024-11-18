@@ -65,7 +65,7 @@ class StateController extends Controller
         $state->save();
 
         // Update the status of all cities within the state
-        $state->cities()->update(['is_enabled' => $state->is_enabled]);
+        // $state->cities()->update(['is_enabled' => $state->is_enabled]);
         return redirect()->route('state.index')->with('success', 'State status updated successfully.');
     }
 

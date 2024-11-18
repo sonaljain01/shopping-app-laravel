@@ -6,6 +6,7 @@ use App\Models\BillingAddress;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\PaymentMethod;
+use App\Models\State;
 use Illuminate\Http\Request;
 use App\Models\Product;
 use DB;
@@ -419,14 +420,26 @@ class OrderController extends Controller
 
     public function checkDelivery($cityName, $stateName)
     {
+        $state = State::where('name', $stateName)->where('is_enabled', 1)->first();
+
+        if (!$state) {
+            // If the state is not enabled, return delivery not available
+            return ['delivery_available' => false, 'message' => 'Delivery not available. State is disabled.'];
+        }
+
+        // If the state is enabled, now check the city
         $city = City::where('name', $cityName)
-            ->whereHas('state', function ($query) use ($stateName) {
-                $query->where('name', $stateName);
-            })
-            ->where('is_enabled', 1)
+            ->where('is_enabled', 1) // Ensure the city is enabled
+            ->where('state_id', $state->id) // Ensure the city belongs to the correct enabled state
             ->first();
 
-        return $city ? ['delivery_available' => true] : ['delivery_available' => false];
-        
+        // Check if both state and city are enabled
+        if ($city) {
+            return ['delivery_available' => true, 'message' => 'Delivery is available.'];
+        } else {
+            return ['delivery_available' => false, 'message' => 'Delivery not available. City is disabled or does not exist.'];
+        }
+
+
     }
 }
