@@ -62,14 +62,11 @@
                                         </span>
                                     </td>
                                     <td>
-                                        <form action="#" method="POST">
+                                        <form action="{{ route('city.toggle', $city->id) }}" method="POST">
                                             @csrf
-                                            <button type="submit" class="btn btn-warning">
-                                                @if ($city->is_enabled)
-                                                    Enable Delivery
-                                                @else
-                                                    Disable Delivery
-                                                @endif
+                                            @method('PATCH')
+                                            <button type="submit" class="btn {{ $city->is_enabled ? 'btn-danger' : 'btn-success' }}">
+                                                {{ $city->is_enabled ? 'Disable Delivery' : 'Enable Delivery' }}
                                             </button>
                                         </form>
                                     </td>

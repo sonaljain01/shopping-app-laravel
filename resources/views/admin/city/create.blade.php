@@ -68,26 +68,7 @@
                             </div>
                         </div>
             
-                        <div class="row">
-                            <!-- Pincode Dropdown (or text input if you prefer manual entry) -->
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label for="pincode">Pincode</label>
-                                    <input type="text" name="pincode" id="pincode" class="form-control" placeholder="Enter Pincode" required>
-                                </div>
-                            </div>
-            
-                            <!-- City Status (Active/Blocked) -->
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label for="is_enabled">City Status</label>
-                                    <select name="is_enabled" id="is_enabled" class="form-control" required>
-                                        <option value="1">enabled</option>
-                                        <option value="0">disabled</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
+                       
                     </div>
                 </div>
             

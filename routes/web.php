@@ -186,7 +186,7 @@ Route::group(['prefix' => 'admin'], function () {
         //cities
         Route::get('/cities', [CityController::class, 'index'])->name('city.index');
         Route::post('/cities', [CityController::class, 'storeCity'])->name('city.store');
-        Route::post('/cities/{city}/toggle', [CityController::class, 'toggleCityDelivery'])->name('city.toggle');
+        Route::patch('/cities/{id}/toggle', [CityController::class, 'toggleCityDelivery'])->name('city.toggle');
         Route::get('/cities/create', [CityController::class, 'create'])->name('city.create');
         Route::post('/cities/create', [CityController::class, 'storeCity'])->name('city.store');
         Route::get('cities/{id}/edit', [CityController::class, 'edit'])->name('city.edit');

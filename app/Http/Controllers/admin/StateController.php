@@ -45,7 +45,7 @@ class StateController extends Controller
         $stateExists = State::where('name', $validated['name'])->first();
 
         if ($stateExists) {
-            return redirect()->back()->withErrors(['name' => 'This state already exists.'])->withInput();
+            return redirect()->back()->withErrors(['error' => 'This state already exists.'])->withInput();
         }
 
         $state = new State();
@@ -55,7 +55,7 @@ class StateController extends Controller
 
         // Create the new pincode if it doesn't exist
 
-        return redirect()->route('state.index');
+        return redirect()->route('state.index')->with('success', 'State created successfully.');
     }
 
     public function toggleStatus($id)
@@ -64,6 +64,8 @@ class StateController extends Controller
         $state->is_enabled = !$state->is_enabled;
         $state->save();
 
+        // Update the status of all cities within the state
+        $state->cities()->update(['is_enabled' => $state->is_enabled]);
         return redirect()->route('state.index')->with('success', 'State status updated successfully.');
     }
 
@@ -91,7 +93,7 @@ class StateController extends Controller
         $stateExists = State::where('name', $validated['name'])->first();
 
         if ($stateExists) {
-            return redirect()->route('state.index')->with(['name' => 'This state already exists in the selected state.'])->withInput();
+            return redirect()->route('state.index')->with(['error' => 'This state already exists in the selected state.'])->withInput();
         }
 
         // Update the city details
@@ -101,7 +103,7 @@ class StateController extends Controller
 
       
 
-        return redirect()->route('state.index')->with('status', 'State updated successfully!');
+        return redirect()->route('state.index')->with('success', 'State updated successfully!');
     }
 
     public function destroy($stateId, Request $request)
@@ -109,7 +111,7 @@ class StateController extends Controller
         $state = State::findOrFail($stateId);
         $state->delete();
         // $request->session()->flash('success', 'City deleted successfully');
-        return redirect()->route('state.index')->with('status', 'State deleted successfully!');
+        return redirect()->route('state.index')->with('success', 'State deleted successfully!');
 
     }
 }
