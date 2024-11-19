@@ -81,7 +81,7 @@ class AdminOrderController extends Controller
         return redirect()->route('orders.detail', $orderId)->with('success', 'Order status updated successfully');
     }
 
-    public function downloadInvoice($orderId)
+    public function viewInvoice($orderId)
     {
         $order = Order::select('orders.*', 'billing_addresses.*')
             ->where('orders.id', $orderId)
@@ -106,6 +106,7 @@ class AdminOrderController extends Controller
         ]);
 
         // Download the PDF with a filename based on the order ID
-        return $pdf->download('invoice-' . $order->id . '.pdf');
+        // return $pdf->download('invoice-' . $order->id . '.pdf');
+        return $pdf->stream('invoice-' . $order->id . '.pdf');
     }
 }

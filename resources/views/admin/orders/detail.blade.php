@@ -122,10 +122,10 @@
                     </div>
                     <div class="card">
                         <div class="card-body">
-                            <h2 class="h4 mb-3">Download Invoice</h2>
+                            <h2 class="h4 mb-3">View Invoice</h2>
                             <div class="mb-3">
-                                <a href="{{ route('admin.orders.downloadInvoice', $order->id) }}" class="btn btn-primary">
-                                    Download Invoice
+                                <a href="{{ route('admin.orders.viewInvoice', $order->id) }}" target="_blank" class="btn btn-primary">
+                                    View Invoice
                                 </a>
                                 
                             </div>

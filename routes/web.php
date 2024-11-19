@@ -144,8 +144,8 @@ Route::group(['prefix' => 'admin'], function () {
 
 
 
-        Route::get('/admin/orders/{orderId}/download-invoice', [AdminOrderController::class, 'downloadInvoice'])
-            ->name('admin.orders.downloadInvoice');
+        Route::get('/orders/{orderId}/view-invoice', [AdminOrderController::class, 'viewInvoice'])
+            ->name('admin.orders.viewInvoice');
 
         Route::get('/attributes', [AttributeController::class, 'index'])->name('attributes.index');
         Route::get('attributes/create', [AttributeController::class, 'create'])->name('attributes.create');
