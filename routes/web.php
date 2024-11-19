@@ -128,7 +128,6 @@ Route::group(['prefix' => 'admin'], function () {
         Route::get('/orders', [AdminOrderController::class, 'index'])->name(name: 'orders.index');
         Route::get('/orders/{id}', [AdminOrderController::class, 'detail'])->name(name: 'orders.detail');
         Route::post('/order/change-status/{id}', [AdminOrderController::class, 'changeOrderStatus'])->name(name: 'orders.changeOrderStatus');
-        Route::get('orders/{orderId}/generate-invoice-pdf', [AdminOrderController::class, 'generateInvoicePDF'])->name('admin.orders.generateInvoicePDF');
         Route::get('/orders/{orderId}/view-invoice', [AdminOrderController::class, 'viewInvoice'])
             ->name('admin.orders.viewInvoice');
         Route::get('orders/{orderId}/print-invoice', [AdminOrderController::class, 'printInvoice'])->name('orders.printInvoice');

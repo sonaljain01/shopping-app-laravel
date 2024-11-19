@@ -84,45 +84,28 @@ class AdminOrderController extends Controller
     public function viewInvoice($orderId)
     {
         // Retrieve the order with its billing address and items
-        $order = Order::with('billingAddress')
-            ->where('id', $orderId)
+        $order = Order::select('orders.*', 'billing_addresses.*')
+            ->where('orders.id', $orderId)
+            ->leftJoin('billing_addresses', 'orders.billing_address_id', '=', 'billing_addresses.id')
             ->first();
 
+        // Retrieve order items with product details
+        $orderItems = OrderItem::select('order_items.*', 'products.*')
+            ->where('order_id', $orderId)
+            ->rightJoin('products', 'order_items.product_id', '=', 'products.id')
+            ->get();
+
+        // Check if order exists
         if (!$order) {
             return redirect()->route('orders.index')->with('error', 'Order not found');
         }
 
-        // Retrieve order items with product details
-        $orderItems = OrderItem::with('product')
-            ->where('order_id', $orderId)
-            ->get();
-
-        // Generate the PDF
+        // Load the PDF view
         $pdf = Pdf::loadView('invoices.invoice', [
             'order' => $order,
-            'orderItems' => $orderItems,
+            'orderItems' => $orderItems
         ]);
 
-        // $pdfContent = $pdf->output();
-
-        // if (request()->has('print')) {
-        //     // Optionally send the PDF to PrintNode for printing
-        //     $printResult = $this->sendToPrintNode(base64_encode($pdfContent), 'Invoice-' . $order->id);
-
-        //     if ($printResult['success']) {
-        //         return response($pdfContent, 200, [
-        //             'Content-Type' => 'application/pdf',
-        //             'Content-Disposition' => 'inline; filename="invoice-' . $order->id . '.pdf"',
-        //         ]);
-        //     }
-
-        //     return redirect()->route('orders.index')->with(
-        //         'error',
-        //         'Failed to send invoice to printer: ' . $printResult['error']
-        //     );
-        // }
-
-        // Stream the PDF for inline viewing
         return $pdf->stream('invoice-' . $order->id . '.pdf');
     }
 
@@ -168,45 +151,23 @@ class AdminOrderController extends Controller
         }
     }
 
-
-    // public function generateInvoicePDF($orderId)
-    // {
-    //     $order = Order::select('orders.*', 'billing_addresses.*')
-    //         ->where('orders.id', $orderId)
-    //         ->leftJoin('billing_addresses', 'orders.billing_address_id', '=', 'billing_addresses.id')
-    //         ->first();
-
-    //     $orderItems = OrderItem::select('order_items.*', 'products.*')
-    //         ->where('order_id', $orderId)
-    //         ->rightJoin('products', 'order_items.product_id', '=', 'products.id')
-    //         ->get();
-
-    //     if (!$order) {
-    //         return response()->json(['error' => 'Order not found'], 404);
-    //     }
-
-    //     $pdf = Pdf::loadView('invoices.invoice', [
-    //         'order' => $order,
-    //         'orderItems' => $orderItems
-    //     ]);
-
-    //     $pdfContent = base64_encode($pdf->output());
-
-    //     return response()->json(['content' => $pdfContent]);
-    // }
-
     public function printInvoice($orderId)
     {
-        // Retrieve the order with its billing address
-        $order = Order::with('billingAddress')->find($orderId);
+        $order = Order::select('orders.*', 'billing_addresses.*')
+            ->where('orders.id', $orderId)
+            ->leftJoin('billing_addresses', 'orders.billing_address_id', '=', 'billing_addresses.id')
+            ->first();
 
+        // Retrieve order items with product details
+        $orderItems = OrderItem::select('order_items.*', 'products.*')
+            ->where('order_id', $orderId)
+            ->rightJoin('products', 'order_items.product_id', '=', 'products.id')
+            ->get();
+
+        // Check if order exists
         if (!$order) {
             return redirect()->route('orders.index')->with('error', 'Order not found');
         }
-
-        // Retrieve the order items with product details
-        $orderItems = OrderItem::with('product')->where('order_id', $orderId)->get();
-
         // Generate the PDF
         $pdf = $this->generateInvoicePdf($order, $orderItems);
 
