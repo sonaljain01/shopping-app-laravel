@@ -109,48 +109,6 @@ class AdminOrderController extends Controller
         return $pdf->stream('invoice-' . $order->id . '.pdf');
     }
 
-    private function sendToPrintNode($pdfBase64, $title)
-    {
-        $apiKey = env('PRINTNODE_API_KEY');
-        $desktopId = env('PRINTNODE_DESKTOP_ID'); // Allow desktop ID to be configurable
-
-        $client = new \GuzzleHttp\Client();
-
-        try {
-            $response = $client->post('https://api.printnode.com/printjobs', [
-                'auth' => [$apiKey, env('PRINTNODE_API_SECRET')],
-                'json' => [
-                    'printerId' => $desktopId,
-                    'title' => $title,
-                    'contentType' => 'pdf_base64',
-                    'content' => $pdfBase64,
-                ],
-            ]);
-
-            if ($response->getStatusCode() === 201) {
-                return ['success' => true];
-            }
-
-            return ['success' => false, 'error' => 'Unexpected response from PrintNode'];
-        } catch (\Exception $e) {
-            return ['success' => false, 'error' => $e->getMessage()];
-        }
-    }
-
-
-    public function getPrinters()
-    {
-        $apiKey = env('PRINTNODE_API_KEY');
-        $response = \Http::withBasicAuth($apiKey, env('PRINTNODE_API_SECRET'))
-            ->get('https://api.printnode.com/printers');
-
-        if ($response->successful()) {
-            return $response->json();
-        } else {
-            return response()->json(['error' => 'Failed to fetch printers'], $response->status());
-        }
-    }
-
     public function printInvoice($orderId)
     {
         $order = Order::select('orders.*', 'billing_addresses.*')
@@ -199,6 +157,46 @@ class AdminOrderController extends Controller
             ->setOption('enable_font_subsetting', true); // Optimize fonts
     }
 
+    private function sendToPrintNode($pdfBase64, $title)
+    {
+        $apiKey = env('PRINTNODE_API_KEY');
+        $desktopId = env('PRINTNODE_DESKTOP_ID'); // Allow desktop ID to be configurable
 
+        $client = new \GuzzleHttp\Client();
+
+        try {
+            $response = $client->post('https://api.printnode.com/printjobs', [
+                'auth' => [$apiKey, env('PRINTNODE_API_SECRET')],
+                'json' => [
+                    'printerId' => $desktopId,
+                    'title' => $title,
+                    'contentType' => 'pdf_base64',
+                    'content' => $pdfBase64,
+                ],
+            ]);
+
+            if ($response->getStatusCode() === 201) {
+                return ['success' => true];
+            }
+
+            return ['success' => false, 'error' => 'Unexpected response from PrintNode'];
+        } catch (\Exception $e) {
+            return ['success' => false, 'error' => $e->getMessage()];
+        }
+    }
+
+
+    public function getPrinters()
+    {
+        $apiKey = env('PRINTNODE_API_KEY');
+        $response = \Http::withBasicAuth($apiKey, env('PRINTNODE_API_SECRET'))
+            ->get('https://api.printnode.com/printers');
+
+        if ($response->successful()) {
+            return $response->json();
+        } else {
+            return response()->json(['error' => 'Failed to fetch printers'], $response->status());
+        }
+    }
 
 }
