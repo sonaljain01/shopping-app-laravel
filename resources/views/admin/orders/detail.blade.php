@@ -46,6 +46,8 @@
                                         <span class="badge badge-danger">Cancelled</span>
                                     @elseif($order->status == 'completed')
                                         <span class="badge badge-success">Completed</span>
+                                    @elseif($order->status == 'shipped')
+                                        <span class="badge badge-info">Shipped</span>
                                     @else
                                         <span class="badge badge-warning">In Progress</span>
                                     @endif
@@ -110,6 +112,8 @@
                                         </option>
                                         <option value="cancelled" {{ $order->status == 'cancelled' ? 'selected' : '' }}>
                                             Cancelled</option>
+                                        <option value="shipped" {{ $order->status == 'shipped' ? 'selected' : '' }}>
+                                            Shipped</option>
                                     </select>
                                 </div>
                                 <div class="mb-3">
@@ -128,7 +132,8 @@
                                     Download Invoice
                                 </a>
 
-                                <a href="{{ route('orders.printInvoice', $order->id) }}" class="btn btn-success">Print Invoice</a>
+                                <a href="{{ route('orders.printInvoice', $order->id) }}" class="btn btn-success">Print
+                                    Invoice</a>
                             </div>
                         </div>
                     </div>
@@ -167,10 +172,12 @@
 
                     if (response.ok) {
                         alert('Invoice sent to printer successfully!');
-                        document.getElementById('downloadModal').style.display = 'block'; // Show modal for download
+                        document.getElementById('downloadModal').style.display =
+                        'block'; // Show modal for download
                     } else {
                         const errorData = await response.json();
-                        alert(`Failed to send invoice to printer: ${errorData.error || 'Unknown error'}`);
+                        alert(
+                            `Failed to send invoice to printer: ${errorData.error || 'Unknown error'}`);
                     }
                 } catch (error) {
                     console.error('Error printing invoice:', error);
@@ -199,29 +206,36 @@
                 form.addEventListener('submit', (event) => {
                     event.preventDefault();
                     const formData = new FormData(form);
+                    const selectedStatus = formData.get('status');
 
                     fetch("{{ route('orders.changeOrderStatus', $order->id) }}", {
-                        method: 'POST',
-                        body: formData,
-                        headers: {
-                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                        },
-                    })
-                        .then((response) => response.json())
-                        .then((data) => {
+                            method: 'POST',
+                            body: formData,
+                            headers: {
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                            },
+                        })
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error('Network response was not ok ' + response.statusText);
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
                             if (data.success) {
                                 window.location.href = "{{ route('orders.detail', $order->id) }}";
                             } else {
-                                alert('Failed to update order status.');
+                                alert(data.message || 'Failed to update order status.');
                             }
                         })
-                        .catch((error) => {
+                        .catch(error => {
                             console.error('Error updating order status:', error);
                             alert('Error updating order status. Please check the console for details.');
                         });
+
+
                 });
             }
         });
     </script>
 @endsection
-

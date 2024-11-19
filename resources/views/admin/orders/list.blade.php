@@ -67,6 +67,8 @@
                                                 <span class="badge badge-danger">Cancelled</span>
                                             @elseif($order->status == 'completed')
                                                 <span class="badge badge-success">Completed</span>
+                                            @elseif($order->status == 'Shipped')
+                                                <span class="badge badge-info">Shipped</span>
                                             @else
                                                 <span class="badge badge-warning">In Progress</span>
                                             @endif

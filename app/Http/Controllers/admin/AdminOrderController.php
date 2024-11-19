@@ -57,28 +57,36 @@ class AdminOrderController extends Controller
 
     public function changeOrderStatus(Request $request, $orderId)
     {
+        $request->validate([
+            'status' => 'required|in:In Progress,completed,cancelled,shipped',
+        ]);
 
-        $order = Order::findOrFail($orderId);
-        if ($order->status === 'cancelled' || $order->status === 'completed') {
-            // If cancelled, return a response indicating the order cannot be updated
+        $order = Order::find($orderId);
+        if (!$order) {
+            return response()->json(['success' => false, 'message' => 'Order not found'], 404);
+        }
+        if (in_array($order->status, ['cancelled', 'completed'])) {
+            session()->flash('error', 'You cannot update the order status because the order is ' . $order->status . '.');
+            return redirect()->route('orders.detail', $orderId);}
+        
+        // Restrict changing from shipped to in-progress
+        if ($order->status === 'shipped' && $request->status === 'In Progress') {
             session()->flash('error', 'You cannot update the order status because the order is ' . $order->status . '.');
             return redirect()->route('orders.detail', $orderId);
         }
-        $previousStatus = $order->status;
 
-        // Update the order status
         $order->status = $request->status;
         $order->save();
 
-        // Log the status update in the order_histories table
+
         OrderHistory::create([
             'order_id' => $order->id,
             'status' => $order->status,
             'changed_at' => now(), // Stores the current timestamp
         ]);
 
-        session()->flash('success', 'Order status updated successfully');
-        return redirect()->route('orders.detail', $orderId)->with('success', 'Order status updated successfully');
+        return response()->json(['success' => true, 'message' => 'Order status updated successfully']);
+
     }
 
     public function viewInvoice($orderId)
