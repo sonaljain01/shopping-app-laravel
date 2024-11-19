@@ -36,9 +36,7 @@ Route::post('/cart/update', [CartController::class, 'update'])->name('cart.updat
 Route::get('/product/{id}/quick-view', [ProductController::class, 'quickView'])->name('product.quickview');
 // Route::get('/register/form', [AuthController::class, 'showRegistrationForm'])->name('front.register');
 Route::post('register', [AuthController::class, 'register'])->name('front.register.store');
-// Route::get('register', function () {
-//     return view('front.register');
-// })->name('front.register');
+
 Route::get('/register', [AuthController::class, 'showRegisterForm'])->name('front.register');
 
 Route::post('/login', [AuthController::class, 'login'])->name('front.login');
@@ -130,6 +128,11 @@ Route::group(['prefix' => 'admin'], function () {
         Route::get('/orders', [AdminOrderController::class, 'index'])->name(name: 'orders.index');
         Route::get('/orders/{id}', [AdminOrderController::class, 'detail'])->name(name: 'orders.detail');
         Route::post('/order/change-status/{id}', [AdminOrderController::class, 'changeOrderStatus'])->name(name: 'orders.changeOrderStatus');
+        Route::get('orders/{orderId}/generate-invoice-pdf', [AdminOrderController::class, 'generateInvoicePDF'])->name('admin.orders.generateInvoicePDF');
+        Route::get('/orders/{orderId}/view-invoice', [AdminOrderController::class, 'viewInvoice'])
+            ->name('admin.orders.viewInvoice');
+        Route::get('orders/{orderId}/print-invoice', [AdminOrderController::class, 'printInvoice'])->name('orders.printInvoice');
+
 
         //users
         Route::get('/users', [UserController::class, 'index'])->name('users.index');
@@ -144,8 +147,7 @@ Route::group(['prefix' => 'admin'], function () {
 
 
 
-        Route::get('/orders/{orderId}/view-invoice', [AdminOrderController::class, 'viewInvoice'])
-            ->name('admin.orders.viewInvoice');
+        
 
         Route::get('/attributes', [AttributeController::class, 'index'])->name('attributes.index');
         Route::get('attributes/create', [AttributeController::class, 'create'])->name('attributes.create');
