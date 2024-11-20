@@ -119,7 +119,7 @@
         <p><strong>Products:</strong>
             @foreach ($order->orderItems as $item)
                 <tr>
-                    <td>{{ implode(', ', $order->orderItems->pluck('product.title')->toArray()) }}</td>
+                    <td>{{ implode(', ', $order->orderItems->pluck('product_name')->toArray()) }}</td>
                 </tr>
             @endforeach
         </p>

@@ -89,7 +89,7 @@
                                                         class="text-muted small">{{ $item->product->category->name }}</span>
                                                 </p>
                                                 <h4 class="product_title fs-sm ft-medium mb-1 lh-1">
-                                                    {{ $item->product->title }}</h4>
+                                                    {{ $item->product_name }}</h4>
 
                                                 <h4 class="fs-sm ft-bold mb-0 lh-1">${{ $item->price }}</h4>
                                             </div>

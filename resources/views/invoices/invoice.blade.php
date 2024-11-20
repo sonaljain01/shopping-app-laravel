@@ -34,7 +34,7 @@
             <tbody>
                 @foreach ($orderItems as $item)
                     <tr>
-                        <td>{{ $item->title }}</td>
+                        <td>{{ $item->product_name }}</td>
                         <td>{{ $item->quantity }}</td>
                         <td>Rs. {{ number_format($item->price, 2) }}</td>
                         <td>Rs. {{ number_format($item->quantity * $item->price, 2) }}</td>

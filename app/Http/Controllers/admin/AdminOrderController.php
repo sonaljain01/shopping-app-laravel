@@ -38,10 +38,11 @@ class AdminOrderController extends Controller
             ->leftJoin('billing_addresses', 'orders.billing_address_id', '=', 'billing_addresses.id')
             ->first();
 
-        $orderItems = OrderItem::select('order_items.*', 'products.*')
-            ->where('order_id', $orderId)
-            ->rightJoin('products', 'order_items.product_id', '=', 'products.id')
-            ->get();
+        // $orderItems = OrderItem::select('order_items.*', 'products.*')
+        //     ->where('order_id', $orderId)
+        //     ->rightJoin('products', 'order_items.product_id', '=', 'products.id')
+        //     ->get();
+        $orderItems = OrderItem::where('order_id', $orderId)->get();
 
 
         // Check if order exists
@@ -98,10 +99,12 @@ class AdminOrderController extends Controller
             ->first();
 
         // Retrieve order items with product details
-        $orderItems = OrderItem::select('order_items.*', 'products.*')
-            ->where('order_id', $orderId)
-            ->rightJoin('products', 'order_items.product_id', '=', 'products.id')
-            ->get();
+        // $orderItems = OrderItem::select('order_items.*', 'products.*')
+        //     ->where('order_id', $orderId)
+        //     ->rightJoin('products', 'order_items.product_id', '=', 'products.id')
+        //     ->get();
+
+        $orderItems = OrderItem::where('order_id', $orderId)->get();
 
         // Check if order exists
         if (!$order) {
@@ -125,10 +128,12 @@ class AdminOrderController extends Controller
             ->first();
 
         // Retrieve order items with product details
-        $orderItems = OrderItem::select('order_items.*', 'products.*')
-            ->where('order_id', $orderId)
-            ->rightJoin('products', 'order_items.product_id', '=', 'products.id')
-            ->get();
+        // $orderItems = OrderItem::select('order_items.*', 'products.*')
+        //     ->where('order_id', $orderId)
+        //     ->rightJoin('products', 'order_items.product_id', '=', 'products.id')
+        //     ->get();
+
+        $orderItems = OrderItem::where('order_id', $orderId)->get();
 
         // Check if order exists
         if (!$order) {

@@ -171,26 +171,33 @@ class OrderController extends Controller
             }
 
             foreach ($cartItems as $cartItem) {
-                if (!isset($cartItem['product_id'])) {
-                    \Log::error('Product ID is missing in cart item', ['cartItem' => $cartItem]);
-                    throw new \Exception('Product ID is missing in cart item');
-                }
+                // if (!isset($cartItem['product_id'])) {
+                //     \Log::error('Product ID is missing in cart item', ['cartItem' => $cartItem]);
+                //     throw new \Exception('Product ID is missing in cart item');
+                // }
 
-                if (!isset($cartItem['quantity'])) {
-                    \Log::error('Quantity is missing in cart item', ['cartItem' => $cartItem]);
-                    throw new \Exception('Quantity is missing in cart item');
-                }
+                // if (!isset($cartItem['quantity'])) {
+                //     \Log::error('Quantity is missing in cart item', ['cartItem' => $cartItem]);
+                //     throw new \Exception('Quantity is missing in cart item');
+                // }
 
-                if (!isset($cartItem['price'])) {
-                    \Log::error('Price is missing in cart item', ['cartItem' => $cartItem]);
-                    throw new \Exception('Price is missing in cart item');
+                // if (!isset($cartItem['price'])) {
+                //     \Log::error('Price is missing in cart item', ['cartItem' => $cartItem]);
+                //     throw new \Exception('Price is missing in cart item');
+                // }
+                $product = Product::find($cartItem['product_id']);
+                if (!$product) {
+                    \Log::error('Product not found', ['product_id' => $cartItem['product_id']]);
+                    throw new \Exception('Product not found');
                 }
-
                 OrderItem::create([
                     'order_id' => $order->id,
                     'product_id' => $cartItem['product_id'],
+                    'product_name' => $product->title, // Store product name at the time of order
+                    'product_price' => $product->price,
                     'quantity' => $cartItem['quantity'],
                     'price' => $cartItem['price'],
+                    'subtotal' => $product->price * $cartItem['quantity'],
                 ]);
             }
 

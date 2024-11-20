@@ -69,10 +69,10 @@
                                 <tbody>
                                     @foreach ($order->orderItems as $item)
                                         <tr>
-                                            <td>{{ $item->product->title }}</td>
+                                            <td>{{ $item->product_name }}</td>
                                             <td>Rs.{{ number_format($item->price, 2) }}</td>
                                             <td>{{ $item->quantity }}</td>
-                                            <td>Rs.{{ number_format($item->price * $item->quantity, 2) }}</td>
+                                            <td>Rs.{{ number_format($item->subtotal, 2) }}</td>
                                         </tr>
                                     @endforeach
 
