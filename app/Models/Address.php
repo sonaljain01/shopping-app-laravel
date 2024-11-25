@@ -4,14 +4,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class BillingAddress extends Model
+class Address extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'order_id',
-        'username',
-        'email',
+        
+        'name',
         'company',
         'address_1',
         'address_2',
@@ -21,6 +20,9 @@ class BillingAddress extends Model
         'phone',
         'country',
         'additional_information',
+        'type',
+        'is_default',
+        'user_id',
     ];
 
     // Relationship with Order
@@ -28,4 +30,11 @@ class BillingAddress extends Model
     {
         return $this->belongsTo(Order::class);
     }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    
 }

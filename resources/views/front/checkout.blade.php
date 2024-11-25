@@ -37,23 +37,14 @@
                     <div class="row mb-2">
                         <div class="col-6">
                             <div class="form-group">
-                                <label for="username">Username <span class="text-danger">*</span></label>
-                                <input type="text" id="username" name="username" class="form-control"
-                                    placeholder="Username" required />
-                            </div>
-                        </div>
-
-                        <!-- Email Field -->
-                        <div class="col-6">
-                            <div class="form-group">
-                                <label for="email">Email <span class="text-danger">*</span></label>
-                                <input type="email" id="email" name="email" class="form-control" placeholder="Email"
+                                <label for="name">Name <span class="text-danger">*</span></label>
+                                <input type="text" id="name" name="name" class="form-control" placeholder="name"
                                     required />
                             </div>
                         </div>
 
                         <!-- Company Field -->
-                        <div class="col-12">
+                        <div class="col-6">
                             <div class="form-group">
                                 <label for="company">Company</label>
                                 <input type="text" id="company" name="company" class="form-control"
@@ -116,8 +107,8 @@
                         <div class="col-12">
                             <div class="form-group">
                                 <label for="phone">Phone <span class="text-danger">*</span></label>
-                                <input type="text" id="phone" name="phone" class="form-control"
-                                    placeholder="Phone" required />
+                                <input type="text" id="phone" name="phone" class="form-control" placeholder="Phone"
+                                    required />
                             </div>
                         </div>
 
@@ -159,6 +150,30 @@
                         <input type="password" class="form-control" name="password" id="password" minlength="8"
                             placeholder="Enter password for account creation">
                     </div>
+                    {{-- @include('partials.billing-address') --}}
+
+                    <!-- Same as Billing Address Toggle -->
+                    <div class="col-12 mb-4">
+                        <input type="checkbox" id="same_as_billing" name="same_as_billing" class="checkbox-custom"
+                            onclick="toggleShippingFields()">
+                        @include('partials.shipping-address')
+                    </div>
+
+
+
+                    <script>
+                        function toggleShippingFields() {
+                            const isChecked = document.getElementById('same_as_billing').checked;
+                            const shippingSection = document.getElementById('shipping-address-section');
+                            if (isChecked) {
+                                shippingSection.style.display = 'none';
+                            } else {
+                                shippingSection.style.display = 'block';
+                            }
+                        }
+                    </script>
+
+
 
                     <h5 class="mb-4 ft-medium">Payments</h5>
                     <div class="row mb-4">
@@ -235,15 +250,15 @@
         document.addEventListener("DOMContentLoaded", function() {
             const zipInput = document.getElementById('zip');
             const deliveryStatus = document.getElementById('delivery-status');
-    
+
             if (!deliveryStatus) {
                 console.error("Delivery status element not found!");
                 return;
             }
-    
+
             zipInput.addEventListener('change', function() {
                 const zip = this.value.trim();
-    
+
                 if (zip) {
                     fetch(`https://api.postalpincode.in/pincode/${zip}`)
                         .then(response => response.json())
@@ -251,14 +266,14 @@
                             if (data[0].Status === 'Success') {
                                 const city = data[0].PostOffice[0].Division;
                                 const state = data[0].PostOffice[0].State;
-    
+
                                 const cityInput = document.getElementById('city');
                                 const stateInput = document.getElementById('state');
-    
+
                                 if (cityInput && stateInput) {
                                     cityInput.value = city;
                                     stateInput.value = state;
-    
+
                                     checkDeliveryAvailability(city, state);
                                 } else {
                                     console.error('City or State input field not found.');
@@ -275,13 +290,14 @@
                     displayMessage("Please enter a valid zip code.");
                 }
             });
-    
+
             function checkDeliveryAvailability(city, state) {
-                const routeTemplate = `{{ route('check-delivery', ['city' => '__CITY__', 'state' => '__STATE__']) }}`;
+                const routeTemplate =
+                    `{{ route('check-delivery', ['city' => '__CITY__', 'state' => '__STATE__']) }}`;
                 const finalUrl = routeTemplate
                     .replace('__CITY__', encodeURIComponent(city))
                     .replace('__STATE__', encodeURIComponent(state));
-    
+
                 fetch(finalUrl)
                     .then(response => response.json())
                     .then(data => {
@@ -296,16 +312,15 @@
                         displayMessage("Error checking delivery availability.");
                     });
             }
-    
+
             function displayMessage(message) {
                 deliveryStatus.textContent = message;
             }
         });
-    
+
         function togglePasswordField() {
             const passwordField = document.getElementById("passwordField");
             passwordField.style.display = passwordField.style.display === "none" ? "block" : "none";
         }
     </script>
-    
 @endsection

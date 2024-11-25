@@ -55,6 +55,7 @@ Route::post('/checkout/place-order', [OrderController::class, 'placeOrder'])->na
 Route::get('/my-orders', [OrderController::class, 'myOrders'])->name('front.index');
 Route::get('/front/{user}', [OrderController::class, 'index'])->name('front.index.user');
 Route::get('/check-delivery/{city}/{state}', [OrderController::class, 'checkDelivery'])->name('check-delivery');
+Route::post('/billing-address/save', [OrderController::class, 'save'])->name('billing.address.save');
 
 Route::post('/wishlist/add', [WishlistController::class, 'add'])->name('wishlist.add');
 
