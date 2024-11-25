@@ -102,29 +102,52 @@
                                     readonly required />
                             </div>
                         </div>
-
-                        <!-- Phone Field -->
-                        <div class="col-12">
+                        <div class="col-6">
                             <div class="form-group">
-                                <label for="phone">Phone <span class="text-danger">*</span></label>
-                                <input type="text" id="phone" name="phone" class="form-control" placeholder="Phone"
-                                    required />
+                                <label for="dial_code">Dial Code <span class="text-danger">*</span></label>
+                                <input type="text" id="dial_code" name="dial_code" readonly class="form-control">
                             </div>
                         </div>
-
+                        
+                        <!-- Phone Field -->
+                        <div class="col-6">
+                            <div class="form-group">
+                                <label for="phone">Phone <span class="text-danger">*</span></label>
+                                <input type="text" id="phone" name="phone" class="form-control" placeholder="Phone" required>
+                            </div>
+                        </div>
+                        
                         <!-- Country Selection -->
                         <div class="col-12">
                             <div class="form-group">
-                                <label>Country *</label>
-                                <select name="country" class="custom-select" required>
-                                    <option value="India" selected="">India</option>
-                                    <option value="United States">United States</option>
-                                    <option value="United Kingdom">United Kingdom</option>
-                                    <option value="China">China</option>
-                                    <option value="Pakistan">Pakistan</option>
-                                </select>
+                                <label for="country">Country <span class="text-danger">*</span></label>
+                                <input type="text" id="country" name="country" class="form-control" placeholder="Enter Country" onblur="fetchDialCode()" required>
                             </div>
                         </div>
+                        
+                        <script>
+                            function fetchDialCode() {
+                                const countryName = document.getElementById("country").value.trim();
+                        
+                                if (countryName) {
+                                    fetch(`https://restcountries.com/v3.1/name/${countryName}`)
+                                        .then(response => response.json())
+                                        .then(data => {
+                                            if (data && data[0] && data[0].idd) {
+                                                document.getElementById("dial_code").value = `${data[0].idd.root || ''}${data[0].idd.suffixes[0] || ''}`;
+                                            } else {
+                                                alert("Dial code not found for the entered country.");
+                                            }
+                                        })
+                                        .catch(error => {
+                                            console.error("Error fetching dial code:", error);
+                                            alert("Error fetching the dial code. Please check the country name.");
+                                        });
+                                }
+                            }
+                        </script>
+                        
+
 
                         <!-- Additional Information -->
                         <div class="col-12">
