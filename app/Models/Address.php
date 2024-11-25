@@ -9,7 +9,7 @@ class Address extends Model
     use HasFactory;
 
     protected $fillable = [
-        
+
         'name',
         'company',
         'address_1',
@@ -36,5 +36,9 @@ class Address extends Model
         return $this->belongsTo(User::class);
     }
 
-    
+    public function orders()
+    {
+        return $this->hasMany(Order::class);
+    }
+
 }

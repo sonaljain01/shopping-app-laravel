@@ -15,10 +15,17 @@
     <div class="header">
         <h1>Invoice #{{ $order->id }}</h1>
         <p>Order Date: {{ $order->created_at->format('d M Y') }}</p>
-        <p>Customer: {{ $order->username ?? 'N/A' }}</p>
-        <p>Billing Address: {{ $order->address_1 }}, {{ $order->address_2 }}, {{ $order->city }}, {{ $order->country }}</p>
-        <p>Zip: {{ $order->zip }}</p>
-        <p>Phone: {{ $order->phone }}</p>
+        <p>Shipped By: {{ $order->billingAddress->name ?? 'N/A' }}</p>
+        <p>Billing Address: {{ $order->billingAddress->address_1 }}, {{ $order->billingAddress->address_2 }}, {{ $order->billingAddress->city }}, {{ $order->billingAddress->country }}</p>
+        <p>Zip: {{ $order->billingAddress->zip }}</p>
+        <p>Phone: {{ $order->billingAddress->phone }}</p>
+    </div>
+
+    <div class="header">
+        <p>Shipping To: {{ $order->shippingAddress->name ?? 'N/A' }}</p>
+        <p>Shipping Address: {{ $order->shippingAddress->address_1 }}, {{ $order->shippingAddress->address_2 }}, {{ $order->shippingAddress->city }}, {{ $order->shippingAddress->country }}</p>
+        <p>Zip: {{ $order->shippingAddress->zip }}</p>
+        <p>Phone: {{ $order->shippingAddress->phone }}</p>
     </div>
 
     <div class="details">
@@ -32,9 +39,9 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach ($orderItems as $item)
+                @foreach ($order->orderItems as $item)
                     <tr>
-                        <td>{{ $item->product_name }}</td>
+                        <td>{{ $item->product->title }}</td>
                         <td>{{ $item->quantity }}</td>
                         <td>Rs. {{ number_format($item->price, 2) }}</td>
                         <td>Rs. {{ number_format($item->subtotal, 2) }}</td>
@@ -46,3 +53,4 @@
     </div>
 </body>
 </html>
+

@@ -23,35 +23,34 @@
                     <div class="card">
                         <div class="card-header pt-3">
                             <div class="row invoice-info">
-                                <div class="col-sm-4 invoice-col">
-                                    <h1 class="h5 mb-3">Shipping Address</h1>
+                                <!-- Billing Address -->
+                                <div class="col-sm-6 invoice-col">
+                                    <h1 class="h5 mb-3">Billing Address</h1>
                                     <address>
-                                        <strong>{{ $order->username }}</strong><br>
-                                        {{ $order->address_1 }}<br>
-                                        {{ $order->address_2 }}<br>
-                                        City: {{ $order->city }}<br>
-                                        Zip: {{ $order->zip }}<br>
-                                        Country: {{ $order->country }}<br>
-                                        Phone: {{ $order->phone }}<br>
-                                        Email: {{ $order->email }}
+                                        <strong>{{ $order->billingAddress->name }}</strong><br>
+                                        {{ $order->billingAddress->address_1 }}<br>
+                                        {{ $order->billingAddress->address_2 }}<br>
+                                        City: {{ $order->billingAddress->city }}<br>
+                                        Zip: {{ $order->billingAddress->zip }}<br>
+                                        Country: {{ $order->billingAddress->country }}<br>
+                                        Phone: {{ $order->billingAddress->phone }}<br>
+                                        Email: {{ $order->billingAddress->email }}
                                     </address>
                                 </div>
 
-                                <div class="col-sm-4 invoice-col">
-                                    <br>
-                                    <b>Order ID:</b> {{ $order->id }}<br>
-                                    <b>Total:</b> Rs.{{ number_format($order->total_amount) }}<br>
-                                    <b>Status:</b>
-                                    @if ($order->status == 'cancelled')
-                                        <span class="badge badge-danger">Cancelled</span>
-                                    @elseif($order->status == 'completed')
-                                        <span class="badge badge-success">Completed</span>
-                                    @elseif($order->status == 'shipped')
-                                        <span class="badge badge-info">Shipped</span>
-                                    @else
-                                        <span class="badge badge-warning">In Progress</span>
-                                    @endif
-                                    <br>
+                                <!-- Shipping Address -->
+                                <div class="col-sm-6 invoice-col">
+                                    <h1 class="h5 mb-3">Shipping Address</h1>
+                                    <address>
+                                        <strong>{{ $order->shippingAddress->name }}</strong><br>
+                                        {{ $order->shippingAddress->address_1 }}<br>
+                                        {{ $order->shippingAddress->address_2 }}<br>
+                                        City: {{ $order->shippingAddress->city }}<br>
+                                        Zip: {{ $order->shippingAddress->zip }}<br>
+                                        Country: {{ $order->shippingAddress->country }}<br>
+                                        Phone: {{ $order->shippingAddress->phone }}<br>
+                                        Email: {{ $order->shippingAddress->email }}
+                                    </address>
                                 </div>
                             </div>
                         </div>
@@ -70,7 +69,7 @@
                                     @foreach ($order->orderItems as $item)
                                         <tr>
                                             <td>{{ $item->product_name }}</td>
-                                            <td>Rs.{{ number_format($item->price, 2) }}</td>
+                                            <td>Rs.{{ number_format($item->product_price, 2) }}</td>
                                             <td>{{ $item->quantity }}</td>
                                             <td>Rs.{{ number_format($item->subtotal, 2) }}</td>
                                         </tr>
@@ -98,22 +97,16 @@
 
                 <div class="col-md-3">
                     <div class="card">
-                        <form action="{{ route('orders.changeOrderStatus', $order->id) }}" method="POST"
-                            id="ChangeOrderStatusForm">
+                        <form action="{{ route('orders.changeOrderStatus', $order->id) }}" method="POST" id="ChangeOrderStatusForm">
                             @csrf
                             <div class="card-body">
                                 <h2 class="h4 mb-3">Order Status</h2>
                                 <div class="mb-3">
                                     <select name="status" id="status" class="form-control">
-                                        <option value="In Progress"
-                                            {{ $order->status == 'In Progress' ? 'selected' : '' }}>In Progress</option>
-                                        <option value="completed" {{ $order->status == 'completed' ? 'selected' : '' }}>
-                                            Completed
-                                        </option>
-                                        <option value="cancelled" {{ $order->status == 'cancelled' ? 'selected' : '' }}>
-                                            Cancelled</option>
-                                        <option value="shipped" {{ $order->status == 'shipped' ? 'selected' : '' }}>
-                                            Shipped</option>
+                                        <option value="In Progress" {{ $order->status == 'In Progress' ? 'selected' : '' }}>In Progress</option>
+                                        <option value="completed" {{ $order->status == 'completed' ? 'selected' : '' }}>Completed</option>
+                                        <option value="cancelled" {{ $order->status == 'cancelled' ? 'selected' : '' }}>Cancelled</option>
+                                        <option value="shipped" {{ $order->status == 'shipped' ? 'selected' : '' }}>Shipped</option>
                                     </select>
                                 </div>
                                 <div class="mb-3">
@@ -127,13 +120,8 @@
                         <div class="card-body">
                             <h2 class="h4 mb-3">View Invoice</h2>
                             <div class="mb-3">
-                                <a href="{{ route('admin.orders.viewInvoice', $order->id) }}" target="_blank"
-                                    class="btn btn-primary">
-                                    Download Invoice
-                                </a>
-
-                                <a href="{{ route('orders.printInvoice', $order->id) }}" class="btn btn-success">Print
-                                    Invoice</a>
+                                <a href="{{ route('admin.orders.viewInvoice', $order->id) }}" target="_blank" class="btn btn-primary">Download Invoice</a>
+                                <a href="{{ route('orders.printInvoice', $order->id) }}" class="btn btn-success">Print Invoice</a>
                             </div>
                         </div>
                     </div>

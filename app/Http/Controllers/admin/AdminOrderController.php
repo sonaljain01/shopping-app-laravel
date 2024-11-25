@@ -33,27 +33,19 @@ class AdminOrderController extends Controller
 
     public function detail($orderId)
     {
-        $order = Order::select('orders.*', 'billing_addresses.*')
-            ->where('orders.id', $orderId)
-            ->leftJoin('billing_addresses', 'orders.billing_address_id', '=', 'billing_addresses.id')
+        $order = Order::with(['billingAddress', 'shippingAddress', 'orderItems.product'])
+            ->where('id', $orderId)
             ->first();
 
-        // $orderItems = OrderItem::select('order_items.*', 'products.*')
-        //     ->where('order_id', $orderId)
-        //     ->rightJoin('products', 'order_items.product_id', '=', 'products.id')
-        //     ->get();
-        $orderItems = OrderItem::where('order_id', $orderId)->get();
-
-
-        // Check if order exists
+        // Check if the order exists
         if (!$order) {
-            return redirect()->route('orders.index')->with('error', 'Order not found');
+            return redirect()->route('admin.orders.index')->with('error', 'Order not found');
         }
 
         return view('admin.orders.detail', [
             'order' => $order,
-            'orderItems' => $orderItems
         ]);
+
     }
 
     public function changeOrderStatus(Request $request, $orderId)
@@ -68,8 +60,9 @@ class AdminOrderController extends Controller
         }
         if (in_array($order->status, ['cancelled', 'completed'])) {
             session()->flash('error', 'You cannot update the order status because the order is ' . $order->status . '.');
-            return redirect()->route('orders.detail', $orderId);}
-        
+            return redirect()->route('orders.detail', $orderId);
+        }
+
         // Restrict changing from shipped to in-progress
         if ($order->status === 'shipped' && $request->status === 'In Progress') {
             session()->flash('error', 'You cannot update the order status because the order is ' . $order->status . '.');
@@ -92,23 +85,16 @@ class AdminOrderController extends Controller
 
     public function viewInvoice($orderId)
     {
-        // Retrieve the order with its billing address and items
-        $order = Order::select('orders.*', 'billing_addresses.*')
-            ->where('orders.id', $orderId)
-            ->leftJoin('billing_addresses', 'orders.billing_address_id', '=', 'billing_addresses.id')
+        // Retrieve the order with its related models: billingAddress, shippingAddress, and orderItems with products
+        $order = Order::with(['billingAddress', 'shippingAddress', 'orderItems.product'])
+            ->where('id', $orderId)
             ->first();
 
-        // Retrieve order items with product details
-        // $orderItems = OrderItem::select('order_items.*', 'products.*')
-        //     ->where('order_id', $orderId)
-        //     ->rightJoin('products', 'order_items.product_id', '=', 'products.id')
-        //     ->get();
+        $orderItems = $order->orderItems; // This is already loaded via eager loading
 
-        $orderItems = OrderItem::where('order_id', $orderId)->get();
-
-        // Check if order exists
+        // Check if the order exists
         if (!$order) {
-            return redirect()->route('orders.index')->with('error', 'Order not found');
+            return redirect()->route('admin.orders.index')->with('error', 'Order not found');
         }
 
         // Load the PDF view
@@ -120,25 +106,22 @@ class AdminOrderController extends Controller
         return $pdf->stream('invoice-' . $order->id . '.pdf');
     }
 
+
     public function printInvoice($orderId)
     {
-        $order = Order::select('orders.*', 'billing_addresses.*')
-            ->where('orders.id', $orderId)
-            ->leftJoin('billing_addresses', 'orders.billing_address_id', '=', 'billing_addresses.id')
+        // Retrieve the order with its related models: billingAddress, shippingAddress, and orderItems with products
+        $order = Order::with(['billingAddress', 'shippingAddress', 'orderItems.product'])
+            ->where('id', $orderId)
             ->first();
 
-        // Retrieve order items with product details
-        // $orderItems = OrderItem::select('order_items.*', 'products.*')
-        //     ->where('order_id', $orderId)
-        //     ->rightJoin('products', 'order_items.product_id', '=', 'products.id')
-        //     ->get();
-
-        $orderItems = OrderItem::where('order_id', $orderId)->get();
-
-        // Check if order exists
+        // Check if the order exists
         if (!$order) {
             return redirect()->route('orders.index')->with('error', 'Order not found');
         }
+
+        // Retrieve the order items (already eager-loaded in $order)
+        $orderItems = $order->orderItems;
+
         // Generate the PDF
         $pdf = $this->generateInvoicePdf($order, $orderItems);
 
