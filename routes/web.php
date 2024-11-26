@@ -18,6 +18,8 @@ use App\Http\Controllers\admin\AdminOrderController;
 use App\Http\Controllers\admin\UserController;
 use App\Http\Controllers\admin\AttributeController;
 use App\Http\Controllers\admin\StateController;
+use App\Http\Controllers\admin\PickupController;
+
 
 use App\Http\Controllers\admin\CityController;
 use App\Http\Controllers\admin\MenuController;
@@ -196,6 +198,14 @@ Route::group(['prefix' => 'admin'], function () {
         Route::put('cities/{id}', [CityController::class, 'update'])->name('city.update');
         Route::delete('/cities/{city}', [CityController::class, 'destroy'])->name('city.delete');
 
+        //pickup routes
+        Route::get('/pickup', [PickupController::class, 'index'])->name('pickup.index');
+        Route::post('/pickup', [PickupController::class, 'store'])->name('pickup.store');
+        // Route::patch('/cities/{id}/toggle', [CityController::class, 'toggleCityDelivery'])->name('city.toggle');
+        Route::get('/pickup/create', [PickupController::class, 'create'])->name('pickup.create');
+        Route::get('pickup/{id}/edit', [PickupController::class, 'edit'])->name('pickup.edit');
+        Route::put('pickup/{id}', [PickupController::class, 'update'])->name('pickup.update');
+        Route::delete('/pickup/{pickup}', [PickupController::class, 'destroy'])->name('pickup.destroy');
 
         //menu routes
 

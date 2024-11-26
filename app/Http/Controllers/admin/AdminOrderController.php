@@ -9,6 +9,7 @@ use App\Models\OrderItem;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\Models\OrderHistory;
+use App\Http\Controllers\admin\ShipRocketController;
 
 class AdminOrderController extends Controller
 {
@@ -70,6 +71,30 @@ class AdminOrderController extends Controller
         }
 
         $order->status = $request->status;
+        if ($request->status === 'shipped') {
+            $shipRocketController = app(ShipRocketController::class); // Resolve the ShipRocketController
+    
+            // Create order in ShipRocket
+            $shipRocketResponse = $shipRocketController->createOrder($order);
+    
+            if (!$shipRocketResponse || !method_exists($shipRocketResponse, 'status')) {
+                return redirect()->route('orders.detail', $orderId)
+                    ->with('error', 'Failed to create order in ShipRocket.');
+            }
+    
+            // Handle successful response from ShipRocket
+            if ($shipRocketResponse->status() === 200) {
+                $storeResponse = $shipRocketController->storeShipment($shipRocketResponse->json());
+    
+                if (!$storeResponse['status']) {
+                    return redirect()->route('orders.detail', $orderId)
+                        ->with('error', $storeResponse['message']);
+                }
+            } else {
+                return redirect()->route('orders.detail', $orderId)
+                    ->with('error', 'Error while processing order in ShipRocket: ' . $shipRocketResponse->json()['message']);
+            }
+        }
         $order->save();
 
 
