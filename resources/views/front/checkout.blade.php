@@ -102,12 +102,12 @@
                                     readonly required />
                             </div>
                         </div>
-                        <div class="col-6">
+                        {{-- <div class="col-6">
                             <div class="form-group">
                                 <label for="dial_code">Dial Code <span class="text-danger">*</span></label>
                                 <input type="text" id="dial_code" name="dial_code" readonly class="form-control">
                             </div>
-                        </div>
+                        </div> --}}
                         
                         <!-- Phone Field -->
                         <div class="col-6">
@@ -125,7 +125,7 @@
                             </div>
                         </div>
                         
-                        <script>
+                        {{-- <script>
                             function fetchDialCode() {
                                 const countryName = document.getElementById("country").value.trim();
                         
@@ -145,7 +145,7 @@
                                         });
                                 }
                             }
-                        </script>
+                        </script> --}}
                         
 
 
