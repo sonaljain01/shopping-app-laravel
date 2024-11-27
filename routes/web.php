@@ -19,63 +19,65 @@ use App\Http\Controllers\admin\UserController;
 use App\Http\Controllers\admin\AttributeController;
 use App\Http\Controllers\admin\StateController;
 use App\Http\Controllers\admin\PickupController;
-
-
+use App\Http\Middleware\TrackUtmMiddleware;
+use App\Http\Middleware\AdminMiddleware;
 use App\Http\Controllers\admin\CityController;
 use App\Http\Controllers\admin\MenuController;
 
-Route::get('/', [FrontController::class, 'index'])->name('front.home');
 
-Route::get('/shop/{categorySlug?}/{subcategorySlug?}', [ShopController::class, 'index'])->name('front.shop');
-Route::get('/product/{slug}', [ProductController::class, 'show'])->name('product.show');
+Route::group(['middleware' => TrackUtmMiddleware::class], function () {
+    Route::get('/', [FrontController::class, 'index'])->name('front.home');
 
-Route::get('/products/{id}', [ShopController::class, 'show']);
-Route::post('/cart/add/{productId}', [CartController::class, 'addToCart'])->name('cart.add');
-Route::get('/cart', [CartController::class, 'viewCart'])->name('cart.index');
-Route::post('/cart/update', [CartController::class, 'update'])->name('cart.update');
+    Route::get('/shop/{categorySlug?}/{subcategorySlug?}', [ShopController::class, 'index'])->name('front.shop');
+    Route::get('/product/{slug}', [ProductController::class, 'show'])->name('product.show');
+
+    Route::get('/products/{id}', [ShopController::class, 'show']);
+    Route::post('/cart/add/{productId}', [CartController::class, 'addToCart'])->name('cart.add');
+    Route::get('/cart', [CartController::class, 'viewCart'])->name('cart.index');
+    Route::post('/cart/update', [CartController::class, 'update'])->name('cart.update');
 
 
-Route::get('/product/{id}/quick-view', [ProductController::class, 'quickView'])->name('product.quickview');
-// Route::get('/register/form', [AuthController::class, 'showRegistrationForm'])->name('front.register');
-Route::post('register', [AuthController::class, 'register'])->name('front.register.store');
+    Route::get('/product/{id}/quick-view', [ProductController::class, 'quickView'])->name('product.quickview');
+    // Route::get('/register/form', [AuthController::class, 'showRegistrationForm'])->name('front.register');
+    Route::post('register', [AuthController::class, 'register'])->name('front.register.store');
 
-Route::get('/register', [AuthController::class, 'showRegisterForm'])->name('front.register');
+    Route::get('/register', [AuthController::class, 'showRegisterForm'])->name('front.register');
 
-Route::post('/login', [AuthController::class, 'login'])->name('front.login');
+    Route::post('/login', [AuthController::class, 'login'])->name('front.login');
 
-Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
-Route::post('/logout', [AuthController::class, 'logout'])->name('auth.logout');
+    Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
+    Route::post('/logout', [AuthController::class, 'logout'])->name('auth.logout');
 
-Route::get('/google', [GoogleController::class, 'redirectToGoogle'])->name('login.google');
-Route::get('/google/callback', [GoogleController::class, 'handleGoogleCallback']);
+    Route::get('/google', [GoogleController::class, 'redirectToGoogle'])->name('login.google');
+    Route::get('/google/callback', [GoogleController::class, 'handleGoogleCallback']);
 
-Route::get('/facebook', [FacebookController::class, 'redirectToFacebook'])->name('login.facebook');
-Route::get('/facebook/callback', [FacebookController::class, 'handleFacebookCallback']);
+    Route::get('/facebook', [FacebookController::class, 'redirectToFacebook'])->name('login.facebook');
+    Route::get('/facebook/callback', [FacebookController::class, 'handleFacebookCallback']);
 
-Route::get('/checkout', [OrderController::class, 'checkout'])->name('front.checkout');
-Route::post('/checkout/place-order', [OrderController::class, 'placeOrder'])->name('checkout.placeOrder');
-Route::get('/my-orders', [OrderController::class, 'myOrders'])->name('front.index');
-Route::get('/front/{user}', [OrderController::class, 'index'])->name('front.index.user');
-Route::get('/check-delivery/{city}/{state}', [OrderController::class, 'checkDelivery'])->name('check-delivery');
-Route::post('/billing-address/save', [OrderController::class, 'save'])->name('billing.address.save');
+    Route::get('/checkout', [OrderController::class, 'checkout'])->name('front.checkout');
+    Route::post('/checkout/place-order', [OrderController::class, 'placeOrder'])->name('checkout.placeOrder');
+    Route::get('/my-orders', [OrderController::class, 'myOrders'])->name('front.index');
+    Route::get('/front/{user}', [OrderController::class, 'index'])->name('front.index.user');
+    Route::get('/check-delivery/{city}/{state}', [OrderController::class, 'checkDelivery'])->name('check-delivery');
+    Route::post('/billing-address/save', [OrderController::class, 'save'])->name('billing.address.save');
 
-Route::post('/wishlist/add', [WishlistController::class, 'add'])->name('wishlist.add');
+    Route::post('/wishlist/add', [WishlistController::class, 'add'])->name('wishlist.add');
 
-Route::middleware(['auth'])->group(function () {
-    Route::get('/wishlist', [WishlistController::class, 'index'])->name('wishlist.index');
-    Route::delete('/wishlist/remove/{id}', [WishlistController::class, 'remove'])->name('wishlist.remove');
+    Route::middleware(['auth'])->group(function () {
+        Route::get('/wishlist', [WishlistController::class, 'index'])->name('wishlist.index');
+        Route::delete('/wishlist/remove/{id}', [WishlistController::class, 'remove'])->name('wishlist.remove');
+
+    });
+
+    //track orders
+    Route::get('/track-orders', [OrderController::class, 'showTrackOrderForm'])->name('track.orders.form');
+    Route::post('/track-orders', [OrderController::class, 'trackOrder'])->name('track.orders');
+
+
+    //price filter
+    Route::get('price/filter', [ShopController::class, 'filter'])->name('price.filter');
 
 });
-
-//track orders
-Route::get('/track-orders', [OrderController::class, 'showTrackOrderForm'])->name('track.orders.form');
-Route::post('/track-orders', [OrderController::class, 'trackOrder'])->name('track.orders');
-
-
-//price filter
-Route::get('price/filter', [ShopController::class, 'filter'])->name('price.filter');
-
-
 
 // admin routes
 Route::group(['prefix' => 'admin'], function () {
@@ -83,6 +85,7 @@ Route::group(['prefix' => 'admin'], function () {
         Route::get('/login', [AdminLoginController::class, 'index'])->name('admin.login');
         Route::post('/authenticate', [AdminLoginController::class, 'authenticate'])->name('admin.authenticate');
     });
+
     Route::middleware(['admin.auth'])->group(function () {
         Route::get('/dashboard', [HomeController::class, 'index'])->name('admin.dashboard');
         Route::get('/logout', [HomeController::class, 'logout'])->name('admin.logout');
@@ -149,7 +152,7 @@ Route::group(['prefix' => 'admin'], function () {
 
 
 
-        
+
 
         Route::get('/attributes', [AttributeController::class, 'index'])->name('attributes.index');
         Route::get('attributes/create', [AttributeController::class, 'create'])->name('attributes.create');
@@ -218,7 +221,7 @@ Route::group(['prefix' => 'admin'], function () {
                 'edit' => 'admin.menus.edit',
                 'update' => 'admin.menus.update',
                 'destroy' => 'admin.menus.destroy',
-               
+
             ]
         ]);
         Route::post('/admin/menus/update-order', [MenuController::class, 'updateOrder'])->name('admin.menus.updateOrder');
@@ -226,9 +229,11 @@ Route::group(['prefix' => 'admin'], function () {
         Route::post('admin/menus/update-locations', [MenuController::class, 'updateLocations'])->name('admin.menus.updateLocations');
 
     });
-
-
 });
+
+
+
+
 
 
 

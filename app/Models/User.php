@@ -25,6 +25,11 @@ class User extends Authenticatable
         'role',
         'google_id',
         'facebook_id',
+        'utm_source',
+        'utm_medium',
+        'utm_campaign',
+        'utm_term',
+        'utm_content',
     ];
 
     /**
