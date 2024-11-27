@@ -60,6 +60,9 @@ class ProductController extends Controller
             // 'attribute_name.*' => 'exists:attributes,id',
             // 'attribute_value.*' => 'exists:attribute_values,id',
             'image.*' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'length' => 'required|numeric',
+            'breath' => 'required|numeric',
+            'height' => 'required|numeric',
 
         ];
 
@@ -86,7 +89,9 @@ class ProductController extends Controller
                 'status' => $request->status,
                 'barcode' => $request->barcode,
                 'compare_price' => $request->compare_price,
-
+                'length' => $request->length,
+                'breath' => $request->breath,
+                'height' => $request->height
             ]);
 
 
@@ -171,7 +176,9 @@ class ProductController extends Controller
             'track_qty' => 'required|in:Yes,No',
             'category' => 'required',
             'is_featured' => 'required|in:Yes,No',
-
+            'length' => 'required|numeric',
+            'breath' => 'required|numeric',
+            'height' => 'required|numeric',
 
         ];
 
@@ -208,7 +215,9 @@ class ProductController extends Controller
                 'status' => $request->status,
                 'barcode' => $request->barcode,
                 'compare_price' => $request->compare_price,
-
+                'length' => $request->length,
+                'breath' => $request->breath,
+                'height' => $request->height
             ]);
 
             if ($request->has('attributes') && is_array($request->attributes)) {

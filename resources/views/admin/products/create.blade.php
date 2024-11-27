@@ -198,7 +198,18 @@
                                 </select>
                             </div>
                         </div>
-
+                        <div class="card mb-3">
+                            <div class="card-body">
+                                <h2 class="h4 mb-3">Length</h2>
+                                <input type="text" name="length" id="length" class="form-control" placeholder="Length">
+                                <br>
+                                <h2 class="h4 mb-3">Breath</h2>
+                                <input type="text" name="breath" id="breath" class="form-control" placeholder="Breath">
+                                <br>
+                                <h2 class="h4 mb-3">Height</h2>
+                                <input type="text" name="height" id="height" class="form-control" placeholder="Height">
+                            </div>
+                        </div>
                         <!-- Product Attributes -->
                         <div class="card mb-3">
                             <div class="card-body">

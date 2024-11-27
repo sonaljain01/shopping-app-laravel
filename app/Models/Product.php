@@ -28,6 +28,9 @@ class Product extends Model
         'compare_price',
         'status',
         'barcode',
+        'length',
+        'breath',
+        'height',
 
 
     ];

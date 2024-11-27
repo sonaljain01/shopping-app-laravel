@@ -199,6 +199,22 @@
                         </div>
                         <div class="card mb-3">
                             <div class="card-body">
+                                <h2 class="h4 mb-3">Length</h2>
+                                <input type="text" name="length" id="length" class="form-control"
+                                    placeholder="Length" value="{{ $product->length }}">
+                                <br>
+                                <h2 class="h4 mb-3">Breath</h2>
+                                <input type="text" name="breath" id="breath" class="form-control"
+                                    placeholder="Breath" value="{{ $product->breath }}">
+                                <br>
+                                <h2 class="h4 mb-3">Height</h2>
+                                <input type="text" name="height" id="height" class="form-control"
+                                    placeholder="Height" value="{{ $product->height }}">
+                            </div>
+                        </div>
+                        
+                        <div class="card mb-3">
+                            <div class="card-body">
                                 <h2 class="h4 mb-3">Product Attributes</h2>
                                 <div id="attributes-container">
                                     <!-- Populate Existing Attributes if in Edit Mode -->
