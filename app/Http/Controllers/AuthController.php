@@ -24,10 +24,13 @@ class AuthController extends Controller
                 'role' => $request->role ?? 1,
             ]);
 
-
+            if (session('utm')) {
+                $user->update(session('utm'));
+            }
             if (!$user) {
                 return back()->with('error', 'Something went wrong');
             }
+
 
             // Optionally log in the user
             Auth::login($user);
