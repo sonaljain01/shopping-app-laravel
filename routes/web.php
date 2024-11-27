@@ -20,7 +20,6 @@ use App\Http\Controllers\admin\AttributeController;
 use App\Http\Controllers\admin\StateController;
 use App\Http\Controllers\admin\PickupController;
 use App\Http\Middleware\TrackUtmMiddleware;
-use App\Http\Middleware\AdminMiddleware;
 use App\Http\Controllers\admin\CityController;
 use App\Http\Controllers\admin\MenuController;
 
