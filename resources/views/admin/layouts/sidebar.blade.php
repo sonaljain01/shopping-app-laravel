@@ -74,6 +74,12 @@
                                 <p>Shipping Cities</p>
                             </a>
                         </li>
+                        <li class="nav-item">
+                            <a href="{{ route('pickup.index') }}" class="nav-link {{ request()->routeIs('pickup.index') ? 'active' : '' }}">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>PickUp Address</p>
+                            </a>
+                        </li>
                     </ul>
                 </li>
                                         

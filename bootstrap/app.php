@@ -5,6 +5,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use App\Http\Middleware\AdminAuthenticate;
+use App\Http\Middleware\TrackUtmMiddleware;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -21,6 +22,7 @@ return Application::configure(basePath: dirname(__DIR__))
         //     AdminRedirectIfAuthenticated::class,
         //     // Second::class,
         // ]);
+        // $middleware->append(TrackUtmMiddleware::class);
         $middleware->alias([
 
             'admin.auth' => AdminAuthenticate::class, 

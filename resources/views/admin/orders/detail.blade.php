@@ -52,6 +52,15 @@
                                         Email: {{ $order->shippingAddress->email }}
                                     </address>
                                 </div>
+
+                                <div class="col-sm-12">
+                                    <h1 class="h5 mb-3">Order Status</h1>
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                            <p class="lead">Order Status: <span class="badge badge-success">{{ $order->status }}</span></p>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 

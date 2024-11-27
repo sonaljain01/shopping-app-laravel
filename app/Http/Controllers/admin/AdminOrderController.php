@@ -9,6 +9,7 @@ use App\Models\OrderItem;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\Models\OrderHistory;
+use App\Http\Controllers\admin\ShipRocketController;
 
 class AdminOrderController extends Controller
 {
@@ -48,40 +49,70 @@ class AdminOrderController extends Controller
 
     }
 
-    public function changeOrderStatus(Request $request, $orderId)
+    public function changeOrderStatus(Request $request, $orderId, ShipRocketController $shipRocketController)
     {
         $request->validate([
             'status' => 'required|in:In Progress,completed,cancelled,shipped',
         ]);
 
+        // Retrieve the order
         $order = Order::find($orderId);
         if (!$order) {
             return response()->json(['success' => false, 'message' => 'Order not found'], 404);
         }
+
+        // Prevent updating if the order is already completed or cancelled
         if (in_array($order->status, ['cancelled', 'completed'])) {
-            session()->flash('error', 'You cannot update the order status because the order is ' . $order->status . '.');
-            return redirect()->route('orders.detail', $orderId);
+            return response()->json(['success' => false, 'message' => 'Cannot update the status of an order that is ' . $order->status . '.'], 400);
         }
 
-        // Restrict changing from shipped to in-progress
-        if ($order->status === 'shipped' && $request->status === 'In Progress') {
-            session()->flash('error', 'You cannot update the order status because the order is ' . $order->status . '.');
-            return redirect()->route('orders.detail', $orderId);
+        // Handle "shipped" status with ShipRocket integration
+        if ($request->status === 'shipped') {
+            $shipRocketResponse = $shipRocketController->createOrder($order);
+
+            // Verify ShipRocket response
+            if (!$shipRocketResponse || !isset($shipRocketResponse['status'])) {
+                return response()->json(['success' => false, 'message' => 'Failed to create order in ShipRocket.'], 500);
+            }
+
+            if ($shipRocketResponse['status'] === 200) {
+                $shipRocketOrderData = $shipRocketResponse['data'] ?? [];
+
+                // Update the order with ShipRocket details
+                $order->update([
+                    'shiprocket_order_id' => $shipRocketOrderData['order_id'] ?? null,
+                    'shiprocket_tracking_number' => $shipRocketOrderData['tracking_number'] ?? null,
+                    'shiprocket_label_url' => $shipRocketOrderData['label_url'] ?? null,
+                    'status' => 'shipped',
+                ]);
+
+                // Store additional shipment details if needed
+                $storeResponse = $shipRocketController->storeShipment($shipRocketOrderData);
+                if (!$storeResponse['status']) {
+                    return response()->json(['success' => false, 'message' => $storeResponse['message']], 500);
+                }
+            } else {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Error processing order in ShipRocket: ' . ($shipRocketResponse['message'] ?? 'Unknown error.'),
+                ], 500);
+            }
+        } else {
+            // Update order status for other statuses
+            $order->status = $request->status;
+            $order->save();
         }
 
-        $order->status = $request->status;
-        $order->save();
-
-
+        // Log the order status change
         OrderHistory::create([
             'order_id' => $order->id,
             'status' => $order->status,
-            'changed_at' => now(), // Stores the current timestamp
+            'changed_at' => now(),
         ]);
 
         return response()->json(['success' => true, 'message' => 'Order status updated successfully']);
-
     }
+
 
     public function viewInvoice($orderId)
     {
@@ -195,4 +226,20 @@ class AdminOrderController extends Controller
         }
     }
 
+    public function updateGlobalCountry(Request $request)
+    {
+            $countryCode = $request->name;
+            $telCodeData = getTelCode($countryCode);
+            if (auth()->check()) {
+                auth()->user()->update([
+                    'country' => $countryCode, 
+                    'country_code' => $telCodeData['code']
+                ]);
+            } else {
+                session()->put('country', $countryCode);
+                session()->put('country_code', $telCodeData['code']);
+            }
+            return response()->json(['success' => true], 200);
+        
+    }
 }

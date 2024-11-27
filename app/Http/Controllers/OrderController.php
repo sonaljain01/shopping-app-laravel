@@ -83,7 +83,16 @@ class OrderController extends Controller
                     ->orWhere('location', 'both');
             })
             ->get();
-        return view('front.checkout', compact('cartItems', 'products', 'subtotal', 'tax', 'total', 'paymentMethods', 'headerMenus', 'footerMenus'));
+        $country = session('country', 'IN');
+        if (auth()->check()) {
+            $country = auth()->user()->country ?? $country;
+        } elseif (!session('country')) {
+            $ip = request()->ip() ?? '146.70.245.84';
+            $data = getLocationInfo($ip);
+            $country = $data['data']['country'] ?? $country;
+        }
+        $telcode = getTelCode($country)['code'];
+        return view('front.checkout', compact('cartItems', 'products', 'subtotal', 'tax', 'total', 'paymentMethods', 'headerMenus', 'footerMenus', 'telcode'));
 
     }
 
@@ -101,9 +110,9 @@ class OrderController extends Controller
             'zip' => 'required|numeric',
             'city' => 'required|string',
             'state' => 'nullable|string',
-            'phone' => 'required|string',
+            'phone' => 'required|numeric',
             'country' => 'nullable|string',
-            'dial_code' => 'required|string',
+            // 'dial_code' => 'required|string',
             'payment_method' => 'required|in:cod,razorpay',
             'additional_information' => 'nullable|string',
             'same_as_billing' => 'nullable|string',
@@ -116,8 +125,14 @@ class OrderController extends Controller
             'shipping_city' => $sameAsBilling ? 'nullable' : 'required|string',
             'shipping_state' => 'nullable|string',
             'shipping_phone' => $sameAsBilling ? 'nullable' : 'required|string',
+            // 'shipping_dial_code' => $sameAsBilling ? 'nullable' : 'required|string',
             'shipping_country' => 'nullable|string',
         ]);
+
+        // $countryDetails = $this->validateCountryDialCode($validatedData['country'], $validatedData['dial_code']);
+        // if (!$countryDetails) {
+        //     return redirect()->back()->withErrors(['dial_code' => 'Invalid country or dial code provided.']);
+        // }
 
         // Handle location validation based on the zip code
         $locationDetails = $this->getLocationFromPincode($validatedData['zip']);
@@ -130,7 +145,7 @@ class OrderController extends Controller
         $validatedData['state'] = $locationDetails['state'];
 
         // Use database transaction to handle the order creation
-        DB::transaction(function () use ($validatedData, $sameAsBilling) {
+        DB::transaction(function () use ($validatedData, $sameAsBilling, $request) {
             $cartItems = session('cart', []);
             $totalAmount = collect($cartItems)->sum(fn($item) => $item['price'] * $item['quantity']);
 
@@ -144,10 +159,11 @@ class OrderController extends Controller
                 'payment_method' => $validatedData['payment_method'],
                 'status' => 'In Progress',
                 'total_amount' => $totalAmount,
-                'phone' => $validatedData['phone'],
+                // 'phone' => $validatedData['phone'],
+                'phone' => $request->ccode + $request->phone,
                 'billing_address_id' => null,
                 'shipping_address_id' => null,
-                'dial_code' => $validatedData['dial_code'],
+
             ]);
 
             // Create billing address
@@ -162,7 +178,7 @@ class OrderController extends Controller
                 'zip' => $validatedData['zip'],
                 'phone' => $validatedData['phone'],
                 'country' => $validatedData['country'],
-                'dial_code' => $validatedData['dial_code'],
+                // 'dial_code' => $validatedData['dial_code'],
                 'additional_information' => $validatedData['additional_information'],
                 'type' => 'billing',
                 'is_default' => true,
@@ -184,7 +200,7 @@ class OrderController extends Controller
                     'zip' => $validatedData['shipping_zip'],
                     'phone' => $validatedData['shipping_phone'],
                     'country' => $validatedData['shipping_country'],
-                    'dial_code' => $validatedData['dial_code'],
+                    // 'dial_code' => $validatedData['dial_code'],
                     'additional_information' => $validatedData['additional_information'],
                     'type' => 'shipping',
                     'is_default' => false,
@@ -221,7 +237,17 @@ class OrderController extends Controller
         return redirect()->route('front.index')->with('success', 'Order placed successfully!');
     }
 
-
+    private function validateCountryDialCode($countryName, $dialCode)
+    {
+        $response = Http::get("https://restcountries.com/v3.1/name/{$countryName}");
+        if ($response->ok()) {
+            $data = $response->json();
+            if (!empty($data[0]['idd']) && in_array(str_replace('+', '', $dialCode), $data[0]['idd']['suffixes'])) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     private function getLocationFromPincode($pincode)
     {
