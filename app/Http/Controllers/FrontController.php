@@ -96,6 +96,19 @@ class FrontController extends Controller
             })
             ->orderBy('order', 'asc')
             ->get();
+        // $ip = '146.70.245.84';
+        // $data = getLocationInfo($ip);
+        // $telcode = $data['data']['country'] ?? 'IN';
+        $country = session('country', 'IN');
+        if (auth()->check()) {
+            $country = auth()->user()->country ?? $country;
+        } elseif (!session('country')) {
+            $ip = request()->ip() ?? '146.70.245.84'; // Replace with dynamic IP detection
+            $data = getLocationInfo($ip);
+            $country = $data['data']['country'] ?? $country;
+        }
+        $telcode = getTelCode($country)['code'];
+        session()->put('dial_code', $telcode);
         // Pass data to the view
         return view('front.shop', [
             'categories' => $categories,
@@ -103,9 +116,10 @@ class FrontController extends Controller
             'products' => $products,
             'headerMenus' => $headerMenus,   // Pass header menus to the view
             'footerMenus' => $footerMenus,   // Pass footer menus to the view
+            'telcode' => $telcode
         ]);
 
     }
 
-   
+
 }

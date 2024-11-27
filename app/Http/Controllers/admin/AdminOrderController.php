@@ -226,4 +226,20 @@ class AdminOrderController extends Controller
         }
     }
 
+    public function updateGlobalCountry(Request $request)
+    {
+            $countryCode = $request->name;
+            $telCodeData = getTelCode($countryCode);
+            if (auth()->check()) {
+                auth()->user()->update([
+                    'country' => $countryCode, 
+                    'country_code' => $telCodeData['code']
+                ]);
+            } else {
+                session()->put('country', $countryCode);
+                session()->put('country_code', $telCodeData['code']);
+            }
+            return response()->json(['success' => true], 200);
+        
+    }
 }

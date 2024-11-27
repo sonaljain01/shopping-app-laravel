@@ -51,15 +51,44 @@
                         <div class="currency-selector dropdown js-dropdown float-right">
                             <a href="javascript:void(0);" data-toggle="dropdown" class="popup-title" title="Currency"
                                 aria-label="Currency dropdown">
-                                <span class="hidden-xl-down medium text-light">Currency:</span>
-                                <span class="iso_code medium text-light">$USD</span>
+                                <span class="hidden-xl-down medium text-light">Country:</span>
+                                <span class="iso_code medium text-light"> <img
+                                        src="{{ asset('vendor/blade-flags/country-' . session('country_code', 'in') . '.svg') }}"
+                                        width="20" height="20" />
+                                </span>
                                 <i class="fa fa-angle-down medium text-light"></i>
                             </a>
                             <ul class="popup-content dropdown-menu">
-                                <li><a title="Euro" href="#" class="dropdown-item medium text-medium">EUR €</a>
+                                <li><a title="Euro" onclick="country(this.id)" href="javascript:void(0);"
+                                        id="in" class="dropdown-item medium text-medium"><img
+                                            src="{{ asset('vendor/blade-flags/country-in.svg') }}" width="32"
+                                            height="32" />India</a>
                                 </li>
-                                <li class="current"><a title="US Dollar" href="#"
-                                        class="dropdown-item medium text-medium">USD $</a></li>
+
+                                <li><a title="Euro" onclick="country(this.id)" href="javascript:void(0);"
+                                        id="eu" class="dropdown-item medium text-medium"><img
+                                            src="{{ asset('vendor/blade-flags/country-eu.svg') }}" width="32"
+                                            height="32" />Europe</a>
+                                </li>
+                                <li class="current"><a title="US Dollar" href="javascript:void(0);" id="uk"
+                                        onclick="country(this.id)" class="dropdown-item medium text-medium">
+                                        <img src="{{ asset('vendor/blade-flags/country-uk.svg') }}" width="32"
+                                            height="32" />
+                                        UK</a></li>
+                                <li class="current"><a title="US Dollar" href="javascript:void(0);" id="us"
+                                        onclick="country(this.id)" class="dropdown-item medium text-medium">
+                                        <img src="{{ asset('vendor/blade-flags/country-us.svg') }}" width="32"
+                                            height="32" />
+                                        USA
+                                    </a>
+                                </li>
+                                <li class="current"><a title="US Dollar" href="javascript:void(0);" id="cn"
+                                        onclick="country(this.id)" class="dropdown-item medium text-medium">
+                                        <img src="{{ asset('vendor/blade-flags/country-cn.svg') }}" width="32"
+                                            height="32" />
+                                        China
+                                    </a>
+                                </li>
                             </ul>
                         </div>
 
@@ -84,14 +113,14 @@
                                             src="{{ asset('front-assets/img/3.jpg') }}" alt="de" width="16"
                                             height="11" /><span>Deutsch</span></a></li>
                                 <li><a href="javascript:void(0);" class="dropdown-item medium text-medium"><img
-                                            src="{{ asset('front-assets/img/4.jpg') }}" alt="it" width="16"
-                                            height="11" /><span>Italiano</span></a></li>
+                                            src="{{ asset('front-assets/img/4.jpg') }}" alt="it"
+                                            width="16" height="11" /><span>Italiano</span></a></li>
                                 <li><a href="javascript:void(0);" class="dropdown-item medium text-medium"><img
-                                            src="{{ asset('front-assets/img/5.jpg') }}" alt="es" width="16"
-                                            height="11" /><span>Español</span></a></li>
+                                            src="{{ asset('front-assets/img/5.jpg') }}" alt="es"
+                                            width="16" height="11" /><span>Español</span></a></li>
                                 <li><a href="javascript:void(0);" class="dropdown-item medium text-medium"><img
-                                            src="{{ asset('front-assets/img/6.jpg') }}" alt="ar" width="16"
-                                            height="11" /><span>اللغة العربية</span></a></li>
+                                            src="{{ asset('front-assets/img/6.jpg') }}" alt="ar"
+                                            width="16" height="11" /><span>اللغة العربية</span></a></li>
                             </ul>
                         </div>
 
@@ -184,6 +213,7 @@
                         </ul>
 
                         <ul class="nav-menu nav-menu-social align-to-right">
+
                             <li>
                                 <a href="#" onclick="openSearch()">
                                     <i class="lni lni-search-alt"></i>
@@ -214,7 +244,31 @@
                     </div>
                 </nav>
             </div>
+
         </div>
+        <script>
+            function country(id) {
+                console.log("Selected Country ID:", id); // Debug selected ID
+                $.ajax({
+                    url: "{{ route('update.global.country') }}",
+                    type: "POST",
+                    data: {
+                        "_token": "{{ csrf_token() }}",
+                        "name": id
+                    },
+                    success: function(data) {
+                        if (data.success) {
+                            location.reload(); // Reload to update displayed country
+                        } else {
+                            alert(data.error || 'Failed to update country.');
+                        }
+                    },
+                    error: function(xhr) {
+                        console.error(xhr.responseJSON || xhr.responseText); // Log detailed error
+                    }
+                });
+            }
+        </script>
         <!-- End Navigation -->
         <div class="clearfix"></div>
         <!-- ============================================================== -->

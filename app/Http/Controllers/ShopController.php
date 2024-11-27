@@ -108,7 +108,9 @@ class ShopController extends Controller
                     ->orWhere('location', 'both');
             })
             ->get();
-
+        $ip = '146.70.245.84';
+        $data = getLocationInfo($ip);
+        $telcode = $data['data']['country'] ?? 'IN';
         return view('front.shop', [
             'categories' => $categories,
             'brands' => $brands,
@@ -119,6 +121,7 @@ class ShopController extends Controller
             // 'keyword' => $keyword ?? null,
             'headerMenus' => $headerMenus,   // Pass header menus to the view
             'footerMenus' => $footerMenus,
+            'telcode' => $telcode
 
         ]);
     }
@@ -259,7 +262,7 @@ class ShopController extends Controller
                     ->orWhere('location', 'both');
             })
             ->get();
-       
+
 
         $products = $products->get();
 

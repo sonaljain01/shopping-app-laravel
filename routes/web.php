@@ -22,9 +22,11 @@ use App\Http\Controllers\admin\PickupController;
 use App\Http\Middleware\TrackUtmMiddleware;
 use App\Http\Controllers\admin\CityController;
 use App\Http\Controllers\admin\MenuController;
-
+use App\Http\Controllers\CountryController;
 
 Route::group(['middleware' => TrackUtmMiddleware::class], function () {
+    Route::get('/api/get-dial-code', [CountryController::class, 'getDialCode']);
+    Route::post('/update-global-country', [AdminOrderController::class, 'updateGlobalCountry'])->name('update.global.country');
     Route::get('/', [FrontController::class, 'index'])->name('front.home');
 
     Route::get('/shop/{categorySlug?}/{subcategorySlug?}', [ShopController::class, 'index'])->name('front.shop');

@@ -23,6 +23,10 @@ class User extends Authenticatable
         'email',
         'password',
         'role',
+        'country_code',
+        'phone_number',
+        // 'provider',
+        // 'provider_id',
         'google_id',
         'facebook_id',
         'utm_source',
@@ -30,6 +34,7 @@ class User extends Authenticatable
         'utm_campaign',
         'utm_term',
         'utm_content',
+        'country'
     ];
 
     /**

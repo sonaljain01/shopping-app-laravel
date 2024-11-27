@@ -108,14 +108,30 @@
                                 <input type="text" id="dial_code" name="dial_code" readonly class="form-control">
                             </div>
                         </div> --}}
-                        
+                        {{-- <div class="col-xl-2 col-lg-6 col-md-12 col-sm-12 col-12">
+                            <div class="form-group">
+                                <label class="text-dark" id="phone">Tel Code *</label>
+                                <input type="text" class="form-control" placeholder="+91" name="ccode" id="ccode"
+                                    value="{{$telcode}}" required />
+                            </div>
+                        </div>
                         <!-- Phone Field -->
                         <div class="col-6">
                             <div class="form-group">
                                 <label for="phone">Phone <span class="text-danger">*</span></label>
                                 <input type="text" id="phone" name="phone" class="form-control" placeholder="Phone" required>
                             </div>
+                        </div> --}}
+                        <div class="form-group col-md-6">
+                            <label for="country_code">Country Code *</label>
+                            <input type="text" class="form-control" name="country_code" id="country_code" 
+                                value="{{ $telcode }}" readonly />
                         </div>
+                        <div class="form-group col-md-6">
+                            <label for="phone_number">Phone Number *</label>
+                            <input type="tel" class="form-control" name="phone_number" id="phone_number" required>
+                        </div>
+                        
                         
                         <!-- Country Selection -->
                         <div class="col-12">

@@ -83,7 +83,16 @@ class OrderController extends Controller
                     ->orWhere('location', 'both');
             })
             ->get();
-        return view('front.checkout', compact('cartItems', 'products', 'subtotal', 'tax', 'total', 'paymentMethods', 'headerMenus', 'footerMenus'));
+        $country = session('country', 'IN');
+        if (auth()->check()) {
+            $country = auth()->user()->country ?? $country;
+        } elseif (!session('country')) {
+            $ip = request()->ip() ?? '146.70.245.84';
+            $data = getLocationInfo($ip);
+            $country = $data['data']['country'] ?? $country;
+        }
+        $telcode = getTelCode($country)['code'];
+        return view('front.checkout', compact('cartItems', 'products', 'subtotal', 'tax', 'total', 'paymentMethods', 'headerMenus', 'footerMenus', 'telcode'));
 
     }
 
@@ -101,7 +110,7 @@ class OrderController extends Controller
             'zip' => 'required|numeric',
             'city' => 'required|string',
             'state' => 'nullable|string',
-            'phone' => 'required|string',
+            'phone' => 'required|numeric',
             'country' => 'nullable|string',
             // 'dial_code' => 'required|string',
             'payment_method' => 'required|in:cod,razorpay',
@@ -136,7 +145,7 @@ class OrderController extends Controller
         $validatedData['state'] = $locationDetails['state'];
 
         // Use database transaction to handle the order creation
-        DB::transaction(function () use ($validatedData, $sameAsBilling) {
+        DB::transaction(function () use ($validatedData, $sameAsBilling, $request) {
             $cartItems = session('cart', []);
             $totalAmount = collect($cartItems)->sum(fn($item) => $item['price'] * $item['quantity']);
 
@@ -150,10 +159,11 @@ class OrderController extends Controller
                 'payment_method' => $validatedData['payment_method'],
                 'status' => 'In Progress',
                 'total_amount' => $totalAmount,
-                'phone' => $validatedData['phone'],
+                // 'phone' => $validatedData['phone'],
+                'phone' => $request->ccode + $request->phone,
                 'billing_address_id' => null,
                 'shipping_address_id' => null,
-                // 'dial_code' => $validatedData['dial_code'],
+
             ]);
 
             // Create billing address
