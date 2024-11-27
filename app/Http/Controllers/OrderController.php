@@ -112,7 +112,7 @@ class OrderController extends Controller
             'state' => 'nullable|string',
             'phone' => 'required|numeric',
             'country' => 'nullable|string',
-            // 'dial_code' => 'required|string',
+            'country_code' => 'required|string',
             'payment_method' => 'required|in:cod,razorpay',
             'additional_information' => 'nullable|string',
             'same_as_billing' => 'nullable|string',
@@ -125,7 +125,7 @@ class OrderController extends Controller
             'shipping_city' => $sameAsBilling ? 'nullable' : 'required|string',
             'shipping_state' => 'nullable|string',
             'shipping_phone' => $sameAsBilling ? 'nullable' : 'required|string',
-            // 'shipping_dial_code' => $sameAsBilling ? 'nullable' : 'required|string',
+            'shipping_country_code' => $sameAsBilling ? 'nullable' : 'required|string',
             'shipping_country' => 'nullable|string',
         ]);
 
@@ -160,9 +160,10 @@ class OrderController extends Controller
                 'status' => 'In Progress',
                 'total_amount' => $totalAmount,
                 // 'phone' => $validatedData['phone'],
-                'phone' => $request->ccode + $request->phone,
+                'phone' => $validatedData['country_code'] . $validatedData['phone'],
                 'billing_address_id' => null,
                 'shipping_address_id' => null,
+                'country_code' => $request->country_code,
 
             ]);
 
@@ -178,7 +179,7 @@ class OrderController extends Controller
                 'zip' => $validatedData['zip'],
                 'phone' => $validatedData['phone'],
                 'country' => $validatedData['country'],
-                // 'dial_code' => $validatedData['dial_code'],
+                'country_code' => $request->country_code,
                 'additional_information' => $validatedData['additional_information'],
                 'type' => 'billing',
                 'is_default' => true,
@@ -200,7 +201,7 @@ class OrderController extends Controller
                     'zip' => $validatedData['shipping_zip'],
                     'phone' => $validatedData['shipping_phone'],
                     'country' => $validatedData['shipping_country'],
-                    // 'dial_code' => $validatedData['dial_code'],
+                    'country_code' => $request->country_code,
                     'additional_information' => $validatedData['additional_information'],
                     'type' => 'shipping',
                     'is_default' => false,

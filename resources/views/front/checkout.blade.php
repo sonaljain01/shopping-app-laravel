@@ -128,8 +128,8 @@
                                 value="{{ $telcode }}" readonly />
                         </div>
                         <div class="form-group col-md-6">
-                            <label for="phone_number">Phone Number *</label>
-                            <input type="tel" class="form-control" name="phone_number" id="phone_number" required>
+                            <label for="phone">Phone Number *</label>
+                            <input type="tel" class="form-control" name="phone" id="phone" required>
                         </div>
                         
                         

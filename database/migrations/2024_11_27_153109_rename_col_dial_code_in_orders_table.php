@@ -11,9 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('billing_addresses', function (Blueprint $table) {
-            // change first_name to username
-            $table->renameColumn('first_name', 'username');
+        Schema::table('orders', function (Blueprint $table) {
+            $table->renameColumn('dial_code', 'country_code');
         });
     }
 
@@ -22,8 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('billing_addresses', function (Blueprint $table) {
-            $table->renameColumn('username', 'first_name');
+        Schema::table('orders', function (Blueprint $table) {
+            $table->renameColumn('country_code', 'dial_code');
         });
     }
 };
