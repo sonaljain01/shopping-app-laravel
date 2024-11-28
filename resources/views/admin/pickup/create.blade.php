@@ -16,7 +16,7 @@
 
 <section class="content">
     <div class="container-fluid">
-        @include('admin.message') <!-- Message partial for alerts -->
+        @include('admin.message') <!-- Flash message partial -->
 
         <div class="card">
             <div class="card-body">
@@ -56,7 +56,7 @@
                         <label for="address">Address</label>
                         <textarea 
                             name="address" 
-                            id="address_1" 
+                            id="address" 
                             rows="3" 
                             class="form-control" 
                             placeholder="Enter address" 
@@ -66,8 +66,8 @@
 
                     <!-- Location Fields -->
                     <div class="form-row">
-                        @foreach (['city' => 'City', 'state' => 'State', 'country' => 'Country'] as $field => $label)
-                            <div class="form-group col-md-4">
+                        @foreach (['city' => 'City', 'state' => 'State', 'country' => 'Country', 'pincode' => 'Pincode'] as $field => $label)
+                            <div class="form-group col-md-3">
                                 <label for="{{ $field }}">{{ $label }}</label>
                                 <input 
                                     type="text" 
@@ -80,20 +80,6 @@
                                 @error($field) <small class="text-danger">{{ $message }}</small> @enderror
                             </div>
                         @endforeach
-
-                        <!-- Pincode Field -->
-                        <div class="form-group col-md-4">
-                            <label for="pincode">Pincode</label>
-                            <input 
-                                type="text" 
-                                name="pincode" 
-                                id="pincode" 
-                                class="form-control" 
-                                value="{{ old('pincode') }}" 
-                                placeholder="Enter pincode" 
-                                required>
-                            @error('pincode') <small class="text-danger">{{ $message }}</small> @enderror
-                        </div>
                     </div>
 
                     <!-- Phone Field -->
@@ -116,7 +102,7 @@
                         <input 
                             type="text" 
                             name="tag" 
-                            id="tags" 
+                            id="tag" 
                             class="form-control" 
                             value="{{ old('tag') }}" 
                             placeholder="e.g., Main Office, Warehouse">
@@ -125,7 +111,6 @@
 
                     <!-- Default Pickup Checkbox -->
                     <div class="form-group">
-                        <label for="is_default">Set as Default</label>
                         <div class="form-check">
                             <input 
                                 type="checkbox" 
@@ -134,7 +119,7 @@
                                 class="form-check-input" 
                                 value="1" 
                                 {{ old('is_default') ? 'checked' : '' }}>
-                            <label class="form-check-label" for="is_default">Make this the default pickup address</label>
+                            <label class="form-check-label" for="is_default">Set as Default Pickup Address</label>
                         </div>
                         @error('is_default') <small class="text-danger">{{ $message }}</small> @enderror
                     </div>

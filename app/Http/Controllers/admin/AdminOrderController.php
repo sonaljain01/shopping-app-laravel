@@ -9,7 +9,7 @@ use App\Models\OrderItem;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\Models\OrderHistory;
-use App\Models\pickupAddress;
+use App\Models\PickupAddress;
 use App\Http\Controllers\admin\ShipRocketController;
 
 class AdminOrderController extends Controller
