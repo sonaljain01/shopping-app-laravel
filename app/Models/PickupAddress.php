@@ -11,8 +11,7 @@ class PickupAddress extends Model
 
     protected $fillable = [
         'name',
-        'address_1',
-        'address_2',
+        'address',
         'city',
         'state',
         'country',
