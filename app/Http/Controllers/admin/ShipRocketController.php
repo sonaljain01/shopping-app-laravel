@@ -20,11 +20,12 @@ class ShipRocketController extends Controller
         $this->token = env('SHIPROCKET_TOKEN');
     }
 
-    public function createOrder($order)
+
+    public function createOrder($data, $pickupaddress)
     {
         try {
             $products = [];
-            foreach ($order->products as $product) {
+            foreach ($data->products as $product) {
                 $products[] = [
                     'name' => $product->product->title,
                     'sku' => $product->product->sku,
@@ -41,29 +42,42 @@ class ShipRocketController extends Controller
                 'Content-Type' => 'application/json',
                 'Authorization' => 'Bearer ' . $this->token,
             ])->post('https://apiv2.shiprocket.in/v1/external/orders/create/adhoc', [
-                        'order_id' => $order->id,
-                        'order_date' => $order->created_at->format('Y-m-d H:i:s'),
-                        'pickup_location' => 'Home',
+                        'order_id' => $data->id,
+                        'order_date' => $data->created_at->format('Y-m-d H:i:s'),
+                        'pickup_location' => $pickupaddress ?? 'home',
                         'channel_id' => '5780891',
                         'comment' => '',
-                        'billing_customer_name' => $order->user->name,
+                        'billing_customer_name' => $data->user->name,
                         'billing_last_name' => '',
-                        'billing_address' => $order->address->address,
+                        'billing_address' => $data->address->address,
                         'billing_address_2' => '',
-                        'billing_city' => $order->address->city,
-                        'billing_pincode' => $order->address->zip,
-                        'billing_state' => $order->address->state,
-                        'billing_country' => $order->address->country,
-                        'billing_email' => $order->user->email ?? '',
-                        'billing_phone' => $order->user->phone ?? '',
+                        'billing_city' => $data->address->city,
+                        'billing_pincode' => $data->address->pincode,
+                        'billing_state' => $data->address->state,
+                        'billing_country' => $data->address->country,
+                        'billing_email' => $data->user->email,
+                        'billing_phone' => $data->user->phone_number,
                         'shipping_is_billing' => true,
+                        'shipping_customer_name' => '',
+                        'shipping_last_name' => '',
+                        'shipping_address' => '',
+                        'shipping_address_2' => '',
+                        'shipping_city' => '',
+                        'shipping_pincode' => '',
+                        'shipping_country' => '',
+                        'shipping_state' => '',
+                        'shipping_email' => '',
+                        'shipping_phone' => '',
                         'order_items' => $products,
-                        'payment_method' => $order->payment_method == 'cod' ? 'postpaid' : 'prepaid',
+                        'payment_method' => $data->payment_method == 'cod' ? 'postpaid' : 'prepaid',
                         'shipping_charges' => 0,
-                        'sub_total' => $order->total,
-                        'length' => 10,
-                        'breadth' => 15,
-                        'height' => 20,
+                        'giftwrap_charges' => 0,
+                        'transaction_charges' => 0,
+                        'total_discount' => 0,
+                        'sub_total' => $data->total,
+                        'length' => $data->length,
+                        'breadth' => $data->breadth,
+                        'height' => $data->height,
                         'weight' => 2.5,
                     ]);
 
@@ -89,15 +103,15 @@ class ShipRocketController extends Controller
     }
 
 
-    public function storeShipment($order)
+    public function storeShipment($data)
     {
         $shiprocket = Shipment::updateOrCreate([
-            'order_id' => $order['order_id'],
-            'channel_order_id' => $order['channel_order_id'],
-            'shipment_id' => $order['shipment_id'],
+            'order_id' => $data['order_id'],
+            'channel_order_id' => $data['channel_order_id'],
+            'shipment_id' => $data['shipment_id'],
             'courier_name' => '',
-            'status' => $order['status'],
-            'pickup_address_id' => 1,
+            'status' => $data['status'],
+            'pickup_address_id' => 2,
             'actual_weight' => '',
             'volumetric_weight' => '',
             'platform' => '5777349',

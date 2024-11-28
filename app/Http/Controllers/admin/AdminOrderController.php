@@ -62,13 +62,13 @@ class AdminOrderController extends Controller
         }
 
         // Prevent updating if the order is already completed or cancelled
-        if (in_array($order->status, ['cancelled', 'completed'])) {
+        if (in_array($order->status, ['cancelled', 'completed', 'shipped'])) {
             return response()->json(['success' => false, 'message' => 'Cannot update the status of an order that is ' . $order->status . '.'], 400);
         }
 
         // Handle "shipped" status with ShipRocket integration
         if ($request->status === 'shipped') {
-            $shipRocketResponse = $shipRocketController->createOrder($order);
+            $shipRocketResponse = $shipRocketController->createOrder($order, $request->pickup);
 
             // Verify ShipRocket response
             if (!$shipRocketResponse || !isset($shipRocketResponse['status'])) {
