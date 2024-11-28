@@ -11,20 +11,6 @@ use App\Http\Requests\PickupAddressRequest;
 
 class PickupController extends Controller
 {
-    // public function index(Request $request)
-    // {
-    //     if (!auth()->check()) {
-    //         return redirect()->route('login');
-    //     }
-
-    //     $keyword = $request->get('keyword');
-    //     $pickupAddresses = PickupAddress::query()
-    //         ->where('user_id', auth()->id())
-    //         ->when($keyword, fn($query) => $query->where('name', 'like', "%$keyword%"))
-    //         ->paginate(10);
-
-    //     return view('admin.pickup.index', compact('pickupAddresses'));
-    // }
     public function index(Request $request)
     {
         if (! auth()->check()) {
@@ -62,9 +48,9 @@ class PickupController extends Controller
                 'is_default' => $request->is_default,
             ];
 
-            DB::beginTransaction();
-            PickupAddress::create($data);
-            DB::commit();
+            // DB::beginTransaction();
+            // PickupAddress::create($data);
+            // DB::commit();
 
             $res = Http::withHeaders([
                 'Content-Type' => 'application/json',
@@ -81,9 +67,15 @@ class PickupController extends Controller
                         'pin_code' => $request->pincode,
                     ]);
             if (!$res->successful()) {
-                $error = $res->json()['errors']['address'][0];
+                // $error = $res->json()['errors']['address'][0];
+                $error = $res->json()['errors']['address'][0] ?? $res->json()['errors']['pickup_location'][0];
                 return back()->with('error', $error);
             }
+
+            DB::beginTransaction();
+            PickupAddress::create($data);
+            DB::commit();
+
             return back()->with('success', 'Pickup address created');
         } catch (\Exception $e) {
             DB::rollBack();
