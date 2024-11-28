@@ -52,6 +52,56 @@ class AdminOrderController extends Controller
         ]);
     }
 
+    // public function changeOrderStatus(Request $request, $orderId, ShipRocketController $shipRocketController)
+
+    // {
+    //     $request->validate([
+    //         'status' => 'required|in:In Progress,completed,cancelled,shipped',
+    //         'pickup' => 'required_if:status,shipped|exists:pickup_addresses,id',
+    //     ]);
+
+    //     $order = Order::with(['billingAddress', 'shippingAddress', 'orderItems.product'])->find($orderId);
+
+    //     if (!$order) {
+    //         return back()->with('error', 'Order not found');
+    //     }
+
+    //     if ($request->status === 'shipped') {
+    //         $pickupAddress = PickupAddress::find($request->pickup);
+
+    //         if (!$pickupAddress || !$pickupAddress->tag) {
+    //             return back()->with('error', 'Invalid or missing pickup address/tag.');
+    //         }
+
+    //         $shipRocketResponse = $shipRocketController->createOrder($order, $pickupAddress->tag);
+
+    //         if (! $shipRocketResponse || ! method_exists($shipRocketResponse, 'status')) {
+    //             return back()->with('error', 'Failed to create order in ShipRocket.');
+    //         }
+
+    //         if ($shipRocketResponse->status() === 200) {
+    //             $storeResponse = $shipRocketController->storeShipment($shipRocketResponse->json());
+
+    //             if (! $storeResponse['status']) {
+    //                 return back()->with('error', $storeResponse['message']);
+    //             }
+    //             $order->update(['status' => "shipped"]);
+    //         } else {
+    //             return response()->json(['data' => $shipRocketResponse->json()]);
+    //         }
+    //     } else {
+    //         $order->update(['status' => $request->status]);
+    //     }
+
+    //     OrderHistory::create([
+    //         'order_id' => $order->id,
+    //         'status' => $request->status,
+    //         'changed_at' => now(),
+    //     ]);
+
+    //     return back()->with('success', 'Order updated successfully.');
+    // }
+
     public function changeOrderStatus(Request $request, $orderId, ShipRocketController $shipRocketController)
     {
         $request->validate([
@@ -62,44 +112,60 @@ class AdminOrderController extends Controller
         $order = Order::with(['billingAddress', 'shippingAddress', 'orderItems.product'])->find($orderId);
 
         if (!$order) {
-            return back()->with('error', 'Order not found');
+            return back()->with('error', 'Order not found.');
         }
-        
+
+        // Handle 'shipped' status
         if ($request->status === 'shipped') {
-            $pickupAddress = PickupAddress::find($request->pickup);
-
-            if (!$pickupAddress || !$pickupAddress->tag) {
-                return back()->with('error', 'Invalid or missing pickup address/tag.');
-            }
-
-            $shipRocketResponse = $shipRocketController->createOrder($order, $pickupAddress->tag);
-
-            if (! $shipRocketResponse || ! method_exists($shipRocketResponse, 'status')) {
-                return back()->with('error', 'Failed to create order in ShipRocket.');
-            }
-
-            if ($shipRocketResponse->status() === 200) {
-                $storeResponse = $shipRocketController->storeShipment($shipRocketResponse->json());
-
-                if (! $storeResponse['status']) {
-                    return back()->with('error', $storeResponse['message']);
-                }
-                $order->update(['status' => "shipped"]);
-            } else {
-                return response()->json(['data' => $shipRocketResponse->json()]);
-            }
-        } else {
-            $order->update(['status' => $request->status]);
+            return $this->handleShippedStatus($order, $request, $shipRocketController);
         }
 
-        OrderHistory::create([
-            'order_id' => $order->id,
-            'status' => $request->status,
-            'changed_at' => now(),
-        ]);
+        // Update status for non-shipped cases
+        $order->update(['status' => $request->status]);
+        $this->logOrderHistory($order, $request->status);
 
         return back()->with('success', 'Order updated successfully.');
     }
+
+    private function handleShippedStatus($order, Request $request, ShipRocketController $shipRocketController)
+    {
+        $pickupAddress = PickupAddress::find($request->pickup);
+
+        if (!$pickupAddress || !$pickupAddress->tag) {
+            return back()->with('error', 'Invalid or missing pickup address/tag.');
+        }
+
+        $shipRocketResponse = $shipRocketController->createOrder($order, $pickupAddress->tag);
+
+        if (!$shipRocketResponse || !method_exists($shipRocketResponse, 'status')) {
+            return back()->with('error', 'Failed to create order in ShipRocket.');
+        }
+
+        if ($shipRocketResponse->status() !== 200) {
+            return back()->with('error', 'Error from ShipRocket: ' . json_encode($shipRocketResponse->json()));
+        }
+
+        $storeResponse = $shipRocketController->storeShipment($shipRocketResponse->json());
+
+        if (!$storeResponse['status']) {
+            return back()->with('error', $storeResponse['message']);
+        }
+
+        $order->update(['status' => 'shipped']);
+        $this->logOrderHistory($order, 'shipped');
+
+        return back()->with('success', 'Order marked as shipped successfully.');
+    }
+
+    private function logOrderHistory($order, $status)
+    {
+        OrderHistory::create([
+            'order_id' => $order->id,
+            'status' => $status,
+            'changed_at' => now(),
+        ]);
+    }
+
     public function viewInvoice($orderId)
     {
         // Retrieve the order with its related models: billingAddress, shippingAddress, and orderItems with products
@@ -214,17 +280,6 @@ class AdminOrderController extends Controller
 
     public function updateGlobalCountry(Request $request)
     {
-        // $countryCode = $request->name;
-        // $telCodeData = getTelCode($countryCode);
-        // if (auth()->check()) {
-        //     auth()->user()->update([
-        //         'country' => $countryCode,
-        //         'country_code' => $telCodeData['code']
-        //     ]);
-        // } else {
-        //     session()->put('country', $countryCode);
-        //     session()->put('country_code', $telCodeData['code']);
-        // }
         session()->put('country', $request->name);
         return response()->json(['success' => true], 200);
 
