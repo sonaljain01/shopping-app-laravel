@@ -44,141 +44,54 @@ class AdminOrderController extends Controller
             return redirect()->route('admin.orders.index')->with('error', 'Order not found');
         }
 
-        $pickupAddresses = PickupAddress::where('user_id', auth()->user()->id)->get();
-
+        $pickupAddresses = PickupAddress::all();
+        // echo $pickupAddresses;
         return view('admin.orders.detail', [
             'order' => $order,
             'pickupAddresses' => $pickupAddresses, // Ensure this is passed
         ]);
     }
 
-
-    // public function changeOrderStatus(Request $request, $orderId, ShipRocketController $shipRocketController)
-    // {
-    //     $request->validate([
-    //         'status' => 'required|in:In Progress,completed,cancelled,shipped',
-    //     ]);
-
-    //     // Retrieve the order
-    //     $order = Order::find($orderId);
-    //     if (!$order) {
-    //         return response()->json(['success' => false, 'message' => 'Order not found'], 404);
-    //     }
-
-    //     // Prevent updating if the order is already completed or cancelled
-    //     if (in_array($order->status, ['cancelled', 'completed', 'shipped'])) {
-    //         return response()->json(['success' => false, 'message' => 'Cannot update the status of an order that is ' . $order->status . '.'], 400);
-    //     }
-
-    //     // Handle "shipped" status with ShipRocket integration
-    //     if ($request->status === 'shipped') {
-    //         $shipRocketResponse = $shipRocketController->createOrder($order, $request->pickup);
-
-    //         // Verify ShipRocket response
-    //         if (!$shipRocketResponse || !isset($shipRocketResponse['status'])) {
-    //             return response()->json(['success' => false, 'message' => 'Failed to create order in ShipRocket.'], 500);
-    //         }
-
-    //         if ($shipRocketResponse['status'] === 200) {
-    //             $shipRocketOrderData = $shipRocketResponse['data'] ?? [];
-
-    //             // Update the order with ShipRocket details
-    //             $order->update([
-    //                 'shiprocket_order_id' => $shipRocketOrderData['order_id'] ?? null,
-    //                 'shiprocket_tracking_number' => $shipRocketOrderData['tracking_number'] ?? null,
-    //                 'shiprocket_label_url' => $shipRocketOrderData['label_url'] ?? null,
-    //                 'status' => 'shipped',
-    //             ]);
-
-    //             // Store additional shipment details if needed
-    //             $storeResponse = $shipRocketController->storeShipment($shipRocketOrderData);
-    //             if (!$storeResponse['status']) {
-    //                 return response()->json(['success' => false, 'message' => $storeResponse['message']], 500);
-    //             }
-    //         } else {
-    //             return response()->json([
-    //                 'success' => false,
-    //                 'message' => 'Error processing order in ShipRocket: ' . ($shipRocketResponse['message'] ?? 'Unknown error.'),
-    //             ], 500);
-    //         }
-    //     } else {
-    //         // Update order status for other statuses
-    //         $order->status = $request->status;
-    //         $order->save();
-    //     }
-
-    //     // Log the order status change
-    //     OrderHistory::create([
-    //         'order_id' => $order->id,
-    //         'status' => $order->status,
-    //         'changed_at' => now(),
-    //     ]);
-
-    //     return response()->json(['success' => true, 'message' => 'Order status updated successfully']);
-    // }
-
-
     public function changeOrderStatus(Request $request, $orderId, ShipRocketController $shipRocketController)
     {
-        // Validate incoming request data
         $request->validate([
             'status' => 'required|in:In Progress,completed,cancelled,shipped',
-            'pickup' => 'required_if:status,shipped|exists:pickup_addresses,id', // Only required for "shipped"
+            'pickup' => 'required_if:status,shipped|exists:pickup_addresses,id',
         ]);
 
-        // Retrieve the order
-        $order = Order::find($orderId);
+        $order = Order::with(['billingAddress', 'shippingAddress', 'orderItems.product'])->find($orderId);
+
         if (!$order) {
             return back()->with('error', 'Order not found');
         }
 
-        // Prevent updates on restricted statuses
-        $restrictedStatuses = ['cancelled', 'delivered', 'shipped'];
-        if (in_array($order->status, $restrictedStatuses)) {
-            return back()->with('error', "You cannot update a {$order->status} order.");
-        }
-
-        // Handle ShipRocket integration for "shipped" status
         if ($request->status === 'shipped') {
-            // Ensure pickup address exists
-            if (!$request->pickup) {
-                return back()->with('error', 'Pickup address is required.');
+            $pickupAddress = PickupAddress::find($request->pickup);
+
+            if (!$pickupAddress || !$pickupAddress->tag) {
+                return back()->with('error', 'Invalid or missing pickup address/tag.');
             }
 
-            // Create order in ShipRocket
-            $shipRocketResponse = $shipRocketController->createOrder($order, $request->pickup);
+            $shipRocketResponse = $shipRocketController->createOrder($order, $pickupAddress->tag);
 
-            // Check if ShipRocket response is valid
-            if (!$shipRocketResponse || !$shipRocketResponse->status()) {
+            if (! $shipRocketResponse || ! method_exists($shipRocketResponse, 'status')) {
                 return back()->with('error', 'Failed to create order in ShipRocket.');
             }
 
-            // Handle the response when the order is created successfully
             if ($shipRocketResponse->status() === 200) {
                 $storeResponse = $shipRocketController->storeShipment($shipRocketResponse->json());
 
-                // Handle the store shipment response
-                if (!$storeResponse['status']) {
+                if (! $storeResponse['status']) {
                     return back()->with('error', $storeResponse['message']);
                 }
-
-                // Update order status to "shipped"
-                $order->update([
-                    'status' => 'shipped',
-                    'shiprocket_order_id' => $shipRocketResponse->json()['order_id'] ?? null,
-                    'shiprocket_tracking_number' => $shipRocketResponse->json()['tracking_number'] ?? null,
-                    'shiprocket_label_url' => $shipRocketResponse->json()['label_url'] ?? null,
-                ]);
+                $order->update(['status' => "shipped"]);
             } else {
-                // Return ShipRocket error if status is not 200
-                return back()->with('error', 'Error processing order with ShipRocket.');
+                return response()->json(['data' => $shipRocketResponse->json()]);
             }
         } else {
-            // Update order status for other statuses (In Progress, Completed, Cancelled)
             $order->update(['status' => $request->status]);
         }
 
-        // Log the status change in the order history
         OrderHistory::create([
             'order_id' => $order->id,
             'status' => $request->status,
@@ -187,9 +100,6 @@ class AdminOrderController extends Controller
 
         return back()->with('success', 'Order updated successfully.');
     }
-
-
-
     public function viewInvoice($orderId)
     {
         // Retrieve the order with its related models: billingAddress, shippingAddress, and orderItems with products
