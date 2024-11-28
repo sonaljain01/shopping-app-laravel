@@ -13,7 +13,7 @@ class PickupController extends Controller
 {
     public function index(Request $request)
     {
-        if (! auth()->check()) {
+        if (!auth()->check()) {
             return redirect()->route('admin.login');
         }
 
@@ -34,6 +34,10 @@ class PickupController extends Controller
     public function store(PickupAddressRequest $request)
     {
         try {
+            $user = auth()->user();
+            if (!$user) {
+                return back()->with('error', 'User is not authenticated');
+            }
             $data = [
                 'user_id' => auth()->user()->id,
                 'name' => $request->name,

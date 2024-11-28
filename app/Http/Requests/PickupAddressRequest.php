@@ -23,6 +23,7 @@ class PickupAddressRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'user_id' => 'nullable|numeric',
             'name' => 'required|string',
             'email' => 'required|email',
             'address' => 'required|string',

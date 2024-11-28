@@ -20,6 +20,7 @@ class PickupAddress extends Model
         'is_default',
         'tag',
         'email',
-        'pincode'
+        'pincode',
+        'user_id',
     ];
 }
