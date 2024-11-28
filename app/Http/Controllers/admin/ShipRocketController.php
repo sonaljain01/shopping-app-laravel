@@ -116,11 +116,11 @@ class ShipRocketController extends Controller
     {
         
         $shiprocket = Shipment::updateOrCreate([
-            'order_id' => $data['order_id'] ?? null,
-            'channel_order_id' => $data['channel_order_id'] ?? null,
-            'shipment_id' => $data['shipment_id'] ?? null,
+            'order_id' => $data['order_id'],
+            'channel_order_id' => $data['channel_order_id'],
+            'shipment_id' => $data['shipment_id'],
             'courier_name' => "",
-            'status' => $data['status'] ?? null,
+            'status' => $data['status'],
             'pickup_address_id' => $this->pickup,
             'actual_weight' => null,
             'volumetric_weight' => null,
