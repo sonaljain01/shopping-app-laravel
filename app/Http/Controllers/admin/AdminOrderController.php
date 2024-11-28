@@ -64,7 +64,7 @@ class AdminOrderController extends Controller
         if (!$order) {
             return back()->with('error', 'Order not found');
         }
-
+        
         if ($request->status === 'shipped') {
             $pickupAddress = PickupAddress::find($request->pickup);
 

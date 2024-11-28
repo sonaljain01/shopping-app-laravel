@@ -207,6 +207,12 @@ class ShipRocketController extends Controller
 
     public function storeShipment($data)
     {
+        if (!isset($data['order_id']) || !isset($data['channel_order_id']) || !isset($data['shipment_id']) || !isset($data['status'])) {
+            return [
+                'status' => false,
+                'message' => 'Required keys are missing in the data array',
+            ];
+        }
         $shiprocket = Shipment::updateOrCreate([
             'order_id' => $data['order_id'],
             'channel_order_id' => $data['channel_order_id'],
