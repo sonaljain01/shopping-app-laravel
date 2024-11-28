@@ -28,7 +28,7 @@ class ShipRocketController extends Controller
     public function createOrder($data, $pickupAddressTag)
     {
         try {
-            
+
             $pickupAddress = PickupAddress::where('tag', $pickupAddressTag)->first();
 
             if (!$pickupAddress) {
@@ -112,34 +112,78 @@ class ShipRocketController extends Controller
         }
     }
 
+    // public function storeShipment($data)
+    // {
+
+    //     $shiprocket = Shipment::updateOrCreate([
+    //         'order_id' => $data['order_id'],
+    //         'channel_order_id' => $data['channel_order_id'],
+    //         'shipment_id' => $data['shipment_id'],
+    //         'courier_name' => "",
+    //         'status' => $data['status'],
+    //         'pickup_address_id' => $this->pickup,
+    //         'actual_weight' => null,
+    //         'volumetric_weight' => null,
+    //         'platform' => $this->channelId,
+    //         'charges' => null,
+    //     ]);
+
+    //     if ($shiprocket) {
+    //         return [
+    //             'status' => true,
+    //             'message' => 'Shipment created successfully',
+    //         ];
+    //     } else {
+    //         return [
+    //             'status' => false,
+    //             'message' => 'Shipment not created',
+    //         ];
+    //     }
+    // }
+
     public function storeShipment($data)
     {
-        
-        $shiprocket = Shipment::updateOrCreate([
-            'order_id' => $data['order_id'],
-            'channel_order_id' => $data['channel_order_id'],
-            'shipment_id' => $data['shipment_id'],
-            'courier_name' => "",
-            'status' => $data['status'],
-            'pickup_address_id' => $this->pickup,
-            'actual_weight' => null,
-            'volumetric_weight' => null,
-            'platform' => $this->channelId,
-            'charges' => null,
-        ]);
+        // Validate input data
+        $requiredKeys = ['order_id', 'channel_order_id', 'shipment_id', 'status'];
+        foreach ($requiredKeys as $key) {
+            if (!array_key_exists($key, $data)) {
+                return [
+                    'status' => false,
+                    'message' => "Missing required key: $key",
+                ];
+            }
+        }
 
+        // Create or update the shipment
+        $shiprocket = Shipment::updateOrCreate(
+            [
+                'order_id' => $data['order_id'],
+                'channel_order_id' => $data['channel_order_id'],
+                'shipment_id' => $data['shipment_id'],
+            ],
+            [
+                'courier_name' => $data['courier_name'] ?? "",
+                'status' => $data['status'],
+                'pickup_address_id' => $this->pickup ?? null,
+                'actual_weight' => $data['actual_weight'] ?? null,
+                'volumetric_weight' => $data['volumetric_weight'] ?? null,
+                'platform' => $this->channelId ?? null,
+                'charges' => $data['charges'] ?? null,
+            ]
+        );
+
+        // Return success or failure message
         if ($shiprocket) {
             return [
                 'status' => true,
                 'message' => 'Shipment created successfully',
             ];
-        } else {
-            return [
-                'status' => false,
-                'message' => 'Shipment not created',
-            ];
         }
-    }
 
+        return [
+            'status' => false,
+            'message' => 'Shipment not created',
+        ];
+    }
 
 }
