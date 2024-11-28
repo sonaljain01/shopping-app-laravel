@@ -768,3 +768,75 @@ class ShipRocketController extends Controller
         </div>
     </div>
 </section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        // // Prevent updating if the order is already completed, cancelled, or shipped
+        // if (in_array($order->status, ['cancelled', 'completed', 'shipped'])) {
+        //     return response()->json(['success' => false, 'message' => 'Cannot update the status of an order that is ' . $order->status . '.'], 400);
+        // }
+
+        // // Handle "shipped" status with ShipRocket integration
+        // if ($request->status === 'shipped') {
+        //     // Validate that pickup address is provided
+        //     $pickupAddress = PickupAddress::find($request->pickup);
+        //     if (!$pickupAddress) {
+        //         return response()->json(['success' => false, 'message' => 'Invalid pickup address.'], 400);
+        //     }
+
+        //     // Call ShipRocket to create the shipment order
+        //     $shipRocketResponse = $shipRocketController->createOrder($order, $pickupAddress);
+
+        //     // Verify ShipRocket response
+        //     if (!$shipRocketResponse || !isset($shipRocketResponse['status'])) {
+        //         return response()->json(['success' => false, 'message' => 'Failed to create order in ShipRocket.'], 500);
+        //     }
+
+        //     if ($shipRocketResponse['status'] === 200) {
+        //         $shipRocketOrderData = $shipRocketResponse['data'] ?? [];
+
+        //         // Update the order with ShipRocket details
+        //         $order->update([
+        //             'shiprocket_order_id' => $shipRocketOrderData['order_id'] ?? null,
+        //             'shiprocket_tracking_number' => $shipRocketOrderData['tracking_number'] ?? null,
+        //             'shiprocket_label_url' => $shipRocketOrderData['label_url'] ?? null,
+        //             'status' => 'shipped',
+        //         ]);
+
+        //         // Store additional shipment details if needed
+        //         $storeResponse = $shipRocketController->storeShipment($shipRocketOrderData);
+        //         if (!$storeResponse['status']) {
+        //             return response()->json(['success' => false, 'message' => $storeResponse['message']], 500);
+        //         }
+        //     } else {
+        //         return response()->json([
+        //             'success' => false,
+        //             'message' => 'Error processing order in ShipRocket: ' . ($shipRocketResponse['message'] ?? 'Unknown error.'),
+        //         ], 500);
+        //     }
+        // } else {
+        //     // Update order status for other statuses
+        //     $order->status = $request->status;
+        //     $order->save();
+        // }
+
+        // // Log the order status change
+        // OrderHistory::create([
+        //     'order_id' => $order->id,
+        //     'status' => $order->status,
+        //     'changed_at' => now(),
+        // ]);
+
+        // return response()->json(['success' => true, 'message' => 'Order status updated successfully']);

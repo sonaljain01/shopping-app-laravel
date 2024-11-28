@@ -67,12 +67,12 @@
 
                                 <li><a title="Euro" onclick="country(this.id)" href="javascript:void(0);"
                                         id="eu" class="dropdown-item medium text-medium"><img
-                                            src="{{ asset('vendor/blade-flags/country-eu.svg') }}" width="32"
-                                            height="32" />Europe</a>
+                                            src="{{ asset('vendor/blade-flags/country-de.svg') }}" width="32"
+                                            height="32" />Germany</a>
                                 </li>
                                 <li class="current"><a title="US Dollar" href="javascript:void(0);" id="uk"
                                         onclick="country(this.id)" class="dropdown-item medium text-medium">
-                                        <img src="{{ asset('vendor/blade-flags/country-uk.svg') }}" width="32"
+                                        <img src="{{ asset('vendor/blade-flags/country-gb.svg') }}" width="32"
                                             height="32" />
                                         UK</a></li>
                                 <li class="current"><a title="US Dollar" href="javascript:void(0);" id="us"

@@ -229,20 +229,35 @@ class AuthController extends Controller
         
         // $data = $this->getLocationInfo($ip);
         // $telcode = $this->getTelCode($data['data']['country'] ?? 'IN');
-        $country = session('country', 'IN');
-        if (auth()->check()) {
-            $country = auth()->user()->country ?? $country;
-        } elseif (! session('country')) {
-            $ip = request()->ip() ?? '146.70.245.84';
-            $data = getLocationInfo($ip);
-            $country = $data['data']['country'] ?? $country;
+        // $country = session('country', 'IN');
+        // if (auth()->check()) {
+        //     $country = auth()->user()->country ?? $country;
+        // } elseif (! session('country')) {
+        //     $ip = request()->ip() ?? '146.70.245.84';
+        //     $data = getLocationInfo($ip);
+        //     $country = $data['data']['country'] ?? $country;
+        // }
+        $country = 'IN';
+        if (! session()->has('country')) {
+            if (auth()->check()) {
+                session()->put('country', auth()->user()->country);
+            } else {
+                $ip = request()->ip() ?? '146.70.245.84';
+                $data = getLocationInfo($ip);
+                $country = $data['data']['country'] ?? $country;
+                session()->put('country', $country);
+            }
         }
+
+        $country = session('country', 'IN');
         $telcode = getTelCode($country)['code'];
+
         return view('front.register', [
             'headerMenus' => $headerMenus,
             'footerMenus' => $footerMenus,
             'telcode' => $telcode
         ]);
+
     }
 
     // protected function getTelCode($data)

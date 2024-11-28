@@ -18,6 +18,8 @@ class PickupAddress extends Model
         'zip',
         'phone',
         'is_default',
-        'tags',
+        'tag',
+        'email',
+        'pincode'
     ];
 }
