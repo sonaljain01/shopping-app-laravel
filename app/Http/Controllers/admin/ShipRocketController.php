@@ -120,7 +120,7 @@ class ShipRocketController extends Controller
             'channel_order_id' => $data['channel_order_id'] ?? null,
             'shipment_id' => $data['shipment_id'] ?? null,
             'courier_name' => "",
-            'status' => $data['status'],
+            'status' => $data['status'] ?? null,
             'pickup_address_id' => $this->pickup,
             'actual_weight' => null,
             'volumetric_weight' => null,
