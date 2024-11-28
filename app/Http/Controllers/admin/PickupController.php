@@ -39,7 +39,7 @@ class PickupController extends Controller
                 return back()->with('error', 'User is not authenticated');
             }
             $data = [
-                'user_id' => auth()->user()->id,
+                'user_id' => $user->id,
                 'name' => $request->name,
                 'tag' => $request->tag,
                 'email' => $request->email,
