@@ -204,8 +204,7 @@ Route::group(['prefix' => 'admin'], function () {
 
         //pickup routes
         Route::get('/pickup', [PickupController::class, 'index'])->name('pickup.index');
-        Route::post('/pickup', [PickupController::class, 'store'])->name('pickup.store');
-        // Route::patch('/cities/{id}/toggle', [CityController::class, 'toggleCityDelivery'])->name('city.toggle');
+        Route::post('/pickup/store', [PickupController::class, 'store'])->name('pickup.store');
         Route::get('/pickup/create', [PickupController::class, 'create'])->name('pickup.create');
         Route::get('pickup/{id}/edit', [PickupController::class, 'edit'])->name('pickup.edit');
         Route::put('pickup/{id}', [PickupController::class, 'update'])->name('pickup.update');

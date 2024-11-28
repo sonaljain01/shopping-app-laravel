@@ -33,17 +33,17 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="address_1">Address</label>
-                        <textarea name="address_1" id="address_1" class="form-control" required>{{ old('address_1', $pickup->address_1) }}</textarea>
-                        @error('address_1') 
+                        <label for="email">Email</label>
+                        <input type="email" name="email" id="email" class="form-control" value="{{ old('email', $pickup->email) }}" required>
+                        @error('email') 
                             <small class="text-danger">{{ $message }}</small> 
                         @enderror
                     </div>
 
                     <div class="form-group">
-                        <label for="address_2">Landmark</label>
-                        <textarea name="address_2" id="address_2" class="form-control" required>{{ old('address_2', $pickup->address_2) }}</textarea>
-                        @error('address_2') 
+                        <label for="address">Address</label>
+                        <textarea name="address" id="address" class="form-control" required>{{ old('address', $pickup->address) }}</textarea>
+                        @error('address') 
                             <small class="text-danger">{{ $message }}</small> 
                         @enderror
                     </div>
@@ -73,9 +73,9 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="zip">Zip</label>
-                        <input type="text" name="zip" id="zip" class="form-control" value="{{ old('zip', $pickup->zip) }}" required>
-                        @error('zip') 
+                        <label for="pincode">Pincode</label>
+                        <input type="text" name="pincode" id="pincode" class="form-control" value="{{ old('pincode', $pickup->pincode) }}" required>
+                        @error('pincode') 
                             <small class="text-danger">{{ $message }}</small> 
                         @enderror
                     </div>

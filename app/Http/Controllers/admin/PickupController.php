@@ -1,50 +1,92 @@
 <?php
 
-namespace App\Http\Controllers\admin;
+namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\PickupAddress;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
+use App\Http\Requests\PickupAddressRequest;
 
 class PickupController extends Controller
 {
     public function index(Request $request)
     {
-        $keyword = $request->get('keyword');
-        $pickupAddresses = PickupAddress::query()
-            ->when($keyword, fn($query) => $query->where('name', 'like', "%$keyword%"))
-            ->paginate(10);
-        return view('admin.pickup.index', compact('pickupAddresses'));
+        if (! auth()->check()) {
+            return redirect()->route('admin.login');
+        }
+
+        $addresses = PickupAddress::where('user_id', auth()->id())
+            ->orderBy('created_at', 'desc')
+            ->paginate(5);
+
+
+        return view('admin.pickup.index', ['addresses' => $addresses]);
     }
+
 
     public function create()
     {
         return view('admin.pickup.create');
     }
 
-    public function store(Request $request)
+    public function store(PickupAddressRequest $request)
     {
-        $validated = $request->validate([
-            'name' => 'required|string',
-            'address_1' => 'required|string',
-            'address_2' => 'nullable|string',
-            'phone' => 'required|numeric',
-            'city' => 'required|string',
-            'state' => 'required|string',
-            'zip' => 'required|numeric',
-            'country' => 'required|string',
-            'is_default' => 'nullable|boolean',
-            'tags' => 'nullable|string',
-        ]);
+        try {
+            $data = [
+                'user_id' => auth()->user()->id,
+                'name' => $request->name,
+                'tag' => $request->tag,
+                'email' => $request->email,
+                'phone' => $request->phone,
+                'address' => $request->address,
+                'city' => $request->city,
+                'state' => $request->state,
+                'pincode' => $request->pincode,
+                'country' => $request->country,
+                'is_default' => $request->is_default,
+            ];
 
-        PickupAddress::create($validated);
+            // DB::beginTransaction();
+            // PickupAddress::create($data);
+            // DB::commit();
 
-        return redirect()->route('pickup.index')->with('success', 'Pickup address created successfully.');
+            $res = Http::withHeaders([
+                'Content-Type' => 'application/json',
+                'Authorization' => 'Bearer ' . env('SHIPROCKET_TOKEN'),
+            ])->post('https://apiv2.shiprocket.in/v1/external/settings/company/addpickup', [
+                        'pickup_location' => $request->tag,
+                        'name' => $request->name,
+                        'email' => $request->email,
+                        'phone' => $request->phone,
+                        'address' => $request->address,
+                        'city' => $request->city,
+                        'state' => $request->state,
+                        'country' => $request->country,
+                        'pin_code' => $request->pincode,
+                    ]);
+            if (!$res->successful()) {
+                // $error = $res->json()['errors']['address'][0];
+                $error = $res->json()['errors']['address'][0] ?? $res->json()['errors']['pickup_location'][0];
+                return back()->with('error', $error);
+            }
+
+            DB::beginTransaction();
+            PickupAddress::create($data);
+            DB::commit();
+
+            return back()->with('success', 'Pickup address created');
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            return back()->with('error', $e->getMessage());
+        }
     }
 
     public function edit($id)
     {
-        $pickup = PickupAddress::findOrFail($id); 
+        $pickup = PickupAddress::findOrFail($id);
         return view('admin.pickup.edit', compact('pickup'));
     }
 
@@ -54,42 +96,31 @@ class PickupController extends Controller
 
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'address_1' => 'required|string|max:255',
-            'address_2' => 'nullable|string|max:255',
+            'email' => 'required|string|email|max:255',
+            'address' => 'required|string|max:255',
             'city' => 'required|string|max:255',
             'state' => 'required|string|max:255',
-            'zip' => 'required|string|max:10',
+            'pincode' => 'required|string|max:6',
             'country' => 'required|string|max:255',
             'phone' => 'required|string|max:15',
-            'tags' => 'nullable|string|max:255',
+            'tag' => 'nullable|string|max:255|unique:pickup_addresses,tags,' . $id,
             'is_default' => 'nullable|boolean',
         ]);
-       
+
         if ($request->boolean('is_default')) {
-            PickupAddress::query()->update(['is_default' => false]);
+            PickupAddress::query()->where('user_id', auth()->id())->update(['is_default' => false]);
         }
 
-        $pickup->update([
-            'name' => $validated['name'],
-            'address_1' => $validated['address_1'],
-            'address_2' => $validated['address_2'],
-            'city' => $validated['city'],
-            'state' => $validated['state'],
-            'zip' => $validated['zip'],
-            'country' => $validated['country'],
-            'phone' => $validated['phone'],
-            'tags' => $validated['tags'],
-            'is_default' => $validated['is_default'],
-        ]);
+        $pickup->update($validated);
 
-        return redirect()->route('pickup.index')->with('success', 'Pickup Address updated successfully.');
+        return redirect()->route('pickup.index')->with('success', 'Pickup address updated successfully.');
     }
 
-    public function destroy(Request $request, $id)
-    {
-        $pickup = PickupAddress::findOrFail($id);
-        $pickup->delete();
-        $request->session()->flash('success', 'Pickup Address deleted successfully!');
-        return redirect()->route('pickup.index')->with('success', 'Pickup Address deleted successfully.');
-    }
+    // public function destroy($id)
+    // {
+    //     $pickup = PickupAddress::findOrFail($id);
+    //     $pickup->delete();
+
+    //     return redirect()->route('pickup.index')->with('success', 'Pickup address deleted successfully.');
+    // }
 }
