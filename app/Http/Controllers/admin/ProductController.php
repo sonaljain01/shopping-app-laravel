@@ -404,7 +404,10 @@ class ProductController extends Controller
             'barcode',
             'attribute_ids',
             'attribute_value_ids',
-            'image_urls'
+            'image_urls',
+            'length',
+            'breath',
+            'height',
         ];
         return response()->streamDownload(function () use ($headers) {
             $file = fopen('php://output', 'w');
