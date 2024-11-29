@@ -148,7 +148,7 @@ class ShipRocketController extends Controller
         foreach ($requiredKeys as $key) {
             if (!array_key_exists($key, $data)) {
                 return [
-                    'status' => false,
+                    'status' => "error",
                     'message' => "Missing required key: $key",
                 ];
             }

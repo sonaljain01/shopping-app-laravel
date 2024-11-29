@@ -106,6 +106,28 @@
 
                 <div class="col-md-3">
                     <div class="card">
+                        <div class="card-body">
+                            <h2 class="h4 mb-3">View Invoice</h2>
+                            <div class="mb-3">
+                                <a href="{{ route('admin.orders.viewInvoice', $order->id) }}" target="_blank"
+                                    class="btn btn-primary">Download Invoice</a>
+                                <a href="{{ route('orders.printInvoice', $order->id) }}" class="btn btn-success">Print
+                                    Invoice</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Download Modal -->
+                    <div id="downloadModal" style="display:none;">
+                        <div class="modal-content">
+                            <h3>Invoice sent to printer successfully!</h3>
+                            <p>You can download the invoice PDF now.</p>
+                            <button id="downloadInvoice" class="btn btn-success">Download Invoice</button>
+                            <button id="closeModal" class="btn btn-danger">Close</button>
+                        </div>
+                    </div>
+
+                    <div class="card">
                         <form action="{{ route('orders.changeOrderStatus', $order->id) }}" method="POST"
                             id="ChangeOrderStatusForm">
                             @csrf
@@ -169,31 +191,7 @@
                     </div>
 
                 </div>
-
-
-                <div class="card">
-                    <div class="card-body">
-                        <h2 class="h4 mb-3">View Invoice</h2>
-                        <div class="mb-3">
-                            <a href="{{ route('admin.orders.viewInvoice', $order->id) }}" target="_blank"
-                                class="btn btn-primary">Download Invoice</a>
-                            <a href="{{ route('orders.printInvoice', $order->id) }}" class="btn btn-success">Print
-                                Invoice</a>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Download Modal -->
-                <div id="downloadModal" style="display:none;">
-                    <div class="modal-content">
-                        <h3>Invoice sent to printer successfully!</h3>
-                        <p>You can download the invoice PDF now.</p>
-                        <button id="downloadInvoice" class="btn btn-success">Download Invoice</button>
-                        <button id="closeModal" class="btn btn-danger">Close</button>
-                    </div>
-                </div>
             </div>
-        </div>
         </div>
     </section>
 @endsection
@@ -310,76 +308,5 @@
                 console.log(data);
             });
         });
-
-        // document.addEventListener('DOMContentLoaded', () => {
-        //     const statusDropdown = document.getElementById('status');
-        //     const modalPickup = new bootstrap.Modal(document.getElementById('modal-pickup'));
-        //     const pickupField = document.getElementById('pickup');
-        //     const changeOrderForm = document.getElementById('ChangeOrderStatusForm');
-        //     const confirmPickupButton = document.getElementById('btn-confirm-pickup');
-
-        //     let pickupConfirmed = false;
-
-        //     // Handle status change and always display the pickup modal
-        //     statusDropdown.addEventListener('change', (e) => {
-        //         pickupConfirmed = false; // Reset pickup confirmation
-        //         modalPickup.show(); // Show the modal whenever the status changes
-        //     });
-
-        //     // Confirm pickup address and attach to form
-        //     confirmPickupButton.addEventListener('click', () => {
-        //         if (pickupField.value) {
-        //             pickupConfirmed = true; // Mark pickup as confirmed
-        //             modalPickup.hide(); // Close the modal after confirmation
-        //         } else {
-        //             alert("Please select a pickup address.");
-        //         }
-        //     });
-
-        //     // Handle form submission via AJAX
-        //     changeOrderForm.addEventListener('submit', (e) => {
-        //         e.preventDefault();
-
-        //         // Ensure `shipped` status has a confirmed pickup address
-        //         if (statusDropdown.value === 'shipped' && !pickupConfirmed) {
-        //             alert("Please confirm a pickup address before changing status to 'Shipped'.");
-        //             return;
-        //         }
-
-        //         // Attach pickup address dynamically if needed
-        //         if (statusDropdown.value === 'shipped' && pickupField.value) {
-        //             const hiddenPickupInput = document.createElement('input');
-        //             hiddenPickupInput.type = 'hidden';
-        //             hiddenPickupInput.name = 'pickup';
-        //             hiddenPickupInput.value = pickupField.value;
-        //             changeOrderForm.appendChild(hiddenPickupInput);
-        //         }
-
-        //         // Submit form via AJAX
-        //         const formData = new FormData(changeOrderForm);
-
-        //         fetch(changeOrderForm.action, {
-        //                 method: 'POST',
-        //                 body: formData,
-        //                 headers: {
-        //                     'X-CSRF-TOKEN': '{{ csrf_token() }}'
-        //                 },
-        //             })
-        //             .then(response => {
-        //                 console.log(response); // Log the response object
-        //                 return response.json();
-        //             })
-        //             .then(data => {
-        //                 console.log(data); // Log the JSON data
-        //                 if (data.success) {
-        //                     window.location.reload();
-        //                 } else {
-        //                     alert(data.message || "Failed to update order status.");
-        //                 }
-        //             })
-        //             .catch(error => console.error('Error updating order status:', error));
-
-        //     });
-        // });
     </script>
 @endsection
