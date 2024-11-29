@@ -32,17 +32,31 @@
                         <p>Brands</p>
                     </a>
                 </li>
-                <li class="nav-item">
-                    <a href="{{ route('products.index') }}" class="nav-link">
-                        <i class="nav-icon fas fa-tag"></i>
-                        <p>Products</p>
+               
+                <li class="nav-item {{ request()->routeIs('products.index') || request()->routeIs('admin.bulk-import') ? 'menu-open' : '' }}">
+                    <a href="#" class="nav-link">
+                        <i class="fas fa-tag nav-icon"></i>
+                        <p>
+                            Products
+                            <i class="right fas fa-angle-left"></i>
+                        </p>
                     </a>
-                </li>
-                <li class="nav-item">
-                    <a href="{{ route('admin.bulk-import') }}" class="nav-link">
-                        <i class="nav-icon fas fa-tag"></i>
-                        <p>Bulk Import</p>
-                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="{{ route('products.index') }}" class="nav-link {{ request()->routeIs('products.index') ? 'active' : '' }}">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Add Products</p>
+                            </a>
+                        </li>
+                    </ul>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="{{ route('admin.bulk-import') }}" class="nav-link {{ request()->routeIs('admin.bulk-import') ? 'active' : '' }}">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Bulk Import</p>
+                            </a>
+                        </li>
+                    </ul>
                 </li>
 
                 <li class="nav-item">
@@ -115,7 +129,7 @@
                 </li>	
                 <li class="nav-item {{ request()->routeIs('settings.edit') ? 'menu-open' : '' }}">
                     <a href="#" class="nav-link">
-                        <i class="fas fa-truck nav-icon"></i>
+                        <i class="fas fa-cog nav-icon"></i>
                         <p>
                             Settings
                             <i class="right fas fa-angle-left"></i>
@@ -130,11 +144,31 @@
                         </li>
                     </ul>
                 </li>	
-                <li class="nav-item">
-                    <a href="{{ route('admin.forex.index') }}" class="nav-link">
-                        <i class="nav-icon fas fa-list"></i>
-                        <p>Forex</p>
+                	
+                <li class="nav-item {{ request()->routeIs('admin.forex.index') ? 'menu-open' : '' }}">
+                    <a href="#" class="nav-link">
+                        <i class="fas fa-money-check nav-icon"></i>
+                        <p>
+                            Forex Management
+                            <i class="right fas fa-angle-left"></i>
+                        </p>
                     </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="{{ route('admin.forex.index') }}" class="nav-link {{ request()->routeIs('admin.forex.index') ? 'active' : '' }}">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Manual Forex</p>
+                            </a>
+                        </li>
+                    </ul>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="#" class="nav-link {{ request()->routeIs('#') ? 'active' : '' }}">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Market Forex</p>
+                            </a>
+                        </li>
+                    </ul>
                 </li>			
             </ul>
         </nav>
