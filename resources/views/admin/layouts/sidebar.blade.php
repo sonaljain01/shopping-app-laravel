@@ -129,7 +129,13 @@
                             </a>
                         </li>
                     </ul>
-                </li>				
+                </li>	
+                <li class="nav-item">
+                    <a href="{{ route('admin.forex.index') }}" class="nav-link">
+                        <i class="nav-icon fas fa-list"></i>
+                        <p>Forex</p>
+                    </a>
+                </li>			
             </ul>
         </nav>
         <!-- /.sidebar-menu -->
