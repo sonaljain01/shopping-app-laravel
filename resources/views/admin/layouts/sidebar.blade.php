@@ -112,7 +112,24 @@
                         <i class="nav-icon fas fa-list"></i>
                         <p>Menus</p>
                     </a>
-                </li>						
+                </li>	
+                <li class="nav-item {{ request()->routeIs('settings.edit') ? 'menu-open' : '' }}">
+                    <a href="#" class="nav-link">
+                        <i class="fas fa-truck nav-icon"></i>
+                        <p>
+                            Settings
+                            <i class="right fas fa-angle-left"></i>
+                        </p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="{{ route('settings.edit') }}" class="nav-link {{ request()->routeIs('settings.edit') ? 'active' : '' }}">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>ShipRocket</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>				
             </ul>
         </nav>
         <!-- /.sidebar-menu -->

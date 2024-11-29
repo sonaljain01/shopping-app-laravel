@@ -61,7 +61,8 @@ class AdminOrderController extends Controller
         ]);
 
         $order = Order::with(['billingAddress', 'shippingAddress', 'orderItems.product'])->find($orderId);
-
+        // echo  $order;
+        // dd();
         if (!$order) {
             return back()->with('error', 'Order not found');
         }

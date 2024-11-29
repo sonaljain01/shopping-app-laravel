@@ -80,7 +80,7 @@ class ShipRocketController extends Controller
                         'billing_state' => $data->billingAddress->state,
                         'billing_country' => $data->billingAddress->country,
                         'billing_email' => $data->user->email,
-                        'billing_phone' => $data->user->phone_number,
+                        'billing_phone' => $data->billingAddress->phone,
                         'shipping_is_billing' => true,
                         'shipping_customer_name' => '',
                         'shipping_last_name' => '',

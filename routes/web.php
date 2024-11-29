@@ -23,6 +23,7 @@ use App\Http\Middleware\TrackUtmMiddleware;
 use App\Http\Controllers\admin\CityController;
 use App\Http\Controllers\admin\MenuController;
 use App\Http\Controllers\CountryController;
+use App\Http\Controllers\admin\SettingController;
 
 Route::group(['middleware' => TrackUtmMiddleware::class], function () {
     Route::get('/api/get-dial-code', [CountryController::class, 'getDialCode']);
@@ -228,6 +229,9 @@ Route::group(['prefix' => 'admin'], function () {
         Route::get('admin/menus/manage-locations', [MenuController::class, 'manageLocations'])->name('admin.menus.manageLocations');
         Route::post('admin/menus/update-locations', [MenuController::class, 'updateLocations'])->name('admin.menus.updateLocations');
 
+        //shipRocket Routes
+        Route::get('/admin/settings', [SettingController::class, 'edit'])->name('settings.edit');
+        Route::post('/admin/settings', [SettingController::class, 'update'])->name('settings.update');
     });
 });
 
