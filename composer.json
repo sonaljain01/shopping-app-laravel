@@ -6,7 +6,7 @@
     "license": "MIT",
     "require": {
         "php": "^8.2",
-        "amrshawky/laravel-currency": "^3.2",
+        
         "barryvdh/laravel-dompdf": "^3.0",
         "doctrine/dbal": "^4.2",
         "guzzlehttp/guzzle": "^7.9",
