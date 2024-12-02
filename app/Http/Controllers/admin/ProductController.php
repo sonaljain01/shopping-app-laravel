@@ -133,18 +133,6 @@ class ProductController extends Controller
 
     public function edit($id, Request $request)
     {
-
-        // $product = Product::find($id);
-
-        // $data = [];
-        // $data['product'] = $product;
-        // $categories = Category::orderBy('name', 'ASC')->get();
-        // $brands = Brand::orderBy('name', 'ASC')->get();
-        // $data['categories'] = $categories;
-        // $data['brands'] = $brands;
-        // $attributes = Attribute::orderBy('name', 'ASC')->get();
-        // $data['attributes'] = $attributes;
-        // return view('admin.products.edit', $data);
         $product = Product::with(['attributes.values'])->find($id);
 
         if (!$product) {
@@ -310,6 +298,8 @@ class ProductController extends Controller
 
     public function show($slug)
     {
+        $country = session('country');
+        $exchangeRate = getExchangeRate($country);
         // Fetch the product using the slug
         $product = Product::with(['product_images', 'category', 'brand', 'attributes.values'])
             ->where('slug', $slug)
@@ -319,6 +309,14 @@ class ProductController extends Controller
         if (!$product) {
             abort(404);
         }
+        $product->transform(function ($product) use ($exchangeRate) {
+            $product->price = round($product->price * $exchangeRate['data'], 2);
+            $product->currency = $exchangeRate['currency'];
+            $product->cost_price = round($product->cost_price * $exchangeRate['data'], 2);
+            return $product;
+        });
+
+        // Fetch the header and footer menus
         $headerMenus = Menu::with([
             'children' => function ($query) {
                 $query->where('status', 1)
