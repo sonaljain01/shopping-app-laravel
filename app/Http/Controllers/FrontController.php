@@ -130,7 +130,7 @@ class FrontController extends Controller
             'headerMenus' => $headerMenus,  
             'footerMenus' => $footerMenus,  
             'telcode' => $telcode,
-          
+            'exchangeRate' => $exchangeRate
         ]);
 
     }

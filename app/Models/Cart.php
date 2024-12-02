@@ -14,6 +14,7 @@ class Cart extends Model
         'product_id',
         'quantity',
         'guest_id',
+        'currency',
     ];
 
     public function product()

@@ -24,6 +24,10 @@ use App\Http\Controllers\admin\CityController;
 use App\Http\Controllers\admin\MenuController;
 use App\Http\Controllers\CountryController;
 use App\Http\Controllers\admin\SettingController;
+use App\Http\Controllers\admin\ForexController;
+use App\Http\Controllers\admin\ForexRateController;
+
+
 
 Route::group(['middleware' => TrackUtmMiddleware::class], function () {
     Route::get('/api/get-dial-code', [CountryController::class, 'getDialCode']);
@@ -230,8 +234,19 @@ Route::group(['prefix' => 'admin'], function () {
         Route::post('admin/menus/update-locations', [MenuController::class, 'updateLocations'])->name('admin.menus.updateLocations');
 
         //shipRocket Routes
-        Route::get('/admin/settings', [SettingController::class, 'edit'])->name('settings.edit');
-        Route::post('/admin/settings', [SettingController::class, 'update'])->name('settings.update');
+        Route::get('/settings', [SettingController::class, 'edit'])->name('settings.edit');
+        Route::post('/settings', [SettingController::class, 'update'])->name('settings.update');
+
+        //Forex routes
+        Route::get('forex-rates', [ForexController::class, 'index'])->name('admin.forex.index');
+        Route::post('forex-rates', [ForexController::class, 'store'])->name('forex.store');
+        Route::get('forex-rates/create', [ForexController::class, 'create'])->name('forex.create');
+        Route::delete('forex-rates/{id}', [ForexController::class, 'destroy'])->name('forex.destroy');
+        Route::get('forex-rates/{id}/edit', [ForexController::class, 'edit'])->name('forex.edit');
+        Route::put('forex-rates/{id}', [ForexController::class, 'update'])->name('forex.update');
+
+        Route::get('forex-rates/auto', [ForexRateController::class, 'index'])->name('forex_rates.index');
+        Route::post('forex-rates/auto', [ForexRateController::class, 'update'])->name('forex_rates.update');
     });
 });
 

@@ -73,7 +73,7 @@
                                                 <span class="badge badge-warning">In Progress</span>
                                             @endif
                                         </td>
-                                        <td>Rs.{{ number_format($order->total_amount,2) }}</td>
+                                        <td>{{ $order->currency_code }}{{ number_format($order->total_amount,2) }}</td>
                                         <td>{{ \Carbon\Carbon::parse($order->created_at)->format('d M, Y') }}</td>
                                     </tr>
                                 @endforeach

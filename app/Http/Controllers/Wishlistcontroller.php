@@ -13,6 +13,7 @@ class Wishlistcontroller extends Controller
         // Validate the incoming request
         $validatedData = $request->validate([
             'product_id' => 'required|exists:products,id',
+            // 'currency_code' => 'required|exists:currencies,code',
         ]);
 
         // Get user ID if authenticated, else use guest ID from session
@@ -32,6 +33,7 @@ class Wishlistcontroller extends Controller
                 'product_id' => $validatedData['product_id'],
                 'user_id' => $userId,
                 'guest_id' => $guestId,
+                'currency_code' => $request->currency,
             ]);
             return redirect()->back()->with('success', 'Product added to wishlist successfully!');
         }

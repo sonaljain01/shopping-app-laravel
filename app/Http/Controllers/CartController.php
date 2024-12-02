@@ -12,9 +12,21 @@ class CartController extends Controller
     public function addToCart(Request $request, $productId)
     {
         $product = Product::find($productId);
+
         if (!$product) {
             return redirect()->back()->with('error', 'Product not found.');
         }
+
+        // Get the selected country from the session
+        $country = session('country', 'IN'); // Default country is 'IN' if not set
+        $exchangeRate = getExchangeRate($country);
+
+        if (!$exchangeRate['status']) {
+            return redirect()->back()->with('error', 'Failed to retrieve exchange rate.');
+        }
+
+        $currency = $exchangeRate['currency'];
+        $conversionRate = $exchangeRate['data'];
 
         // Initialize the session cart if it doesn't exist
         if (!session()->has('cart')) {
@@ -36,9 +48,10 @@ class CartController extends Controller
             $cart[$productId] = [
                 'product_id' => $product->id,
                 'title' => $product->title,
-                'price' => $product->price,
+                'price' => round($product->price * $conversionRate, 2), // Convert price
                 'quantity' => 1,
                 'image' => $product->product_images->isNotEmpty() ? $product->product_images[0]->image : 'path/to/default/image.jpg',
+                'currency' => $currency,
             ];
         }
 
@@ -49,7 +62,7 @@ class CartController extends Controller
         $cartItem = Cart::where('product_id', $productId)
             ->where(function ($query) use ($userId, $guestId) {
                 $query->where('user_id', $userId)
-                      ->orWhere('guest_id', $guestId);
+                    ->orWhere('guest_id', $guestId);
             })
             ->first();
 
@@ -61,11 +74,16 @@ class CartController extends Controller
                 'guest_id' => $userId ? null : $guestId,
                 'product_id' => $productId,
                 'quantity' => 1,
+                'currency' => $currency, // Save dynamic currency
+                'price' => round($product->price * $conversionRate, 2), // Save converted price
             ]);
         }
 
-        return redirect()->back()->with('success', 'Product added to cart successfully');
+        return redirect()->back()->with('success', 'Product added to cart successfully.');
     }
+
+
+
 
     public function viewCart()
     {
@@ -117,7 +135,7 @@ class CartController extends Controller
                     ->orWhere('location', 'both');
             })
             ->get();
-        
+
         return view('front.cart', compact('cartItems', 'cartItemsCount', 'headerMenus', 'footerMenus'));
     }
 
@@ -125,8 +143,8 @@ class CartController extends Controller
     public function update(Request $request)
     {
         $cart = session()->get('cart');
-        $userId = auth()->check() ? auth()->id() : null; 
-        $guestId = session()->getId(); 
+        $userId = auth()->check() ? auth()->id() : null;
+        $guestId = session()->getId();
 
         // Handle item removal from the cart
         if ($request->has('remove_item')) {
@@ -134,7 +152,7 @@ class CartController extends Controller
 
             if (isset($cart[$productId])) {
                 unset($cart[$productId]);
-                session()->put('cart', $cart); 
+                session()->put('cart', $cart);
 
                 // Remove from the database
                 $idToUse = $userId ?? $guestId;
@@ -143,7 +161,7 @@ class CartController extends Controller
                     Cart::where('product_id', $productId)
                         ->where(function ($query) use ($userId, $guestId) {
                             $query->where('user_id', $userId)
-                                  ->orWhere('guest_id', $guestId);
+                                ->orWhere('guest_id', $guestId);
                         })
                         ->delete();
                 }

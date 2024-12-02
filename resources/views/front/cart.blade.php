@@ -4,7 +4,7 @@
 <div class="gray py-3">
     <div class="container">
         <div class="row">
-            <div class="colxl-12 col-lg-12 col-md-12">
+            <div class="col-xl-12 col-lg-12 col-md-12">
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item"><a href="{{ route('front.home') }}">Home</a></li>
@@ -30,6 +30,7 @@
             <div class="col-12 col-lg-7 col-md-12">
                 <form id="cartForm" action="{{ route('cart.update') }}" method="POST">
                     @csrf
+                    
                     <ul class="list-group list-group-sm list-group-flush-y list-group-flush-x mb-4">
                         @if (empty(session('cart')))
                             <li class="list-group-item">Your cart is empty!</li>
@@ -47,7 +48,7 @@
                                             <div class="cart_single_caption pl-2">
                                                 <h4 class="product_title fs-md ft-medium mb-1 lh-1">{{ $item['title'] }}</h4>
                                                 <p class="mb-1 lh-1"><span class="text-dark">Size: {{ $item['size'] ?? 'N/A' }}</span></p>
-                                                <h4 class="fs-md ft-medium mb-3 lh-1">Rs.{{ $item['price'] }}</h4>
+                                                <h4 class="fs-md ft-medium mb-3 lh-1">  {{ number_format($item['price'], 2) }}</h4>
                                                 <!-- Quantity Select -->
                                                 <select name="quantities[{{ $productId }}]" class="mb-2 custom-select w-auto">
                                                     @for ($i = 1; $i <= 5; $i++)
@@ -114,18 +115,17 @@
                             <li class="list-group-item d-flex text-dark fs-sm ft-regular">
                                 <span>Subtotal</span>
                                 <span class="ml-auto text-dark ft-medium">
-                                    {{-- Rs.{{ array_reduce(session('cart'), fn($total, $item) => $total + $item['price'] * $item['quantity'], 0) }} --}}
-                                    Rs.{{ array_reduce(session('cart', []), fn($total, $item) => $total + $item['price'] * $item['quantity'], 0) }}
+                                     {{ number_format(array_reduce(session('cart', []), fn($total, $item) => $total + $item['price'] * $item['quantity'], 0), 2) }}
                                 </span>
                             </li>
                             <li class="list-group-item d-flex text-dark fs-sm ft-regular">
                                 <span>Tax</span>
-                                <span class="ml-auto text-dark ft-medium">Rs.10.10</span>
+                                <span class="ml-auto text-dark ft-medium"> 10.10</span>
                             </li>
                             <li class="list-group-item d-flex text-dark fs-sm ft-regular">
                                 <span>Total</span>
                                 <span class="ml-auto text-dark ft-medium">
-                                    Rs.{{ array_reduce(session('cart', []), fn($total, $item) => $total + $item['price'] * $item['quantity'], 0) + 10.1 }}
+                                     {{ number_format(array_reduce(session('cart', []), fn($total, $item) => $total + $item['price'] * $item['quantity'], 0) + 10.1, 2) }}
                                 </span>
                             </li>
                             <li class="list-group-item fs-sm text-center">
@@ -143,6 +143,4 @@
         </div>
     </div>
 </section>
-
-
 @endsection
