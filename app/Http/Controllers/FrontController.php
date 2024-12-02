@@ -9,11 +9,13 @@ use App\Models\Category;
 use App\Models\Brand;
 use App\Models\Menu;
 use App\Models\City;
+use App\Models\ForexRate;
 class FrontController extends Controller
 {
     public function index(Request $request)
     {
-
+        $country = session('country');
+        $exchangeRate = getExchangeRate($country);
 
         $categories = Category::with('children')->where('status', 1)->orderBy('name', 'ASC')->get();
         $brands = Brand::where('status', 1)->orderBy('name', 'ASC')->get();
@@ -39,7 +41,12 @@ class FrontController extends Controller
         }
 
         $products = $productsQuery->orderBy('id', 'desc')->get();
-
+        $products->transform(function ($product) use ($exchangeRate) {
+            $product->price = round($product->price * $exchangeRate['data'], 2);
+            $product->currency = $exchangeRate['currency'];
+            $product->cost_price = round($product->cost_price * $exchangeRate['data'], 2);
+            return $product;
+        });
         $headerMenus = Menu::with([
             'children' => function ($query) {
                 $query->where('status', 1)
@@ -96,21 +103,10 @@ class FrontController extends Controller
             })
             ->orderBy('order', 'asc')
             ->get();
-        // $ip = '146.70.245.84';
-        // $data = getLocationInfo($ip);
-        // $telcode = $data['data']['country'] ?? 'IN';
-        // $country = session('country', 'IN');
-        // if (auth()->check()) {
-        //     $country = auth()->user()->country ?? $country;
-        // } elseif (!session('country')) {
-        //     $ip = request()->ip() ?? '146.70.245.84'; // Replace with dynamic IP detection
-        //     $data = getLocationInfo($ip);
-        //     $country = $data['data']['country'] ?? $country;
-        // }
-        // $telcode = getTelCode($country)['code'];
-        // session()->put('dial_code', $telcode);
+        
+
         $telcode = 'IN';
-        if (! session()->has('country')) {
+        if (!session()->has('country')) {
             if (auth()->check()) {
                 session()->put('country', auth()->user()->country);
             } else {
@@ -123,14 +119,18 @@ class FrontController extends Controller
 
         $telcode = session('country', 'IN');
 
+
+        // Get conversion rate
+
         // Pass data to the view
         return view('front.shop', [
             'categories' => $categories,
             'brands' => $brands,
             'products' => $products,
-            'headerMenus' => $headerMenus,   // Pass header menus to the view
-            'footerMenus' => $footerMenus,   // Pass footer menus to the view
-            'telcode' => $telcode
+            'headerMenus' => $headerMenus,  
+            'footerMenus' => $footerMenus,  
+            'telcode' => $telcode,
+          
         ]);
 
     }
