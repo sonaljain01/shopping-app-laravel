@@ -43,7 +43,7 @@ class FrontController extends Controller
         $products = $productsQuery->orderBy('id', 'desc')->get();
         $products->transform(function ($product) use ($exchangeRate) {
             $product->price = round((float)$product->price * (float)$exchangeRate['data'], 2);
-            $product->currency = $exchangeRate['currency'];
+            $product->currency = $exchangeRate['currency'] ?? 'INR';
             $product->cost_price = round((float)$product->cost_price * (float)$exchangeRate['data'], 2);
             return $product;
         });
