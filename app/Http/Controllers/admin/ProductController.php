@@ -309,14 +309,12 @@ class ProductController extends Controller
         if (!$product) {
             abort(404);
         }
-        $product->transform(function ($product) use ($exchangeRate) {
-            $product->price = round($product->price * $exchangeRate['data'], 2);
-            $product->currency = $exchangeRate['currency'];
-            $product->cost_price = round($product->cost_price * $exchangeRate['data'], 2);
-            return $product;
-        });
 
-        // Fetch the header and footer menus
+        // $product->transform($exchangeRate);
+        $product->price = round($product->price * $exchangeRate['data'], 2);
+        $product->currency = $exchangeRate['currency'];
+        $product->cost_price = round($product->cost_price * $exchangeRate['data'], 2);
+
         $headerMenus = Menu::with([
             'children' => function ($query) {
                 $query->where('status', 1)
