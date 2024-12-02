@@ -69,8 +69,8 @@
                                         id="eu" class="dropdown-item medium text-medium"><img
                                             src="{{ asset('vendor/blade-flags/country-de.svg') }}" width="32"
                                             height="32" />Germany</a>
-                                </li> --}}
-                                {{-- <li class="current"><a title="US Dollar" href="javascript:void(0);" id="uk"
+                                </li>
+                                <li class="current"><a title="US Dollar" href="javascript:void(0);" id="uk"
                                         onclick="country(this.id)" class="dropdown-item medium text-medium">
                                         <img src="{{ asset('vendor/blade-flags/country-gb.svg') }}" width="32"
                                             height="32" />
