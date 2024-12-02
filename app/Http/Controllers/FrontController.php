@@ -42,9 +42,9 @@ class FrontController extends Controller
 
         $products = $productsQuery->orderBy('id', 'desc')->get();
         $products->transform(function ($product) use ($exchangeRate) {
-            $product->price = round($product->price * $exchangeRate['data'], 2);
+            $product->price = round((float)$product->price * (float)$exchangeRate['data'], 2);
             $product->currency = $exchangeRate['currency'];
-            $product->cost_price = round($product->cost_price * $exchangeRate['data'], 2);
+            $product->cost_price = round((float)$product->cost_price * (float)$exchangeRate['data'], 2);
             return $product;
         });
         $headerMenus = Menu::with([
