@@ -102,26 +102,7 @@
                                     readonly required />
                             </div>
                         </div>
-                        {{-- <div class="col-6">
-                            <div class="form-group">
-                                <label for="dial_code">Dial Code <span class="text-danger">*</span></label>
-                                <input type="text" id="dial_code" name="dial_code" readonly class="form-control">
-                            </div>
-                        </div> --}}
-                        {{-- <div class="col-xl-2 col-lg-6 col-md-12 col-sm-12 col-12">
-                            <div class="form-group">
-                                <label class="text-dark" id="phone">Tel Code *</label>
-                                <input type="text" class="form-control" placeholder="+91" name="ccode" id="ccode"
-                                    value="{{$telcode}}" required />
-                            </div>
-                        </div>
-                        <!-- Phone Field -->
-                        <div class="col-6">
-                            <div class="form-group">
-                                <label for="phone">Phone <span class="text-danger">*</span></label>
-                                <input type="text" id="phone" name="phone" class="form-control" placeholder="Phone" required>
-                            </div>
-                        </div> --}}
+                        
                         <div class="form-group col-md-6">
                             <label for="country_code">Country Code *</label>
                             <input type="text" class="form-control" name="country_code" id="country_code" 
@@ -227,7 +208,7 @@
                                 <div class="col d-flex align-items-center">
                                     <div class="cart_single_caption pl-2">
                                         <h4 class="product_title fs-md ft-medium mb-1 lh-1">{{ $product->title }}</h4>
-                                        <h4 class="fs-md ft-medium mb-3 lh-1">Rs.{{ number_format($product->price, 2) }}
+                                        <h4 class="fs-md ft-medium mb-3 lh-1">{{ $currency }} {{ number_format($product->converted_price, 2) }}
                                         </h4>
                                         <h4 class="fs-md ft-medium mb-3 lh-1">Qty:
                                             {{ $cartItems[$product->id]['quantity'] ?? 1 }}</h4>
@@ -243,15 +224,15 @@
                         <ul class="list-group list-group-sm list-group-flush-y list-group-flush-x">
                             <li class="list-group-item d-flex text-dark fs-sm ft-regular">
                                 <span>Subtotal</span>
-                                <span class="ml-auto text-dark ft-medium">Rs.{{ number_format($subtotal, 2) }}</span>
+                                <span class="ml-auto text-dark ft-medium">{{ $currency }} {{ number_format($subtotal, 2) }}</span>
                             </li>
                             <li class="list-group-item d-flex text-dark fs-sm ft-regular">
                                 <span>Tax</span>
-                                <span class="ml-auto text-dark ft-medium">Rs.{{ number_format($tax, 2) }}</span>
+                                <span class="ml-auto text-dark ft-medium">{{ $currency }} {{ number_format($tax, 2) }}</span>
                             </li>
                             <li class="list-group-item d-flex text-dark fs-sm ft-regular">
                                 <span>Total</span>
-                                <span class="ml-auto text-dark ft-medium">Rs.{{ number_format($total, 2) }}</span>
+                                <span class="ml-auto text-dark ft-medium">{{ $currency }} {{ number_format($total, 2) }}</span>
                             </li>
                             <li class="list-group-item fs-sm text-center">
                                 Shipping cost calculated at Checkout *
