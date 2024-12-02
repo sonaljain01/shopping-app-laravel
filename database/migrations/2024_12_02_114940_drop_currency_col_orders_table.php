@@ -11,8 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('carts', function (Blueprint $table) {
-            $table->renameColumn('currency', 'currency_code');
+        Schema::table('orders', function (Blueprint $table) {
+            $table->dropColumn('currency_code');
         });
     }
 
@@ -21,8 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('carts', function (Blueprint $table) {
-            $table->renameColumn('currency_code', 'currency');
+        Schema::table('orders', function (Blueprint $table) {
+            $table->string('currency_code')->nullable();
         });
     }
 };
