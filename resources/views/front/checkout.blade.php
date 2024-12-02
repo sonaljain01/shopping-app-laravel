@@ -141,28 +141,6 @@
                             </div>
                         </div>
                         
-                        {{-- <script>
-                            function fetchDialCode() {
-                                const countryName = document.getElementById("country").value.trim();
-                        
-                                if (countryName) {
-                                    fetch(`https://restcountries.com/v3.1/name/${countryName}`)
-                                        .then(response => response.json())
-                                        .then(data => {
-                                            if (data && data[0] && data[0].idd) {
-                                                document.getElementById("dial_code").value = `${data[0].idd.root || ''}${data[0].idd.suffixes[0] || ''}`;
-                                            } else {
-                                                alert("Dial code not found for the entered country.");
-                                            }
-                                        })
-                                        .catch(error => {
-                                            console.error("Error fetching dial code:", error);
-                                            alert("Error fetching the dial code. Please check the country name.");
-                                        });
-                                }
-                            }
-                        </script> --}}
-                        
 
 
                         <!-- Additional Information -->
@@ -242,7 +220,7 @@
                             <div class="row align-items-center">
                                 <div class="col-3">
                                     <a href="{{ route('product.show', $product->id) }}">
-                                        <img src="{{ asset('public/uploads/products/' . $product->image) }}"
+                                        <img src="{{ asset('public/uploads/product/' . $product->image) }}"
                                             alt="{{ $product->name }}" class="img-fluid">
                                     </a>
                                 </div>

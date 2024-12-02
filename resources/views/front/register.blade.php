@@ -38,25 +38,7 @@
                             <div class="text-danger">{{ $message }}</div>
                         @enderror
                     </div>
-                    {{-- <div class="row">
-                        <div class="form-group col-md-6">
-                            <label for="country_code">Country Code *</label>
-                            <input type="text" class="form-control" placeholder="+91" required name="country_code"
-                                id="country_code" value="{{ $telcode }}">
-                            @error('country_code')
-                                <p class="text-red-500">{{ $message }}</p>
-                            @enderror
-                        </div>
-
-                        <div class="form-group col-md-6">
-                            <label for="phone_number">Phone Number *</label>
-                            <input type="tel" class="form-control" placeholder="9672670732" required name="phone_number"
-                                id="phone_number" value="{{ old('phone_number') }}">
-                            @error('phone_number')
-                                <p class="text-red-500">{{ $message }}</p>
-                            @enderror
-                        </div>
-                    </div> --}}
+                 
 
                     <div class="form-group col-md-6">
                         <label for="country_code">Country Code *</label>
