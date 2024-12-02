@@ -99,6 +99,7 @@
 
                                                         <a href="#" data-toggle="modal" data-target="#quickview"
                                                             class="text-white fs-sm ft-medium quick-view-btn"
+                                                            data-currency="{{ $product->currency }}"
                                                             data-name="{{ $product->title }}"
                                                             data-price="{{ $product->price }}"
                                                             data-id="{{ $product->id }}"
@@ -123,7 +124,7 @@
                                                     </h5>
                                                     <div class="elis_rty">
                                                         <span
-                                                            class="ft-bold text-dark fs-sm">Rs.{{ $product->price }}</span>
+                                                            class="ft-bold text-dark fs-sm">{{ $product->currency }}{{ $product->price }}</span>
                                                     </div>
                                                 </div>
                                                 <form action="{{ route('wishlist.add') }}" method="POST">
@@ -407,7 +408,7 @@
                     const productReviews = this.getAttribute('data-reviews');
                     const oldPrice = this.getAttribute('data-old-price');
                     const newPrice = this.getAttribute('data-new-price');
-
+                    const currency = this.getAttribute('data-currency');
                     // Update Cart Form Action with productId
                     const form = document.getElementById('addToCartForm');
                     form.action = "{{ route('cart.add', '') }}/" + productId;
@@ -422,10 +423,10 @@
                         '{{ asset('uploads/product/3f1dc5b8e3abc5dfdca48097118b84f2.png') }}';
                     document.querySelector('#quickviewmodal .ft-bold.mb-1').innerText = productName;
                     document.querySelector('#quickviewmodal .ft-bold.theme-cl.fs-lg.mr-2')
-                        .innerText = `Rs.${newPrice}`;
+                        .innerText = `${currency}${newPrice}`;
                     document.querySelector(
                             '#quickviewmodal .ft-medium.text-muted.line-through.fs-md.mr-2')
-                        .innerText = `Rs.${oldPrice}`;
+                        .innerText = `${currency}${oldPrice}`;
                     document.querySelector('#quickviewmodal .prt_03.mb-3 p').innerText =
                         productDescription;
                     document.querySelector("#category").innerText = productCategory;
