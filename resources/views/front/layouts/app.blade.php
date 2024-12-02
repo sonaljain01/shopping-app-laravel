@@ -53,7 +53,7 @@
                                 aria-label="Currency dropdown">
                                 <span class="hidden-xl-down medium text-light">Country:</span>
                                 <span class="iso_code medium text-light"> <img
-                                        src="{{ asset('vendor/blade-flags/country-' . session('country_code', 'in') . '.svg') }}"
+                                        src="{{ asset('vendor/blade-flags/country-' . session('country') . '.svg') }}"
                                         width="20" height="20" />
                                 </span>
                                 <i class="fa fa-angle-down medium text-light"></i>
