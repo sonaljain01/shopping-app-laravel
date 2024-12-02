@@ -48,7 +48,7 @@
                                             <div class="cart_single_caption pl-2">
                                                 <h4 class="product_title fs-md ft-medium mb-1 lh-1">{{ $item['title'] }}</h4>
                                                 <p class="mb-1 lh-1"><span class="text-dark">Size: {{ $item['size'] ?? 'N/A' }}</span></p>
-                                                <h4 class="fs-md ft-medium mb-3 lh-1">  {{ number_format($item['price'], 2) }}</h4>
+                                                <h4 class="fs-md ft-medium mb-3 lh-1"> {{ $item['currency'] }} {{ number_format($item['price'], 2) }}</h4>
                                                 <!-- Quantity Select -->
                                                 <select name="quantities[{{ $productId }}]" class="mb-2 custom-select w-auto">
                                                     @for ($i = 1; $i <= 5; $i++)
@@ -115,17 +115,17 @@
                             <li class="list-group-item d-flex text-dark fs-sm ft-regular">
                                 <span>Subtotal</span>
                                 <span class="ml-auto text-dark ft-medium">
-                                     {{ number_format(array_reduce(session('cart', []), fn($total, $item) => $total + $item['price'] * $item['quantity'], 0), 2) }}
+                                    {{ $item['currency'] }} {{ number_format(array_reduce(session('cart', []), fn($total, $item) => $total + $item['price'] * $item['quantity'], 0), 2) }}
                                 </span>
                             </li>
                             <li class="list-group-item d-flex text-dark fs-sm ft-regular">
                                 <span>Tax</span>
-                                <span class="ml-auto text-dark ft-medium"> 10.10</span>
+                                <span class="ml-auto text-dark ft-medium">{{ $item['currency'] }} 10.10</span>
                             </li>
                             <li class="list-group-item d-flex text-dark fs-sm ft-regular">
                                 <span>Total</span>
                                 <span class="ml-auto text-dark ft-medium">
-                                     {{ number_format(array_reduce(session('cart', []), fn($total, $item) => $total + $item['price'] * $item['quantity'], 0) + 10.1, 2) }}
+                                    {{ $item['currency'] }} {{ number_format(array_reduce(session('cart', []), fn($total, $item) => $total + $item['price'] * $item['quantity'], 0) + 10.1, 2) }}
                                 </span>
                             </li>
                             <li class="list-group-item fs-sm text-center">

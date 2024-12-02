@@ -85,10 +85,73 @@ class CartController extends Controller
 
 
 
+    // public function viewCart()
+    // {
+    //     $cartItems = session()->get('cart', []);
+    //     $cartItemsCount = count($cartItems);
+    //     $headerMenus = Menu::with([
+    //         'children' => function ($query) {
+    //             $query->where('status', 1)
+    //                 ->with([
+    //                     'children' => function ($query) {
+    //                         $query->where('status', 1)
+    //                             ->with([
+    //                                 'children' => function ($query) {
+    //                                     $query->where('status', 1);
+    //                                 }
+    //                             ]);
+    //                     }
+    //                 ]);
+    //         }
+    //     ])
+    //         ->whereNull('parent_id') // Ensure only top-level menus are fetched
+    //         ->where('status', 1) // Only include menus with status = 1
+    //         ->where(function ($query) {
+    //             $query->where('location', 'header')
+    //                 ->orWhere('location', 'both');
+    //         })
+    //         ->get();
+
+    //     // Optionally, for the footer menus, you can follow the same approach
+    //     $footerMenus = Menu::with([
+    //         'children' => function ($query) {
+    //             $query->where('status', 1)
+    //                 ->with([
+    //                     'children' => function ($query) {
+    //                         $query->where('status', 1)
+    //                             ->with([
+    //                                 'children' => function ($query) {
+    //                                     $query->where('status', 1);
+    //                                 }
+    //                             ]);
+    //                     }
+    //                 ]);
+    //         }
+    //     ])
+    //         ->whereNull('parent_id')
+    //         ->where('status', 1) // Only include menus with status = 1
+    //         ->where(function ($query) {
+    //             $query->where('location', 'footer')
+    //                 ->orWhere('location', 'both');
+    //         })
+    //         ->get();
+
+    //     return view('front.cart', compact('cartItems', 'cartItemsCount', 'headerMenus', 'footerMenus'));
+    // }
+
+
     public function viewCart()
     {
         $cartItems = session()->get('cart', []);
+        foreach ($cartItems as $productId => $item) {
+            if (!isset($item['currency'])) {
+                $cartItems[$productId]['currency'] = '₹'; // Default currency symbol
+            }
+        }
+        session()->put('cart', $cartItems); // Update session with fixed cart items
+
         $cartItemsCount = count($cartItems);
+
         $headerMenus = Menu::with([
             'children' => function ($query) {
                 $query->where('status', 1)
@@ -104,15 +167,14 @@ class CartController extends Controller
                     ]);
             }
         ])
-            ->whereNull('parent_id') // Ensure only top-level menus are fetched
-            ->where('status', 1) // Only include menus with status = 1
+            ->whereNull('parent_id')
+            ->where('status', 1)
             ->where(function ($query) {
                 $query->where('location', 'header')
                     ->orWhere('location', 'both');
             })
             ->get();
 
-        // Optionally, for the footer menus, you can follow the same approach
         $footerMenus = Menu::with([
             'children' => function ($query) {
                 $query->where('status', 1)
@@ -129,7 +191,7 @@ class CartController extends Controller
             }
         ])
             ->whereNull('parent_id')
-            ->where('status', 1) // Only include menus with status = 1
+            ->where('status', 1)
             ->where(function ($query) {
                 $query->where('location', 'footer')
                     ->orWhere('location', 'both');
@@ -138,7 +200,6 @@ class CartController extends Controller
 
         return view('front.cart', compact('cartItems', 'cartItemsCount', 'headerMenus', 'footerMenus'));
     }
-
 
     public function update(Request $request)
     {
