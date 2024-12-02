@@ -47,8 +47,8 @@
                                     </div>
                                     <div class="elis_rty">
                                         <span
-                                            class="ft-medium text-muted line-through fs-md mr-2">Rs.${{ $product->compare_price }}</span>
-                                        <span class="ft-bold theme-cl fs-lg mr-2">Rs.{{ $product->price }}</span>
+                                            class="ft-medium text-muted line-through fs-md mr-2">{{ $product->currency }}${{ $product->compare_price }}</span>
+                                        <span class="ft-bold theme-cl fs-lg mr-2">{{ $product->currency }}{{ $product->price }}</span>
                                     </div>
                                 </div>
                             </div>
@@ -572,7 +572,7 @@
                                                 <h5 class="fw-bolder fs-md mb-0 lh-1 mb-1"><a
                                                         href="shop-single-v1.html">Half Running Set</a></h5>
                                                 <div class="elis_rty"><span
-                                                        class="ft-bold fs-md text-dark">Rs.119.00</span>
+                                                        class="ft-bold fs-md text-dark">{{ $product->currency }}119.00</span>
                                                 </div>
                                             </div>
                                         </div>
@@ -607,8 +607,8 @@
                                                 <h5 class="fw-bolder fs-md mb-0 lh-1 mb-1"><a
                                                         href="shop-single-v1.html">Formal Men Lowers</a></h5>
                                                 <div class="elis_rty"><span
-                                                        class="text-muted ft-medium line-through mr-2">Rs.129.00</span><span
-                                                        class="ft-bold theme-cl fs-md">Rs.79.00</span></div>
+                                                        class="text-muted ft-medium line-through mr-2">{{ $product->currency }}129.00</span><span
+                                                        class="ft-bold theme-cl fs-md">{{ $product->currency }}79.00</span></div>
                                             </div>
                                         </div>
                                     </div>
@@ -640,7 +640,7 @@
                                                 <h5 class="fw-bolder fs-md mb-0 lh-1 mb-1"><a
                                                         href="shop-single-v1.html">Half Running Suit</a></h5>
                                                 <div class="elis_rty"><span
-                                                        class="ft-bold fs-md text-dark">Rs.80.00</span>
+                                                        class="ft-bold fs-md text-dark">{{ $product->currency }}80.00</span>
                                                 </div>
                                             </div>
                                         </div>
@@ -676,8 +676,8 @@
                                                 <h5 class="fw-bolder fs-md mb-0 lh-1 mb-1"><a
                                                         href="shop-single-v1.html">Half Fancy Lady Dress</a></h5>
                                                 <div class="elis_rty"><span
-                                                        class="text-muted ft-medium line-through mr-2">Rs.149.00</span><span
-                                                        class="ft-bold theme-cl fs-md">Rs.110.00</span></div>
+                                                        class="text-muted ft-medium line-through mr-2">{{ $product->currency }}149.00</span><span
+                                                        class="ft-bold theme-cl fs-md">{{ $product->currency }}110.00</span></div>
                                             </div>
                                         </div>
                                     </div>
@@ -709,8 +709,8 @@
                                                 <h5 class="fw-bolder fs-md mb-0 lh-1 mb-1"><a
                                                         href="shop-single-v1.html">Flix Flox Jeans</a></h5>
                                                 <div class="elis_rty"><span
-                                                        class="text-muted ft-medium line-through mr-2">Rs.90.00</span><span
-                                                        class="ft-bold theme-cl fs-md">Rs.49.00</span></div>
+                                                        class="text-muted ft-medium line-through mr-2">{{ $product->currency }}90.00</span><span
+                                                        class="ft-bold theme-cl fs-md">{{ $product->currency }}49.00</span></div>
                                             </div>
                                         </div>
                                     </div>
@@ -745,7 +745,7 @@
                                                 <h5 class="fw-bolder fs-md mb-0 lh-1 mb-1"><a
                                                         href="shop-single-v1.html">Fancy Salwar Suits</a></h5>
                                                 <div class="elis_rty"><span
-                                                        class="ft-bold fs-md text-dark">Rs.114.00</span>
+                                                        class="ft-bold fs-md text-dark">{{ $product->currency }}114.00</span>
                                                 </div>
                                             </div>
                                         </div>
@@ -781,7 +781,7 @@
                                                 <h5 class="fw-bolder fs-md mb-0 lh-1 mb-1"><a
                                                         href="shop-single-v1.html">Collot Full Dress</a></h5>
                                                 <div class="elis_rty"><span
-                                                        class="ft-bold theme-cl fs-md text-dark">Rs.120.00</span></div>
+                                                        class="ft-bold theme-cl fs-md text-dark">{{ $product->currency }}120.00</span></div>
                                             </div>
                                         </div>
                                     </div>

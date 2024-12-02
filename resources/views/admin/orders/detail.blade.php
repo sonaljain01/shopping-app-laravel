@@ -78,25 +78,25 @@
                                     @foreach ($order->orderItems as $item)
                                         <tr>
                                             <td>{{ $item->product_name }}</td>
-                                            <td>Rs.{{ number_format($item->product_price, 2) }}</td>
+                                            <td>{{ $order->currency_code }}{{ number_format($item->product_price, 2) }}</td>
                                             <td>{{ $item->quantity }}</td>
-                                            <td>Rs.{{ number_format($item->subtotal, 2) }}</td>
+                                            <td>{{ $order->currency_code }}{{ number_format($item->subtotal, 2) }}</td>
                                         </tr>
                                     @endforeach
 
                                     <tr>
                                         <th colspan="3" class="text-right">Subtotal:</th>
-                                        <td>Rs. {{ number_format($order->total_amount, 2) }}</td>
+                                        <td>{{ $order->currency_code }} {{ number_format($order->total_amount, 2) }}</td>
                                     </tr>
 
                                     <tr>
                                         <th colspan="3" class="text-right">Shipping:</th>
-                                        <td>Rs. 0.00</td>
+                                        <td>{{ $order->currency_code }} 0.00</td>
                                     </tr>
 
                                     <tr>
                                         <th colspan="3" class="text-right">Grand Total:</th>
-                                        <td>Rs. {{ number_format($order->total_amount, 2) }}</td>
+                                        <td>{{ $order->currency_code }} {{ number_format($order->total_amount, 2) }}</td>
                                     </tr>
                                 </tbody>
                             </table>

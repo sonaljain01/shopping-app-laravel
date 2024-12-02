@@ -22,12 +22,36 @@ class OrderController extends Controller
     public function checkout()
     {
         $cartItems = session('cart', []); // Retrieve items from cart session
-        // $billingDetails = auth()->user()->billingAddress; // Assuming billing address is saved with the user profile
         $products = Product::whereIn('id', array_keys($cartItems))->get();
+
+        // Retrieve country from session or determine it using IP or user data
+        $country = session('country', 'IN');
+        if (!session()->has('country')) {
+            if (auth()->check()) {
+                session()->put('country', auth()->user()->country);
+            } else {
+                $ip = request()->ip() ?? '146.70.245.84';
+                $data = getLocationInfo($ip);
+                $country = $data['data']['country'] ?? $country;
+                session()->put('country', $country);
+            }
+        }
+
+        // Get exchange rate for the selected country
+        $exchangeRate = getExchangeRate($country);
+        $currency = $exchangeRate['currency'];
+        $conversionRate = $exchangeRate['data'];
+
         $subtotal = 0;
         foreach ($products as $product) {
             $quantity = $cartItems[$product->id]['quantity'] ?? 1;
-            $subtotal += $product->price * $quantity;
+
+            // Calculate original and converted price
+            $product->original_price = $product->price; // Original price in base currency (e.g., USD)
+            $product->converted_price = round($product->price * $conversionRate, 2); // Convert price
+
+            // Add to subtotal (in original price)
+            $subtotal += $product->converted_price * $quantity;
         }
 
         // Calculate tax (e.g., 10% of subtotal)
@@ -36,6 +60,8 @@ class OrderController extends Controller
 
         // Calculate total
         $total = $subtotal + $tax;
+
+        // Retrieve payment methods and menus for rendering
         $paymentMethods = PaymentMethod::all();
         $headerMenus = Menu::with([
             'children' => function ($query) {
@@ -51,9 +77,8 @@ class OrderController extends Controller
                         }
                     ]);
             }
-        ])
-            ->whereNull('parent_id') // Ensure only top-level menus are fetched
-            ->where('status', 1) // Only include menus with status = 1
+        ])->whereNull('parent_id')
+            ->where('status', 1)
             ->where(function ($query) {
                 $query->where('location', 'header')
                     ->orWhere('location', 'both');
@@ -75,39 +100,24 @@ class OrderController extends Controller
                         }
                     ]);
             }
-        ])
-            ->whereNull('parent_id')
-            ->where('status', 1) // Only include menus with status = 1
+        ])->whereNull('parent_id')
+            ->where('status', 1)
             ->where(function ($query) {
                 $query->where('location', 'footer')
                     ->orWhere('location', 'both');
             })
             ->get();
-        // $country = session('country', 'IN');
-        // if (auth()->check()) {
-        //     $country = auth()->user()->country ?? $country;
-        // } elseif (!session('country')) {
-        //     $ip = request()->ip() ?? '146.70.245.84';
-        //     $data = getLocationInfo($ip);
-        //     $country = $data['data']['country'] ?? $country;
-        // }
-        $country = 'IN';
-        if (! session()->has('country')) {
-            if (auth()->check()) {
-                session()->put('country', auth()->user()->country);
-            } else {
-                $ip = request()->ip() ?? '146.70.245.84';
-                $data = getLocationInfo($ip);
-                $country = $data['data']['country'] ?? $country;
-                session()->put('country', $country);
-            }
-        }
 
-        $country = session('country', 'IN');
+        // Get the phone code for the selected country
         $telcode = getTelCode($country)['code'];
-        return view('front.checkout', compact('cartItems', 'products', 'subtotal', 'tax', 'total', 'paymentMethods', 'headerMenus', 'footerMenus', 'telcode'));
 
+        return view('front.checkout', compact('cartItems', 'products', 'subtotal', 'currency', 'tax', 'total', 'paymentMethods', 'headerMenus', 'footerMenus', 'telcode'));
     }
+
+
+
+
+
 
     public function placeOrder(Request $request)
     {
@@ -250,6 +260,30 @@ class OrderController extends Controller
 
         return redirect()->route('front.index')->with('success', 'Order placed successfully!');
     }
+
+    
+    
+
+    private function prepareAddressData(array $data, string $type, bool $isShipping = false): array
+    {
+        return [
+            'user_id' => auth()->id(),
+            'name' => $isShipping ? $data['shipping_name'] : $data['name'],
+            'company' => $isShipping ? $data['shipping_company'] : $data['company'],
+            'address_1' => $isShipping ? $data['shipping_address_1'] : $data['address_1'],
+            'address_2' => $isShipping ? $data['shipping_address_2'] : $data['address_2'],
+            'city' => $isShipping ? $data['shipping_city'] : $data['city'],
+            'state' => $isShipping ? $data['shipping_state'] : $data['state'],
+            'zip' => $isShipping ? $data['shipping_zip'] : $data['zip'],
+            'phone' => $isShipping ? $data['shipping_phone'] : $data['phone'],
+            'country' => $isShipping ? $data['shipping_country'] : $data['country'],
+            'country_code' => $isShipping ? $data['shipping_country_code'] : $data['country_code'],
+            'additional_information' => $data['additional_information'] ?? null,
+            'type' => $type,
+            'is_default' => $type === 'billing',
+        ];
+    }
+
 
     private function validateCountryDialCode($countryName, $dialCode)
     {

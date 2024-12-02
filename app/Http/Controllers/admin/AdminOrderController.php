@@ -27,6 +27,7 @@ class AdminOrderController extends Controller
         }
 
         $orders = $orders->paginate(10);
+        
         $pickupAddress = PickupAddress::where('user_id', auth()->user()->id)->get();
         return view('admin.orders.list', [
             'orders' => $orders,
@@ -104,7 +105,8 @@ class AdminOrderController extends Controller
             'changed_at' => now(),
         ]);
 
-        return back()->with('success', 'Order updated successfully.');
+        // return back()->with('success', 'Order updated successfully.');
+        return redirect()->route('admin.orders.index')->with('success', 'Order updated successfully.'); 
     }
 
 

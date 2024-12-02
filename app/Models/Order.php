@@ -17,7 +17,8 @@ class Order extends Model
         'total_amount',
         'phone',
         'billing_address_id',
-        'shipping_address_id'
+        'shipping_address_id',
+        'currency_code'
     ];
 
     public function user()

@@ -145,7 +145,7 @@
                     </ul>
                 </li>	
                 	
-                <li class="nav-item {{ request()->routeIs('admin.forex.index') ? 'menu-open' : '' }}">
+                <li class="nav-item {{ request()->routeIs('admin.forex.index') || request()->routeIs('forex_rates.index') ? 'menu-open' : '' }}">
                     <a href="#" class="nav-link">
                         <i class="fas fa-money-check nav-icon"></i>
                         <p>
@@ -163,7 +163,7 @@
                     </ul>
                     <ul class="nav nav-treeview">
                         <li class="nav-item">
-                            <a href="#" class="nav-link {{ request()->routeIs('#') ? 'active' : '' }}">
+                            <a href="{{ route('forex_rates.index') }}" class="nav-link {{ request()->routeIs('forex_rates.index') ? 'active' : '' }}">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p>Market Forex</p>
                             </a>
