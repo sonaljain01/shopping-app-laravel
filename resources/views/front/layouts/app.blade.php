@@ -65,17 +65,17 @@
                                             height="32" />India</a>
                                 </li>
 
-                                <li><a title="Euro" onclick="country(this.id)" href="javascript:void(0);"
+                                {{-- <li><a title="Euro" onclick="country(this.id)" href="javascript:void(0);"
                                         id="eu" class="dropdown-item medium text-medium"><img
                                             src="{{ asset('vendor/blade-flags/country-de.svg') }}" width="32"
                                             height="32" />Germany</a>
-                                </li>
-                                <li class="current"><a title="US Dollar" href="javascript:void(0);" id="uk"
+                                </li> --}}
+                                {{-- <li class="current"><a title="US Dollar" href="javascript:void(0);" id="uk"
                                         onclick="country(this.id)" class="dropdown-item medium text-medium">
                                         <img src="{{ asset('vendor/blade-flags/country-gb.svg') }}" width="32"
                                             height="32" />
-                                        UK</a></li>
-                                <li class="current"><a title="US Dollar" href="javascript:void(0);" id="us"
+                                        UK</a></li> --}}
+                                <li class="current"><a title="US Dollar"git  href="javascript:void(0);" id="us"
                                         onclick="country(this.id)" class="dropdown-item medium text-medium">
                                         <img src="{{ asset('vendor/blade-flags/country-us.svg') }}" width="32"
                                             height="32" />
