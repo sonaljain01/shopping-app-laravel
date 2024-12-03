@@ -28,21 +28,16 @@ class CartController extends Controller
         $currency = $exchangeRate['currency'];
         $conversionRate = $exchangeRate['data'];
 
-        // Initialize the session cart if it doesn't exist
         if (!session()->has('cart')) {
             session()->put('cart', []);
         }
 
-        // Generate a unique guest ID if the user is not authenticated
         $guestId = session()->getId();
         $userId = auth()->check() ? auth()->id() : null;
 
-        // Get the current cart in the session
         $cart = session()->get('cart');
 
-        // Check if product exists in the session cart
         if (isset($cart[$productId])) {
-            // Increment the quantity if it exists
             $cart[$productId]['quantity']++;
         } else {
             $cart[$productId] = [
@@ -55,10 +50,8 @@ class CartController extends Controller
             ];
         }
 
-        // Save the updated cart in the session
         session()->put('cart', $cart);
 
-        // Database operations for adding to cart
         $cartItem = Cart::where('product_id', $productId)
             ->where(function ($query) use ($userId, $guestId) {
                 $query->where('user_id', $userId)
@@ -82,76 +75,54 @@ class CartController extends Controller
         return redirect()->back()->with('success', 'Product added to cart successfully.');
     }
 
-
-
-
-    // public function viewCart()
-    // {
-    //     $cartItems = session()->get('cart', []);
-    //     $cartItemsCount = count($cartItems);
-    //     $headerMenus = Menu::with([
-    //         'children' => function ($query) {
-    //             $query->where('status', 1)
-    //                 ->with([
-    //                     'children' => function ($query) {
-    //                         $query->where('status', 1)
-    //                             ->with([
-    //                                 'children' => function ($query) {
-    //                                     $query->where('status', 1);
-    //                                 }
-    //                             ]);
-    //                     }
-    //                 ]);
-    //         }
-    //     ])
-    //         ->whereNull('parent_id') // Ensure only top-level menus are fetched
-    //         ->where('status', 1) // Only include menus with status = 1
-    //         ->where(function ($query) {
-    //             $query->where('location', 'header')
-    //                 ->orWhere('location', 'both');
-    //         })
-    //         ->get();
-
-    //     // Optionally, for the footer menus, you can follow the same approach
-    //     $footerMenus = Menu::with([
-    //         'children' => function ($query) {
-    //             $query->where('status', 1)
-    //                 ->with([
-    //                     'children' => function ($query) {
-    //                         $query->where('status', 1)
-    //                             ->with([
-    //                                 'children' => function ($query) {
-    //                                     $query->where('status', 1);
-    //                                 }
-    //                             ]);
-    //                     }
-    //                 ]);
-    //         }
-    //     ])
-    //         ->whereNull('parent_id')
-    //         ->where('status', 1) // Only include menus with status = 1
-    //         ->where(function ($query) {
-    //             $query->where('location', 'footer')
-    //                 ->orWhere('location', 'both');
-    //         })
-    //         ->get();
-
-    //     return view('front.cart', compact('cartItems', 'cartItemsCount', 'headerMenus', 'footerMenus'));
-    // }
-
-
     public function viewCart()
     {
+        // Get cart items from session
         $cartItems = session()->get('cart', []);
+        $taxType = 'no_tax'; // Default value
+
         foreach ($cartItems as $productId => $item) {
+            // Ensure each cart item has a currency
             if (!isset($item['currency'])) {
                 $cartItems[$productId]['currency'] = '₹'; // Default currency symbol
             }
-        }
-        session()->put('cart', $cartItems); // Update session with fixed cart items
 
+            // Fetch the product details from the products table
+            $product = Product::find($productId);
+
+            if ($product) {
+                // Fetch tax_type and tax_price from the product
+                $taxType = $product->tax_type ?? 'no_tax';
+                $taxPrice = $product->tax_price ?? 0;
+
+                // // Fetch tax rate from the product (if applicable)
+                // $taxRate = $product->tax_rate ?? 0;
+
+                // Store tax information in the cart item
+                $cartItems[$productId]['tax_type'] = $taxType;
+                $cartItems[$productId]['tax_price'] = $taxPrice;
+
+                // Calculate tax based on tax type (inclusive or exclusive)
+                if ($taxType === 'inclusive') {
+                    
+                    $cartItems[$productId]['tax'] = $item['price'] - ($item['price'] / (1 + ($taxPrice / 100)));
+                } elseif ($taxType === 'exclusive') {
+                    
+                    $cartItems[$productId]['tax'] = $item['price'] * ($taxPrice / 100);
+                } else {
+                    
+                    $cartItems[$productId]['tax'] = 0;
+                }
+            }
+        }
+
+        // Update session with the fixed cart items
+        session()->put('cart', $cartItems);
+
+        // Get the count of cart items
         $cartItemsCount = count($cartItems);
 
+        // Fetch header and footer menus
         $headerMenus = Menu::with([
             'children' => function ($query) {
                 $query->where('status', 1)
