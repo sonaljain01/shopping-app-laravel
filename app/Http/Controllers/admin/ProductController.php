@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\StoreSetting;
 use Illuminate\Http\Request;
 use App\Models\Category;
 use App\Models\Brand;
@@ -38,13 +39,14 @@ class ProductController extends Controller
         $data['categories'] = $categories;
         $data['brands'] = $brands;
         $data['attributes'] = Attribute::all();
+        $data['tax_type'] = StoreSetting::first()->tax_type ?? 'no_tax';
         return view('admin.products.create', $data);
     }
 
     public function store(Request $request)
     {
-        // dd($request->all());
-
+        $storeSetting = StoreSetting::first();
+        $taxType = $storeSetting->tax_type ?? 'no_tax';
 
         $rules = [
             'title' => 'required|unique:products',
@@ -57,14 +59,16 @@ class ProductController extends Controller
             'description' => 'required',
             'attribute_name' => 'required|array',
             'attribute_value' => 'required|array',
-            // 'attribute_name.*' => 'exists:attributes,id',
-            // 'attribute_value.*' => 'exists:attribute_values,id',
             'image.*' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'length' => 'required|numeric',
             'breath' => 'required|numeric',
             'height' => 'required|numeric',
-
+            
         ];
+
+        if ($taxType !== 'no_tax') {
+            $rules['tax_price'] = 'required|numeric';
+        }
 
         // Validate the form data
         $validator = Validator::make($request->all(), $rules);
@@ -91,7 +95,9 @@ class ProductController extends Controller
                 'compare_price' => $request->compare_price,
                 'length' => $request->length,
                 'breath' => $request->breath,
-                'height' => $request->height
+                'height' => $request->height,
+                'tax_price' => $request->tax_price ?? 0,
+                'tax_type' => $taxType
             ]);
 
 
@@ -145,7 +151,7 @@ class ProductController extends Controller
         $data['categories'] = Category::orderBy('name', 'ASC')->get();
         $data['brands'] = Brand::orderBy('name', 'ASC')->get();
         $data['attributes'] = Attribute::with('values')->orderBy('name', 'ASC')->get();
-
+        $data['tax_type'] = StoreSetting::first()->tax_type ?? 'no_tax';
         return view('admin.products.edit', $data);
     }
 
@@ -154,7 +160,8 @@ class ProductController extends Controller
     public function update(Request $request, $id)
     {
         $product = Product::with('product_images', 'attributes')->findOrFail($id);
-
+        $storeSetting = StoreSetting::first();
+        $taxType = $storeSetting->tax_type ?? 'no_tax';
         // Validation rules
         $rules = [
             'title' => 'required|unique:products,title,' . $product->id,
@@ -169,6 +176,10 @@ class ProductController extends Controller
             'height' => 'required|numeric',
 
         ];
+
+        if ($taxType !== 'no_tax') {
+            $rules['tax_price'] = 'required|numeric';
+        }
 
         // Additional validation if tracking quantity is enabled
         if ($request->track_qty === 'Yes') {
@@ -205,7 +216,9 @@ class ProductController extends Controller
                 'compare_price' => $request->compare_price,
                 'length' => $request->length,
                 'breath' => $request->breath,
-                'height' => $request->height
+                'height' => $request->height,
+                'tax_price' => $request->tax_price ?? 0,
+                'tax_type' => $taxType
             ]);
 
             if ($request->has('attributes') && is_array($request->attributes)) {
