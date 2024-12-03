@@ -220,31 +220,6 @@
                 </ul>
 
                 <div class="card mb-4 gray">
-                    {{-- <div class="card-body">
-                        <ul class="list-group list-group-sm list-group-flush-y list-group-flush-x">
-                            <li class="list-group-item d-flex text-dark fs-sm ft-regular">
-                                <span>Subtotal</span>
-                                @if ($product['tax_type'] == 'inclusive')
-                                    <span class="ml-auto text-dark ft-medium">
-                                        {{ $currency }} {{ number_format($subtotal, 2) }}</span>
-                                    
-                                @else
-                                    <span class="ml-auto text-dark ft-medium">{{ $currency }} {{ number_format($subtotal, 2) }}</span>
-                                @endif
-                            </li>
-                            <li class="list-group-item d-flex text-dark fs-sm ft-regular">
-                                <span>Tax</span>
-                                <span class="ml-auto text-dark ft-medium">{{ $currency }} {{ number_format( 2) }}</span>
-                            </li>
-                            <li class="list-group-item d-flex text-dark fs-sm ft-regular">
-                                <span>Total</span>
-                                <span class="ml-auto text-dark ft-medium">{{ $currency }} {{ number_format($total, 2) }}</span>
-                            </li>
-                            <li class="list-group-item fs-sm text-center">
-                                Shipping cost calculated at Checkout *
-                            </li>
-                        </ul>
-                    </div> --}}
                     <div class="card-body">
                         <ul class="list-group list-group-sm list-group-flush-y list-group-flush-x">
                             <!-- Subtotal -->

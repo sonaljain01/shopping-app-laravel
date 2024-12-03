@@ -187,7 +187,8 @@ class OrderController extends Controller
         DB::transaction(function () use ($validatedData, $sameAsBilling, $request) {
             $cartItems = session('cart', []);
             $totalAmount = collect($cartItems)->sum(fn($item) => $item['price'] * $item['quantity']);
-
+            $totalTax = collect($cartItems)->sum(fn($item) => $item['price'] * $item['quantity'] * $item['tax_price'] / 100);
+            $grandTotal = $totalAmount + $totalTax;
             if ($totalAmount <= 0) {
                 throw new \Exception('Cart total is invalid.');
             }
@@ -203,9 +204,10 @@ class OrderController extends Controller
                 'billing_address_id' => null,
                 'shipping_address_id' => null,
                 'country_code' => $request->country_code,
-
+                'tax' => $totalTax,
+                'grand_total' => $grandTotal
             ]);
-
+       
             // Create billing address
             $billingAddress = Address::create([
                 'user_id' => auth()->id(),
