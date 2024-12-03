@@ -26,6 +26,7 @@ use App\Http\Controllers\CountryController;
 use App\Http\Controllers\admin\SettingController;
 use App\Http\Controllers\admin\ForexController;
 use App\Http\Controllers\admin\ForexRateController;
+use App\Http\Controllers\admin\StoreController;
 
 
 
@@ -247,6 +248,14 @@ Route::group(['prefix' => 'admin'], function () {
 
         Route::get('forex-rates/auto', [ForexRateController::class, 'index'])->name('forex_rates.index');
         Route::post('forex-rates/auto', [ForexRateController::class, 'update'])->name('forex_rates.update');
+
+        //Store Routes
+        Route::get('/stores', [StoreController::class, 'index'])->name('stores.index');
+        Route::get('stores/create', [StoreController::class, 'create'])->name('stores.create');
+        Route::post('stores/store', [StoreController::class, 'store'])->name('stores.store');
+        Route::delete('stores/{id}', [StoreController::class, 'destroy'])->name('stores.destroy');
+        Route::get('stores/{id}/edit', [StoreController::class, 'edit'])->name('stores.edit');
+        Route::put('stores/{id}/update', [StoreController::class, 'update'])->name('stores.update');
     });
 });
 
