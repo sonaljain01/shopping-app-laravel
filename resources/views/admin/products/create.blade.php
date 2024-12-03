@@ -201,15 +201,35 @@
                         <div class="card mb-3">
                             <div class="card-body">
                                 <h2 class="h4 mb-3">Length</h2>
-                                <input type="text" name="length" id="length" class="form-control" placeholder="Length">
+                                <input type="text" name="length" id="length" class="form-control"
+                                    placeholder="Length">
                                 <br>
                                 <h2 class="h4 mb-3">Breath</h2>
-                                <input type="text" name="breath" id="breath" class="form-control" placeholder="Breath">
+                                <input type="text" name="breath" id="breath" class="form-control"
+                                    placeholder="Breath">
                                 <br>
                                 <h2 class="h4 mb-3">Height</h2>
-                                <input type="text" name="height" id="height" class="form-control" placeholder="Height">
+                                <input type="text" name="height" id="height" class="form-control"
+                                    placeholder="Height">
                             </div>
                         </div>
+
+                        <div class="card mb-3">
+                            <div class="card-body">
+                                <h2 class="h4 mb-3">Tax Type</h2>
+                                @if ($tax_type !== 'no_tax')
+                                    <label for="tax_price">Tax Price</label>
+                                    <input type="text" name="tax_price" id="tax_price" class="form-control" placeholder="Tax Price" value="{{ old('tax_price') }}">
+                                    <small class="form-text text-muted">
+                                        Tax type: {{ ucfirst($tax_type) }}
+                                    </small>
+                                @else
+                                    <p>No tax applied</p>
+                                @endif
+                            </div>
+                        </div>
+                        
+                        
                         <!-- Product Attributes -->
                         <div class="card mb-3">
                             <div class="card-body">
@@ -218,13 +238,14 @@
                                     <!-- Default Attribute Form -->
                                     <div class="mb-3 attribute-row">
                                         <label class="form-label">Attribute Name</label>
-                                        <select name="attribute_name[]" class="form-control attribute-select" onchange="showAttributeValues(this)">
+                                        <select name="attribute_name[]" class="form-control attribute-select"
+                                            onchange="showAttributeValues(this)">
                                             <option value="">Select Attribute</option>
                                             @foreach ($attributes as $attribute)
                                                 <option value="{{ $attribute->id }}">{{ $attribute->name }}</option>
                                             @endforeach
                                         </select>
-                        
+
                                         <div class="mt-3">
                                             <label class="form-label">Attribute Values</label>
                                             <select name="attribute_value[]" class="form-control attribute-values">
@@ -233,10 +254,11 @@
                                         </div>
                                     </div>
                                 </div>
-                                <button type="button" class="btn btn-outline-primary" onclick="addAttribute()">Add More Attributes</button>
+                                <button type="button" class="btn btn-outline-primary" onclick="addAttribute()">Add More
+                                    Attributes</button>
                             </div>
                         </div>
-                        
+
                         <!-- Preload attribute values in a hidden format -->
                         @foreach ($attributes as $attribute)
                             <div id="attribute-{{ $attribute->id }}" class="d-none">
@@ -245,15 +267,15 @@
                                 @endforeach
                             </div>
                         @endforeach
-                        
+
                         <script>
                             // Show values for the selected attribute
                             function showAttributeValues(selectElement) {
                                 const attributeId = selectElement.value;
                                 const valuesSelect = selectElement.closest('.attribute-row').querySelector('.attribute-values');
-                        
+
                                 valuesSelect.innerHTML = '<option value="">Select a value</option>'; // Clear existing options
-                        
+
                                 if (attributeId) {
                                     const valuesContainer = document.getElementById(`attribute-${attributeId}`);
                                     if (valuesContainer) {
@@ -267,29 +289,24 @@
                                     }
                                 }
                             }
-                        
+
                             // Add new attribute row
                             function addAttribute() {
                                 const container = document.getElementById('attributes-container');
-                        
+
                                 // Clone the first attribute row
                                 const newRow = container.querySelector('.attribute-row').cloneNode(true);
-                        
+
                                 // Clear the selected options of the cloned row
                                 newRow.querySelector('.attribute-select').value = '';
                                 newRow.querySelector('.attribute-values').innerHTML = '<option value="">Select a value</option>';
-                        
+
                                 // Append the cloned row to the container
                                 container.appendChild(newRow);
-                        
+
                                 // Optionally, you can also attach event listeners to the new select elements
                             }
                         </script>
-                        
-                        
-                        
-                       
-
                     </div>
                 </div>
             </div>
