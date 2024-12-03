@@ -42,9 +42,23 @@ class FrontController extends Controller
 
         $products = $productsQuery->orderBy('id', 'desc')->get();
         $products->transform(function ($product) use ($exchangeRate) {
-            $product->price = round((float)$product->price * (float)$exchangeRate['data'], 2);
+            $price = (float)$product->price;
+           
+            $taxPrice = (float)$product->tax_price ?? 0;
+    
+            if ($product->tax_type === 'inclusive') {                
+                $calculatedPrice = $price * (float)$exchangeRate['data'];
+            } elseif ($product->tax_type === 'exclusive') {
+                $calculatedPrice = $price * (float)$exchangeRate['data'];
+            } else {
+                // For no tax, show the base price
+                $calculatedPrice = $price * (float)$exchangeRate['data'];
+            }
+    
+            $product->price = round($calculatedPrice, 2);
             $product->currency = $exchangeRate['currency'] ?? '₹';
             $product->cost_price = round((float)$product->cost_price * (float)$exchangeRate['data'], 2);
+    
             return $product;
         });
         $headerMenus = Menu::with([
