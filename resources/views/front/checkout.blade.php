@@ -208,7 +208,7 @@
                                 <div class="col d-flex align-items-center">
                                     <div class="cart_single_caption pl-2">
                                         <h4 class="product_title fs-md ft-medium mb-1 lh-1">{{ $product->title }}</h4>
-                                        <h4 class="fs-md ft-medium mb-3 lh-1">{{ $currency }} {{ number_format($product->converted_price, 2) }}
+                                        <h4 class="fs-md ft-medium mb-3 lh-1">{{ $currency }} {{ number_format($product->original, 2) }}
                                         </h4>
                                         <h4 class="fs-md ft-medium mb-3 lh-1">Qty:
                                             {{ $cartItems[$product->id]['quantity'] ?? 1 }}</h4>
@@ -220,15 +220,21 @@
                 </ul>
 
                 <div class="card mb-4 gray">
-                    <div class="card-body">
+                    {{-- <div class="card-body">
                         <ul class="list-group list-group-sm list-group-flush-y list-group-flush-x">
                             <li class="list-group-item d-flex text-dark fs-sm ft-regular">
                                 <span>Subtotal</span>
-                                <span class="ml-auto text-dark ft-medium">{{ $currency }} {{ number_format($subtotal, 2) }}</span>
+                                @if ($product['tax_type'] == 'inclusive')
+                                    <span class="ml-auto text-dark ft-medium">
+                                        {{ $currency }} {{ number_format($subtotal, 2) }}</span>
+                                    
+                                @else
+                                    <span class="ml-auto text-dark ft-medium">{{ $currency }} {{ number_format($subtotal, 2) }}</span>
+                                @endif
                             </li>
                             <li class="list-group-item d-flex text-dark fs-sm ft-regular">
                                 <span>Tax</span>
-                                <span class="ml-auto text-dark ft-medium">{{ $currency }} {{ number_format($tax, 2) }}</span>
+                                <span class="ml-auto text-dark ft-medium">{{ $currency }} {{ number_format( 2) }}</span>
                             </li>
                             <li class="list-group-item d-flex text-dark fs-sm ft-regular">
                                 <span>Total</span>
@@ -238,7 +244,57 @@
                                 Shipping cost calculated at Checkout *
                             </li>
                         </ul>
+                    </div> --}}
+                    <div class="card-body">
+                        <ul class="list-group list-group-sm list-group-flush-y list-group-flush-x">
+                            <!-- Subtotal -->
+                            <li class="list-group-item d-flex text-dark fs-sm ft-regular">
+                                <span>Subtotal</span>
+                                <span class="ml-auto text-dark ft-medium">
+                                    @if ($product->tax_type === 'inclusive')
+                                        <!-- If tax is inclusive, display subtotal without tax -->
+                                        {{ $currency }} {{ number_format($subtotal, 2) }}
+                                    @else
+                                        <!-- For exclusive and no_tax, display full subtotal -->
+                                        {{ $currency }} {{ number_format($subtotal, 2) }}
+                                    @endif
+                                </span>
+                            </li>
+                    
+                            <!-- Tax -->
+                            <li class="list-group-item d-flex text-dark fs-sm ft-regular">
+                                <span>Tax</span>
+                                <span class="ml-auto text-dark ft-medium">
+                                    @if ($product->tax_type === 'no_tax')
+                                        <!-- If no_tax, tax amount is 0 -->
+                                        {{ $currency }} 0.00
+                                    @elseif ($products->firstWhere('tax_type', 'exclusive'))
+                                        <!-- For exclusive tax, display calculated tax -->
+                                        {{ $currency }} {{ number_format($totalTax, 2) }}
+                                    @else
+                                        <!-- For inclusive and exclusive, display calculated tax -->
+                                        {{ $currency }} {{ number_format($totalTax, 2) }}
+                                    @endif
+                                </span>
+                            </li>
+                    
+                            <!-- Total -->
+                            <li class="list-group-item d-flex text-dark fs-sm ft-regular">
+                                <span>Total</span>
+                                <span class="ml-auto text-dark ft-medium">
+                                    <!-- Total is always subtotal + tax -->
+                                    {{ $currency }} {{ number_format($total, 2) }}
+                                </span>
+                            </li>
+                    
+                            <!-- Shipping Note -->
+                            <li class="list-group-item fs-sm text-center">
+                                Shipping cost calculated at Checkout *
+                            </li>
+                        </ul>
                     </div>
+                    
+                    
                 </div>
             </div>
         </div>
