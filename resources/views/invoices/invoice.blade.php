@@ -35,6 +35,7 @@
                     <th>Product</th>
                     <th>Quantity</th>
                     <th>Price</th>
+                    <th>Tax</th>
                     <th>Total</th>
                 </tr>
             </thead>
@@ -44,12 +45,13 @@
                         <td>{{ $item->product->title }}</td>
                         <td>{{ $item->quantity }}</td>
                         <td>Rs. {{ number_format($item->price, 2) }}</td>
-                        <td>Rs. {{ number_format($item->subtotal, 2) }}</td>
+                        <td>Rs. {{ number_format($order->tax, 2) }}</td>
+                        <td>Rs. {{ number_format($order->total_amount, 2) }}</td>
                     </tr>
                 @endforeach
             </tbody>
         </table>
-        <p><strong>Grand Total: Rs. {{ number_format($order->total_amount, 2) }}</strong></p>
+        <p><strong>Grand Total: Rs. {{ number_format($order->grand_total, 2) }}</strong></p>
     </div>
 </body>
 </html>

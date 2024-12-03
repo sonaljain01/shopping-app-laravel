@@ -127,7 +127,7 @@
                         <p>Menus</p>
                     </a>
                 </li>	
-                <li class="nav-item {{ request()->routeIs('settings.edit') ? 'menu-open' : '' }}">
+                <li class="nav-item {{ request()->routeIs('settings.edit') || request()->routeIs('stores.index') ? 'menu-open' : '' }}">
                     <a href="#" class="nav-link">
                         <i class="fas fa-cog nav-icon"></i>
                         <p>
@@ -140,6 +140,14 @@
                             <a href="{{ route('settings.edit') }}" class="nav-link {{ request()->routeIs('settings.edit') ? 'active' : '' }}">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p>ShipRocket</p>
+                            </a>
+                        </li>
+                    </ul>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="{{ route('stores.index') }}" class="nav-link {{ request()->routeIs('stores.index') ? 'active' : '' }}">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Store</p>
                             </a>
                         </li>
                     </ul>
