@@ -129,12 +129,6 @@ class OrderController extends Controller
         return view('front.checkout', compact('totalTax','cartItems', 'products', 'subtotal', 'currency', 'total', 'paymentMethods', 'headerMenus', 'footerMenus', 'telcode'));
     }
 
-
-
-
-
-
-
     public function placeOrder(Request $request)
     {
         // Check and normalize the "same_as_billing" input
@@ -168,10 +162,6 @@ class OrderController extends Controller
             'shipping_country' => 'nullable|string',
         ]);
 
-        // $countryDetails = $this->validateCountryDialCode($validatedData['country'], $validatedData['dial_code']);
-        // if (!$countryDetails) {
-        //     return redirect()->back()->withErrors(['dial_code' => 'Invalid country or dial code provided.']);
-        // }
 
         // Handle location validation based on the zip code
         $locationDetails = $this->getLocationFromPincode($validatedData['zip']);
@@ -278,9 +268,6 @@ class OrderController extends Controller
 
         return redirect()->route('front.index')->with('success', 'Order placed successfully!');
     }
-
-
-
 
     private function prepareAddressData(array $data, string $type, bool $isShipping = false): array
     {
