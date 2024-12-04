@@ -34,6 +34,11 @@
                                 value="{{ $rate->target_currency }}" required>
                         </div>
                         <div class="form-group">
+                            <label for="currency_symbol">Currency Symbol:</label>
+                            <input type="text" name="currency_symbol" id="currency_symbol"
+                                value="{{ $rate->currency_symbol }}" required>
+                        </div>
+                        <div class="form-group">
                             <label for="rate">Rate:</label>
                             <input type="text" name="rate" id="rate" value="{{ $rate->rate }}" required>
                         </div>

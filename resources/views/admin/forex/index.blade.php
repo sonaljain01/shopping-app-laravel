@@ -1,15 +1,12 @@
 @extends('admin.layouts.app')
 
 @section('content')
-<section class="content-header">
-    <h1>Manage Forex Rates</h1>
-</section>
 
 <section class="content-header">
     <div class="container-fluid my-2">
         <div class="row mb-2">
             <div class="col-sm-6">
-                <h1>Forex</h1>
+                <h1>Forex Rate</h1>
             </div>
             <div class="col-sm-6 text-right">
                 <a href="{{ route('forex.create') }}" class="btn btn-primary">Add Rate</a>
@@ -52,6 +49,7 @@
                             <th width="60">ID</th>
                             <th>Base Currency</th>
                             <th>Target Currency</th>
+                            <th>Symbol</th>
                             <th>Rate</th>
                             <th width="200">Action</th>
                         </tr>
@@ -63,6 +61,7 @@
                                     <td>{{ $rate->id }}</td>
                                     <td>{{ $rate->base_currency }}</td>
                                     <td>{{ $rate->target_currency }}</td>
+                                    <td>{{ $rate->currency_symbol }}</td>
                                     <td>{{ $rate->rate }}</td>
                                     
                                     <td>

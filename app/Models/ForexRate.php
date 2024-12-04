@@ -8,5 +8,5 @@ class ForexRate extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['base_currency', 'target_currency', 'rate'];
+    protected $fillable = ['base_currency', 'target_currency', 'rate', 'currency_symbol'];
 }
