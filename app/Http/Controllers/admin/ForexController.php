@@ -22,18 +22,21 @@ class ForexController extends Controller
         $request->validate([
             'base_currency' => 'required|string|max:3',
             'target_currency' => 'required|string|max:3',
+            'currency_symbol' => 'required|string|max:3',
             'rate' => 'required|numeric|min:0',
         ]);
 
         ForexRate::updateOrCreate(
             [
-                'base_currency' => $request->base_currency,
+                // 'base_currency' => $request->base_currency,
+                'base_currency' => 'INR',
                 'target_currency' => $request->target_currency,
+                'currency_symbol' => $request->currency_symbol
             ],
             ['rate' => $request->rate]
         );
 
-        return redirect()->route('admin.forex.index')->with('success', 'Forex rate updated successfully!');
+        return redirect()->route('admin.forex.index')->with('success', 'Forex rate created successfully!');
     }
 
     public function destroy($id)
@@ -53,6 +56,7 @@ class ForexController extends Controller
         $request->validate([
             'base_currency' => 'required|string|max:3',
             'target_currency' => 'required|string|max:3',
+            'currency_symbol' => 'required|string|max:3',
             'rate' => 'required|numeric|min:0',
         ]);
 

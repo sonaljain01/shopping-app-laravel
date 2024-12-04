@@ -20,12 +20,19 @@
         <form method="POST" action="{{ route('forex.store') }}">
             @csrf
             <div class="form-group">
+                {{-- <label for="base_currency">Base Currency:</label>
+                <input type="text" name="base_currency" id="base_currency" required> --}}
+                {{-- fix the base currency to INR --}}
                 <label for="base_currency">Base Currency:</label>
-                <input type="text" name="base_currency" id="base_currency" required>
+                <input type="text" name="base_currency" id="base_currency" value="INR" readonly>
             </div>
             <div class="form-group">
                 <label for="target_currency">Target Currency:</label>
                 <input type="text" name="target_currency" id="target_currency" required>
+            </div>
+            <div class="form-group">
+                <label for="currency_symbol">Currency Symbol:</label>
+                <input type="text" name="currency_symbol" id="currency_symbol" required>
             </div>
             <div class="form-group">
                 <label for="rate">Conversion Rate:</label>
