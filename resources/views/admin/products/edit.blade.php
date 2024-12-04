@@ -212,6 +212,20 @@
                                     placeholder="Height" value="{{ $product->height }}">
                             </div>
                         </div>
+                        <div class="card mb-3">
+                            <div class="card-body">
+                                <h2 class="h4 mb-3">Tax Type</h2>
+                                @if ($tax_type !== 'no_tax')
+                                    <label for="tax_price">Tax Price</label>
+                                    <input type="text" name="tax_price" id="tax_price" class="form-control" placeholder="Tax Price" value="{{ old('tax_price', $product->tax_price ?? '') }}">
+                                    <small class="form-text text-muted">
+                                        Tax type: {{ ucfirst($tax_type) }}
+                                    </small>
+                                @else
+                                    <p>No tax applied</p>
+                                @endif
+                            </div>
+                        </div>
                         
                         <div class="card mb-3">
                             <div class="card-body">

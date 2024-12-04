@@ -33,7 +33,6 @@
                                         Zip: {{ $order->billingAddress->zip }}<br>
                                         Country: {{ $order->billingAddress->country }}<br>
                                         Phone: {{ $order->billingAddress->phone }}<br>
-                                        Email: {{ $order->billingAddress->email }}
                                     </address>
                                 </div>
 
@@ -48,7 +47,6 @@
                                         Zip: {{ $order->shippingAddress->zip }}<br>
                                         Country: {{ $order->shippingAddress->country }}<br>
                                         Phone: {{ $order->shippingAddress->phone }}<br>
-                                        Email: {{ $order->shippingAddress->email }}
                                     </address>
                                 </div>
 
@@ -90,13 +88,18 @@
                                     </tr>
 
                                     <tr>
+                                        <th colspan="3" class="text-right">Tax:</th>
+                                        <td>{{ $order->currency_code }} {{ number_format($order->tax, 2) }}</td>
+                                    </tr>
+
+                                    <tr>
                                         <th colspan="3" class="text-right">Shipping:</th>
                                         <td>{{ $order->currency_code }} 0.00</td>
                                     </tr>
 
                                     <tr>
                                         <th colspan="3" class="text-right">Grand Total:</th>
-                                        <td>{{ $order->currency_code }} {{ number_format($order->total_amount, 2) }}</td>
+                                        <td>{{ $order->currency_code }} {{ number_format($order->grand_total, 2) }}</td>
                                     </tr>
                                 </tbody>
                             </table>

@@ -122,10 +122,21 @@
                                                         <a
                                                             href="{{ route('product.show', $product->slug) }}">{{ $product->title }}</a>
                                                     </h5>
+                                                    
                                                     <div class="elis_rty">
-                                                        <span
-                                                            class="ft-bold text-dark fs-sm">{{ $product->currency }}{{ $product->price }}</span>
+                                                        <span class="ft-bold text-dark fs-sm">
+                                                            {{ $product->currency }}
+                                                            @if($product->tax_type === 'inclusive')
+                                                                {{ number_format($product->price, 2) }} <!-- Price already includes tax -->
+                                                            @elseif($product->tax_type === 'exclusive')
+                                                                {{ number_format($product->price, 2) }} <!-- Add tax to price -->
+                                                            @else
+                                                                {{ number_format($product->price, 2) }} <!-- No tax -->
+                                                            @endif
+                                                        </span>
                                                     </div>
+                                                    
+                                                    
                                                 </div>
                                                 <form action="{{ route('wishlist.add') }}" method="POST">
                                                     @csrf

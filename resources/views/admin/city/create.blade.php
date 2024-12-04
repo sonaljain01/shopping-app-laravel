@@ -1,24 +1,3 @@
-{{-- @extends('admin.layouts.app')
-
-@section('content')
-    <h1>Add New City</h1>
-
-    <form action="{{ route('city.store') }}" method="POST">
-        @csrf
-        <div class="form-group">
-            <label for="city_name">City Name</label>
-            <input type="text" name="city_name" class="form-control" required>
-        </div>
-        <div class="form-group">
-            <label for="pincode">Pincode</label>
-            <input type="text" name="pincode" class="form-control" required>
-        </div>
-        <button type="submit" class="btn btn-success">Save</button>
-    </form>
-@endsection --}}
-
-
-{{-- DAshboard CHILD LAYOUT, parent layout - app.blade.php --}}
 
 @extends('admin.layouts.app')
 

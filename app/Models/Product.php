@@ -31,7 +31,8 @@ class Product extends Model
         'length',
         'breath',
         'height',
-
+        'tax_type',
+        'tax_price',
 
     ];
     public function product_images()

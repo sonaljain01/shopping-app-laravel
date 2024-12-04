@@ -43,23 +43,38 @@ class OrderController extends Controller
         $conversionRate = $exchangeRate['data'];
 
         $subtotal = 0;
+        $totalTax = 0;
+        $total = 0;
+
         foreach ($products as $product) {
             $quantity = $cartItems[$product->id]['quantity'] ?? 1;
 
+            if ($product->tax_type === 'inclusive') {
+                // For inclusive tax, price already includes tax
+                $taxAmount = $product->price - ($product->price / (1 + $product->tax_price / 100));
+                $product->original_price = round($product->price - $taxAmount, 2); // Price without tax
+            } elseif ($product->tax_type === 'exclusive') {
+                // For exclusive tax, add tax to the base price
+                $taxAmount = ($product->price * $product->tax_price) / 100;
+                $product->original_price = $product->price; // Base price
+            } else {
+                // For no tax, tax amount is 0
+                $taxAmount = 0;
+                $product->original_price = $product->price; // Base price
+            }
+            $product->original = round($product->price * $conversionRate, 2);
             // Calculate original and converted price
-            $product->original_price = $product->price; // Original price in base currency (e.g., USD)
-            $product->converted_price = round($product->price * $conversionRate, 2); // Convert price
+            $product->converted_price = round($product->original_price * $conversionRate, 2);
+            $product->tax_amount = round($taxAmount * $conversionRate, 2);
 
             // Add to subtotal (in original price)
             $subtotal += $product->converted_price * $quantity;
+            $totalTax += $product->tax_amount * $quantity;
+
         }
 
-        // Calculate tax (e.g., 10% of subtotal)
-        $taxRate = 0.10;
-        $tax = $subtotal * $taxRate;
 
-        // Calculate total
-        $total = $subtotal + $tax;
+        $total = $subtotal + $totalTax;
 
         // Retrieve payment methods and menus for rendering
         $paymentMethods = PaymentMethod::all();
@@ -111,13 +126,8 @@ class OrderController extends Controller
         // Get the phone code for the selected country
         $telcode = getTelCode($country)['code'];
 
-        return view('front.checkout', compact('cartItems', 'products', 'subtotal', 'currency', 'tax', 'total', 'paymentMethods', 'headerMenus', 'footerMenus', 'telcode'));
+        return view('front.checkout', compact('totalTax','cartItems', 'products', 'subtotal', 'currency', 'total', 'paymentMethods', 'headerMenus', 'footerMenus', 'telcode'));
     }
-
-
-
-
-
 
     public function placeOrder(Request $request)
     {
@@ -152,10 +162,6 @@ class OrderController extends Controller
             'shipping_country' => 'nullable|string',
         ]);
 
-        // $countryDetails = $this->validateCountryDialCode($validatedData['country'], $validatedData['dial_code']);
-        // if (!$countryDetails) {
-        //     return redirect()->back()->withErrors(['dial_code' => 'Invalid country or dial code provided.']);
-        // }
 
         // Handle location validation based on the zip code
         $locationDetails = $this->getLocationFromPincode($validatedData['zip']);
@@ -171,7 +177,8 @@ class OrderController extends Controller
         DB::transaction(function () use ($validatedData, $sameAsBilling, $request) {
             $cartItems = session('cart', []);
             $totalAmount = collect($cartItems)->sum(fn($item) => $item['price'] * $item['quantity']);
-
+            $totalTax = collect($cartItems)->sum(fn($item) => $item['price'] * $item['quantity'] * $item['tax_price'] / 100);
+            $grandTotal = $totalAmount + $totalTax;
             if ($totalAmount <= 0) {
                 throw new \Exception('Cart total is invalid.');
             }
@@ -187,9 +194,10 @@ class OrderController extends Controller
                 'billing_address_id' => null,
                 'shipping_address_id' => null,
                 'country_code' => $request->country_code,
-
+                'tax' => $totalTax,
+                'grand_total' => $grandTotal
             ]);
-
+       
             // Create billing address
             $billingAddress = Address::create([
                 'user_id' => auth()->id(),
@@ -260,9 +268,6 @@ class OrderController extends Controller
 
         return redirect()->route('front.index')->with('success', 'Order placed successfully!');
     }
-
-    
-    
 
     private function prepareAddressData(array $data, string $type, bool $isShipping = false): array
     {
