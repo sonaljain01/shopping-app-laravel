@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Product;
 use Auth;
 use App\Models\Menu;
+use DB;
 class CartController extends Controller
 {
     public function addToCart(Request $request, $productId)
@@ -75,51 +76,250 @@ class CartController extends Controller
         return redirect()->back()->with('success', 'Product added to cart successfully.');
     }
 
+    // public function addToCart(Request $request, $productId)
+    // {
+    //     $product = Product::find($productId);
+
+    //     if (!$product) {
+    //         return redirect()->back()->with('error', 'Product not found.');
+    //     }
+
+    //     // Get the selected country from the session
+    //     $country = session('country', 'IN'); // Default country is 'IN' if not set
+    //     $forexMode = DB::table('settings')->where('key', 'forex_mode')->value('value') ?? 'auto';
+
+    //     if ($forexMode === 'manual') {
+    //         // Fetch the manual rate from the database
+    //         $baseCurrency = 'INR'; // Default base currency
+    //         $targetCurrency = getCurrencyCodeFromCountry($country); // Helper to map country to currency
+    //         $manualRate = DB::table('forex_rates')
+    //             ->where('base_currency', $baseCurrency)
+    //             ->where('target_currency', $targetCurrency)
+    //             ->first();
+
+    //         if ($manualRate) {
+    //             $exchangeRate = [
+    //                 'status' => true,
+    //                 'data' => $manualRate->rate,
+    //                 'currency' => $manualRate->currency_symbol,
+    //             ];
+    //         } else {
+    //             // Fallback if no manual rate found
+    //             $exchangeRate = [
+    //                 'status' => true,
+    //                 'data' => 1, // Default rate
+    //                 'currency' => '₹', // Default currency symbol
+    //             ];
+    //         }
+    //     } else {
+    //         // Use existing API-based logic for automatic forex mode
+    //         $exchangeRate = getExchangeRate($country);
+    //     }
+
+    //     if (!$exchangeRate['status']) {
+    //         return redirect()->back()->with('error', 'Failed to retrieve exchange rate.');
+    //     }
+
+    //     $currency = $exchangeRate['currency'];
+    //     $conversionRate = $exchangeRate['data'];
+
+    //     if (!session()->has('cart')) {
+    //         session()->put('cart', []);
+    //     }
+
+    //     $guestId = session()->getId();
+    //     $userId = auth()->check() ? auth()->id() : null;
+
+    //     $cart = session()->get('cart');
+
+    //     if (isset($cart[$productId])) {
+    //         $cart[$productId]['quantity']++;
+    //     } else {
+    //         $cart[$productId] = [
+    //             'product_id' => $product->id,
+    //             'title' => $product->title,
+    //             'price' => round($product->price * $conversionRate, 2), // Convert price
+    //             'quantity' => 1,
+    //             'image' => $product->product_images->isNotEmpty() ? $product->product_images[0]->image : 'path/to/default/image.jpg',
+    //             'currency' => $currency,
+    //         ];
+    //     }
+
+    //     session()->put('cart', $cart);
+
+    //     $cartItem = Cart::where('product_id', $productId)
+    //         ->where(function ($query) use ($userId, $guestId) {
+    //             $query->where('user_id', $userId)
+    //                 ->orWhere('guest_id', $guestId);
+    //         })
+    //         ->first();
+
+    //     if ($cartItem) {
+    //         $cartItem->increment('quantity');
+    //     } else {
+    //         Cart::create([
+    //             'user_id' => $userId,
+    //             'guest_id' => $userId ? null : $guestId,
+    //             'product_id' => $productId,
+    //             'quantity' => 1,
+    //             'currency' => $currency, // Save dynamic currency
+    //             'price' => round($product->price * $conversionRate, 2), // Save converted price
+    //         ]);
+    //     }
+
+    //     return redirect()->back()->with('success', 'Product added to cart successfully.');
+    // }
+
+
+
+    // public function viewCart()
+    // {
+    //     $cartItems = session()->get('cart', []);
+    //     $taxType = 'no_tax'; // Default value
+    //     $forexMode = DB::table('settings')->where('key', 'forex_mode')->value('value') ?? 'auto';
+
+
+    //     foreach ($cartItems as $productId => $item) {
+
+    //         if (!isset($item['currency'])) {
+    //             $cartItems[$productId]['currency'] = '₹';
+    //         }
+
+    //         $product = Product::find($productId);
+
+    //         if ($product) {
+    //             $taxType = $product->tax_type ?? 'no_tax';
+    //             $taxPrice = $product->tax_price ?? 0;
+
+    //             $cartItems[$productId]['tax_type'] = $taxType;
+    //             $cartItems[$productId]['tax_price'] = $taxPrice;
+
+    //             if ($taxType === 'inclusive') {
+    //                 $cartItems[$productId]['tax'] = $item['price'] - ($item['price'] / (1 + ($taxPrice / 100)));
+    //             } elseif ($taxType === 'exclusive') {
+    //                 $cartItems[$productId]['tax'] = $item['price'] * ($taxPrice / 100);
+    //             } else {
+    //                 $cartItems[$productId]['tax'] = 0;
+    //             }
+    //         }
+    //     }
+
+    //     session()->put('cart', $cartItems);
+
+    //     $cartItemsCount = count($cartItems);
+
+    //     $headerMenus = Menu::with([
+    //         'children' => function ($query) {
+    //             $query->where('status', 1)
+    //                 ->with([
+    //                     'children' => function ($query) {
+    //                         $query->where('status', 1)
+    //                             ->with([
+    //                                 'children' => function ($query) {
+    //                                     $query->where('status', 1);
+    //                                 }
+    //                             ]);
+    //                     }
+    //                 ]);
+    //         }
+    //     ])
+    //         ->whereNull('parent_id')
+    //         ->where('status', 1)
+    //         ->where(function ($query) {
+    //             $query->where('location', 'header')
+    //                 ->orWhere('location', 'both');
+    //         })
+    //         ->get();
+
+    //     $footerMenus = Menu::with([
+    //         'children' => function ($query) {
+    //             $query->where('status', 1)
+    //                 ->with([
+    //                     'children' => function ($query) {
+    //                         $query->where('status', 1)
+    //                             ->with([
+    //                                 'children' => function ($query) {
+    //                                     $query->where('status', 1);
+    //                                 }
+    //                             ]);
+    //                     }
+    //                 ]);
+    //         }
+    //     ])
+    //         ->whereNull('parent_id')
+    //         ->where('status', 1)
+    //         ->where(function ($query) {
+    //             $query->where('location', 'footer')
+    //                 ->orWhere('location', 'both');
+    //         })
+    //         ->get();
+
+    //     return view('front.cart', compact('cartItems', 'cartItemsCount', 'headerMenus', 'footerMenus'));
+    // }
+
     public function viewCart()
     {
-        // Get cart items from session
         $cartItems = session()->get('cart', []);
-        $taxType = 'no_tax'; // Default value
+        $forexMode = DB::table('settings')->where('key', 'forex_mode')->value('value') ?? 'auto';
+        $country = session('country', 'IN'); // Default country
+        $exchangeRate = null;
+
+        if ($forexMode === 'manual') {
+            // Fetch manual exchange rate from the database
+            $baseCurrency = 'INR'; // Default base currency
+            $targetCurrency = getCurrencyCodeFromCountry($country); // Helper function to get currency code
+            $manualRate = DB::table('forex_rates')
+                ->where('base_currency', $baseCurrency)
+                ->where('target_currency', $targetCurrency)
+                ->first();
+
+            if ($manualRate) {
+                $exchangeRate = [
+                    'status' => true,
+                    'data' => $manualRate->rate,
+                    'currency' => $manualRate->currency_symbol,
+                ];
+            } else {
+                $exchangeRate = [
+                    'status' => true,
+                    'data' => 1, // Default rate
+                    'currency' => '₹', // Default currency symbol
+                ];
+            }
+        } else {
+            // Use API-based logic to fetch exchange rate
+            $exchangeRate = getExchangeRate($country);
+        }
 
         foreach ($cartItems as $productId => $item) {
-            // Ensure each cart item has a currency
-            if (!isset($item['currency'])) {
-                $cartItems[$productId]['currency'] = '₹'; // Default currency symbol
-            }
-
-            // Fetch the product details from the products table
             $product = Product::find($productId);
 
             if ($product) {
-                // Fetch tax_type and tax_price from the product
                 $taxType = $product->tax_type ?? 'no_tax';
                 $taxPrice = $product->tax_price ?? 0;
 
-                // // Fetch tax rate from the product (if applicable)
-                // $taxRate = $product->tax_rate ?? 0;
+                // Calculate updated price based on forex
+                $convertedPrice = $product->price * (float) $exchangeRate['data'];
 
-                // Store tax information in the cart item
+                $cartItems[$productId]['price'] = round($convertedPrice, 2);
+                $cartItems[$productId]['currency'] = $exchangeRate['currency'] ?? '₹';
                 $cartItems[$productId]['tax_type'] = $taxType;
                 $cartItems[$productId]['tax_price'] = $taxPrice;
 
-                // Calculate tax based on tax type (inclusive or exclusive)
+                // Calculate tax
                 if ($taxType === 'inclusive') {
-                    
-                    $cartItems[$productId]['tax'] = $item['price'] - ($item['price'] / (1 + ($taxPrice / 100)));
+                    $cartItems[$productId]['tax'] = $convertedPrice - ($convertedPrice / (1 + ($taxPrice / 100)));
                 } elseif ($taxType === 'exclusive') {
-                    
-                    $cartItems[$productId]['tax'] = $item['price'] * ($taxPrice / 100);
+                    $cartItems[$productId]['tax'] = $convertedPrice * ($taxPrice / 100);
                 } else {
-                    
                     $cartItems[$productId]['tax'] = 0;
                 }
             }
         }
 
-        // Update session with the fixed cart items
+        // Save updated cart items in the session
         session()->put('cart', $cartItems);
 
-        // Get the count of cart items
         $cartItemsCount = count($cartItems);
 
         // Fetch header and footer menus
@@ -171,6 +371,10 @@ class CartController extends Controller
 
         return view('front.cart', compact('cartItems', 'cartItemsCount', 'headerMenus', 'footerMenus'));
     }
+
+
+
+
 
     public function update(Request $request)
     {
