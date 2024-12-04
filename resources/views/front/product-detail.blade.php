@@ -47,7 +47,7 @@
                                     </div>
                                     <div class="elis_rty">
                                         <span
-                                            class="ft-medium text-muted line-through fs-md mr-2">{{ $product->currency }}${{ $product->compare_price }}</span>
+                                            class="ft-medium text-muted line-through fs-md mr-2">{{ $product->currency }}{{ $product->compare_price }}</span>
                                         <span class="ft-bold theme-cl fs-lg mr-2">{{ $product->currency }}{{ $product->price }}</span>
                                     </div>
                                 </div>
