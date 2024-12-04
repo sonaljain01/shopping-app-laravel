@@ -63,7 +63,7 @@ class ProductController extends Controller
             'length' => 'required|numeric',
             'breath' => 'required|numeric',
             'height' => 'required|numeric',
-            
+
         ];
 
         if ($taxType !== 'no_tax') {
@@ -312,7 +312,34 @@ class ProductController extends Controller
     public function show($slug)
     {
         $country = session('country');
-        $exchangeRate = getExchangeRate($country);
+        $forexMode = DB::table('settings')->where('key', 'forex_mode')->value('value') ?? 'auto';
+        $exchangeRate = null;
+        if ($forexMode == 'manual') {
+            $baseCurrency = 'INR'; // Default base currency
+            $targetCurrency = getCurrencyCodeFromCountry($country); // Helper to map country to currency
+            $manualRate = DB::table('forex_rates')
+                ->where('base_currency', $baseCurrency)
+                ->where('target_currency', $targetCurrency)
+                ->first();
+
+            if ($manualRate) {
+                $exchangeRate = [
+                    'status' => true,
+                    'data' => $manualRate->rate,
+                    'currency' => $manualRate->currency_symbol,
+                ];
+            } else {
+                // Fallback if no manual rate found
+                $exchangeRate = [
+                    'status' => true,
+                    'data' => 1, // Default rate
+                    'currency' => '₹', // Default currency symbol
+                ];
+            }
+        } else {
+            $exchangeRate = getExchangeRate($country);
+        }
+
         // Fetch the product using the slug
         $product = Product::with(['product_images', 'category', 'brand', 'attributes.values'])
             ->where('slug', $slug)
@@ -332,15 +359,15 @@ class ProductController extends Controller
             'children' => function ($query) {
                 $query->where('status', 1)
                     ->with([
-                        'children' => function ($query) {
-                            $query->where('status', 1)
-                                ->with([
-                                    'children' => function ($query) {
-                                        $query->where('status', 1);
-                                    }
-                                ]);
-                        }
-                    ]);
+                            'children' => function ($query) {
+                                $query->where('status', 1)
+                                    ->with([
+                                            'children' => function ($query) {
+                                                $query->where('status', 1);
+                                            }
+                                        ]);
+                            }
+                        ]);
             }
         ])
             ->whereNull('parent_id') // Ensure only top-level menus are fetched
@@ -356,15 +383,15 @@ class ProductController extends Controller
             'children' => function ($query) {
                 $query->where('status', 1)
                     ->with([
-                        'children' => function ($query) {
-                            $query->where('status', 1)
-                                ->with([
-                                    'children' => function ($query) {
-                                        $query->where('status', 1);
-                                    }
-                                ]);
-                        }
-                    ]);
+                            'children' => function ($query) {
+                                $query->where('status', 1)
+                                    ->with([
+                                            'children' => function ($query) {
+                                                $query->where('status', 1);
+                                            }
+                                        ]);
+                            }
+                        ]);
             }
         ])
             ->whereNull('parent_id')
