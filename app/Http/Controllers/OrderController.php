@@ -23,8 +23,10 @@ class OrderController extends Controller
     {
         $cartItems = session('cart', []); // Retrieve items from cart session
         $products = Product::whereIn('id', array_keys($cartItems))->get();
+        $forexMode = DB::table('settings')->where('key', 'forex_mode')->value('value') ?? 'auto';
+        $country = session('country', 'IN'); // Default country
+        $exchangeRate = null;
 
-        // Retrieve country from session or determine it using IP or user data
         $country = session('country', 'IN');
         if (!session()->has('country')) {
             if (auth()->check()) {
@@ -36,9 +38,33 @@ class OrderController extends Controller
                 session()->put('country', $country);
             }
         }
+        if ($forexMode === 'manual') {
+            // Fetch manual exchange rate from the database
+            $baseCurrency = 'INR'; // Default base currency
+            $targetCurrency = getCurrencyCodeFromCountry($country); // Helper function to get currency code
+            $manualRate = DB::table('forex_rates')
+                ->where('base_currency', $baseCurrency)
+                ->where('target_currency', $targetCurrency)
+                ->first();
 
-        // Get exchange rate for the selected country
-        $exchangeRate = getExchangeRate($country);
+            if ($manualRate) {
+                $exchangeRate = [
+                    'status' => true,
+                    'data' => $manualRate->rate,
+                    'currency' => $manualRate->currency_symbol,
+                ];
+            } else {
+                $exchangeRate = [
+                    'status' => true,
+                    'data' => 1, // Default rate
+                    'currency' => '₹', // Default currency symbol
+                ];
+            }
+        } else {
+            
+            $exchangeRate = getExchangeRate($country);
+        }
+        
         $currency = $exchangeRate['currency'];
         $conversionRate = $exchangeRate['data'];
 
@@ -50,24 +76,21 @@ class OrderController extends Controller
             $quantity = $cartItems[$product->id]['quantity'] ?? 1;
 
             if ($product->tax_type === 'inclusive') {
-                // For inclusive tax, price already includes tax
                 $taxAmount = $product->price - ($product->price / (1 + $product->tax_price / 100));
                 $product->original_price = round($product->price - $taxAmount, 2); // Price without tax
             } elseif ($product->tax_type === 'exclusive') {
-                // For exclusive tax, add tax to the base price
                 $taxAmount = ($product->price * $product->tax_price) / 100;
-                $product->original_price = $product->price; // Base price
+                $product->original_price = $product->price;
             } else {
-                // For no tax, tax amount is 0
+
                 $taxAmount = 0;
-                $product->original_price = $product->price; // Base price
+                $product->original_price = $product->price;
             }
             $product->original = round($product->price * $conversionRate, 2);
-            // Calculate original and converted price
+
             $product->converted_price = round($product->original_price * $conversionRate, 2);
             $product->tax_amount = round($taxAmount * $conversionRate, 2);
 
-            // Add to subtotal (in original price)
             $subtotal += $product->converted_price * $quantity;
             $totalTax += $product->tax_amount * $quantity;
 
@@ -126,7 +149,7 @@ class OrderController extends Controller
         // Get the phone code for the selected country
         $telcode = getTelCode($country)['code'];
 
-        return view('front.checkout', compact('totalTax','cartItems', 'products', 'subtotal', 'currency', 'total', 'paymentMethods', 'headerMenus', 'footerMenus', 'telcode'));
+        return view('front.checkout', compact('totalTax', 'cartItems', 'products', 'subtotal', 'currency', 'total', 'paymentMethods', 'headerMenus', 'footerMenus', 'telcode'));
     }
 
     public function placeOrder(Request $request)
@@ -197,7 +220,7 @@ class OrderController extends Controller
                 'tax' => $totalTax,
                 'grand_total' => $grandTotal
             ]);
-       
+
             // Create billing address
             $billingAddress = Address::create([
                 'user_id' => auth()->id(),
