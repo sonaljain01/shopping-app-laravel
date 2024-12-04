@@ -125,6 +125,15 @@ if (!function_exists('getLocationInfo')) {
         }
     }
 
+    function getCurrencyCodeFromCountry($country)
+    {
+        $response = Http::get("https://restcountries.com/v3.1/alpha/{$country}");
+        if ($response->ok()) {
+            $data = $response->json();
+            return array_keys($data[0]['currencies'])[0] ?? 'INR';
+        }
+        return 'INR'; // Default to INR
+    }
     // if (!function_exists('getExchangeRate')) {
     //     function getExchangeRate($country)
     //     {
@@ -190,16 +199,6 @@ if (!function_exists('getLocationInfo')) {
     //         }
     //     }
     // }
-
-    function getCurrencyCodeFromCountry($country)
-    {
-        $response = Http::get("https://restcountries.com/v3.1/alpha/{$country}");
-        if ($response->ok()) {
-            $data = $response->json();
-            return array_keys($data[0]['currencies'])[0] ?? 'INR';
-        }
-        return 'INR'; // Default to INR
-    }
 
 
 }
