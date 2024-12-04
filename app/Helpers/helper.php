@@ -64,7 +64,36 @@ if (!function_exists('getLocationInfo')) {
         {
             try {
 
-               
+                // $mode = DB::table('settings')->where('key', 'forex_mode')->value('value') ?? 'auto';
+
+                // if ($mode === 'manual') {
+                //     // Manual mode: Fetch rate from the database
+                //     $currencyDetails = Http::get("https://restcountries.com/v3.1/alpha/{$country}");
+                //     if ($currencyDetails->ok()) {
+                //         $data = $currencyDetails->json();
+                //         $currencyCode = array_keys($data[0]['currencies'])[0] ?? 'INR';
+                //         $currencySymbol = array_values($data[0]['currencies'])[0]['symbol'] ?? '₹';
+
+                //         $manualRate = DB::table('forex_rates')
+                //             ->where('base_currency', 'INR')
+                //             ->where('target_currency', $currencyCode)
+                //             ->first();
+
+                //         if ($manualRate) {
+                //             return [
+                //                 'status' => true,
+                //                 'data' => $manualRate->rate,
+                //                 'currency' => $manualRate->currency_symbol,
+                //             ];
+                //         }
+                //         return [
+                //             'status' => false,
+                //             'data' => 'Manual rate not found.',
+                //         ];
+                //     }
+                // }
+
+
                 $currencyCode = null;
                 $currencySymbol = null;
                 $response = Http::get("https://restcountries.com/v3.1/alpha/{$country}");
@@ -96,6 +125,71 @@ if (!function_exists('getLocationInfo')) {
         }
     }
 
+    // if (!function_exists('getExchangeRate')) {
+    //     function getExchangeRate($country)
+    //     {
+    //         try {
+    //             // Step 1: Fetch forex mode
+    //             $mode = DB::table('settings')->where('key', 'forex_mode')->value('value') ?? 'auto';
+
+    //             if ($mode === 'manual') {
+    //                 // Manual mode: Fetch rate from the database
+    //                 $currencyDetails = Http::get("https://restcountries.com/v3.1/alpha/{$country}");
+    //                 if ($currencyDetails->ok()) {
+    //                     $data = $currencyDetails->json();
+    //                     $currencyCode = array_keys($data[0]['currencies'])[0] ?? 'INR';
+    //                     $currencySymbol = array_values($data[0]['currencies'])[0]['symbol'] ?? '₹';
+
+    //                     $manualRate = DB::table('forex_rates')
+    //                         ->where('base_currency', 'INR')
+    //                         ->where('target_currency', $currencyCode)
+    //                         ->first();
+
+    //                     if ($manualRate) {
+    //                         return [
+    //                             'status' => true,
+    //                             'data' => $manualRate->rate,
+    //                             'currency' => $manualRate->currency_symbol,
+    //                         ];
+    //                     }
+    //                     return [
+    //                         'status' => false,
+    //                         'data' => 'Manual rate not found.',
+    //                     ];
+    //                 }
+    //             }
+
+    //             // Automatic mode: Fetch rate from APIs
+    //             $response = Http::get("https://restcountries.com/v3.1/alpha/{$country}");
+    //             if ($response->ok()) {
+    //                 $data = $response->json();
+    //                 $currencies = $data[0]['currencies'];
+    //                 $currencyCode = array_keys($currencies)[0] ?? 'INR';
+    //                 $currencySymbol = array_values($currencies)[0]['symbol'] ?? '₹';
+    //             }
+
+    //             $res = Http::get('https://v6.exchangerate-api.com/v6/YOUR_API_KEY/latest/INR');
+    //             if ($res->successful()) {
+    //                 $data = $res->json();
+    //                 return [
+    //                     'status' => true,
+    //                     'data' => $data['conversion_rates'][$currencyCode],
+    //                     'currency' => $currencySymbol,
+    //                 ];
+    //             }
+
+    //             return [
+    //                 'status' => false,
+    //                 'data' => $res->json()['unsupported-code'] ?? 'Error fetching automatic rate.',
+    //             ];
+    //         } catch (\Exception $e) {
+    //             return [
+    //                 'status' => false,
+    //                 'data' => $e->getMessage(),
+    //             ];
+    //         }
+    //     }
+    // }
 
     function getCurrencyCodeFromCountry($country)
     {
