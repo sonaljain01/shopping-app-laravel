@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Product;
 use Auth;
 use App\Models\Menu;
+use DB;
 class CartController extends Controller
 {
     public function addToCart(Request $request, $productId)
@@ -75,51 +76,70 @@ class CartController extends Controller
         return redirect()->back()->with('success', 'Product added to cart successfully.');
     }
 
+    
     public function viewCart()
     {
-        // Get cart items from session
         $cartItems = session()->get('cart', []);
-        $taxType = 'no_tax'; // Default value
+        $forexMode = DB::table('settings')->where('key', 'forex_mode')->value('value') ?? 'auto';
+        $country = session('country', 'IN'); // Default country
+        $exchangeRate = null;
+
+        if ($forexMode === 'manual') {
+            // Fetch manual exchange rate from the database
+            $baseCurrency = 'INR'; // Default base currency
+            $targetCurrency = getCurrencyCodeFromCountry($country); // Helper function to get currency code
+            $manualRate = DB::table('forex_rates')
+                ->where('base_currency', $baseCurrency)
+                ->where('target_currency', $targetCurrency)
+                ->first();
+
+            if ($manualRate) {
+                $exchangeRate = [
+                    'status' => true,
+                    'data' => $manualRate->rate,
+                    'currency' => $manualRate->currency_symbol,
+                ];
+            } else {
+                $exchangeRate = [
+                    'status' => true,
+                    'data' => 1, // Default rate
+                    'currency' => '₹', // Default currency symbol
+                ];
+            }
+        } else {
+            // Use API-based logic to fetch exchange rate
+            $exchangeRate = getExchangeRate($country);
+        }
 
         foreach ($cartItems as $productId => $item) {
-            // Ensure each cart item has a currency
-            if (!isset($item['currency'])) {
-                $cartItems[$productId]['currency'] = '₹'; // Default currency symbol
-            }
-
-            // Fetch the product details from the products table
             $product = Product::find($productId);
 
             if ($product) {
-                // Fetch tax_type and tax_price from the product
                 $taxType = $product->tax_type ?? 'no_tax';
                 $taxPrice = $product->tax_price ?? 0;
 
-                // // Fetch tax rate from the product (if applicable)
-                // $taxRate = $product->tax_rate ?? 0;
+                // Calculate updated price based on forex
+                $convertedPrice = $product->price * (float) $exchangeRate['data'];
 
-                // Store tax information in the cart item
+                $cartItems[$productId]['price'] = round($convertedPrice, 2);
+                $cartItems[$productId]['currency'] = $exchangeRate['currency'] ?? '₹';
                 $cartItems[$productId]['tax_type'] = $taxType;
                 $cartItems[$productId]['tax_price'] = $taxPrice;
 
-                // Calculate tax based on tax type (inclusive or exclusive)
+                // Calculate tax
                 if ($taxType === 'inclusive') {
-                    
-                    $cartItems[$productId]['tax'] = $item['price'] - ($item['price'] / (1 + ($taxPrice / 100)));
+                    $cartItems[$productId]['tax'] = $convertedPrice - ($convertedPrice / (1 + ($taxPrice / 100)));
                 } elseif ($taxType === 'exclusive') {
-                    
-                    $cartItems[$productId]['tax'] = $item['price'] * ($taxPrice / 100);
+                    $cartItems[$productId]['tax'] = $convertedPrice * ($taxPrice / 100);
                 } else {
-                    
                     $cartItems[$productId]['tax'] = 0;
                 }
             }
         }
 
-        // Update session with the fixed cart items
+        // Save updated cart items in the session
         session()->put('cart', $cartItems);
 
-        // Get the count of cart items
         $cartItemsCount = count($cartItems);
 
         // Fetch header and footer menus
@@ -171,6 +191,10 @@ class CartController extends Controller
 
         return view('front.cart', compact('cartItems', 'cartItemsCount', 'headerMenus', 'footerMenus'));
     }
+
+
+
+
 
     public function update(Request $request)
     {

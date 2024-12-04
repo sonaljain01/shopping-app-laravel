@@ -245,6 +245,8 @@ Route::group(['prefix' => 'admin'], function () {
         Route::delete('forex-rates/{id}', [ForexController::class, 'destroy'])->name('forex.destroy');
         Route::get('forex-rates/{id}/edit', [ForexController::class, 'edit'])->name('forex.edit');
         Route::put('forex-rates/{id}', [ForexController::class, 'update'])->name('forex.update');
+        Route::get('/forex/mode', [ForexController::class, 'editForexMode'])->name('forex.mode.edit');
+        Route::post('/forex/mode', [ForexController::class, 'updateForexMode'])->name('forex.mode');
 
         Route::get('forex-rates/auto', [ForexRateController::class, 'index'])->name('forex_rates.index');
         Route::post('forex-rates/auto', [ForexRateController::class, 'update'])->name('forex_rates.update');

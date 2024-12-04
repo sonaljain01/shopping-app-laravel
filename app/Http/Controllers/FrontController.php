@@ -10,19 +10,50 @@ use App\Models\Brand;
 use App\Models\Menu;
 use App\Models\City;
 use App\Models\ForexRate;
+use DB;
 class FrontController extends Controller
 {
     public function index(Request $request)
     {
-        $country = session('country');
-        $exchangeRate = getExchangeRate($country);
+        // Get the forex mode from the database
+        $forexMode = DB::table('settings')->where('key', 'forex_mode')->value('value') ?? 'auto';
 
+        $country = session('country', 'IN');
+        $exchangeRate = null;
+
+        if ($forexMode === 'manual') {
+            // Fetch the manual rate from the database
+            $baseCurrency = 'INR'; // Default base currency
+            $targetCurrency = getCurrencyCodeFromCountry($country); // Helper to map country to currency
+            $manualRate = DB::table('forex_rates')
+                ->where('base_currency', $baseCurrency)
+                ->where('target_currency', $targetCurrency)
+                ->first();
+
+            if ($manualRate) {
+                $exchangeRate = [
+                    'status' => true,
+                    'data' => $manualRate->rate,
+                    'currency' => $manualRate->currency_symbol,
+                ];
+            } else {
+                // Fallback if no manual rate found
+                $exchangeRate = [
+                    'status' => true,
+                    'data' => 1, // Default rate
+                    'currency' => '₹', // Default currency symbol
+                ];
+            }
+        } else {
+            // Fetch the rate using the existing API-based logic
+            $exchangeRate = getExchangeRate($country);
+        }
+
+        // Rest of your code for fetching categories, brands, products, etc.
         $categories = Category::with('children')->where('status', 1)->orderBy('name', 'ASC')->get();
         $brands = Brand::where('status', 1)->orderBy('name', 'ASC')->get();
 
         $productsQuery = Product::where('status', 1);
-
-
 
         if ($request->has('brand')) {
             $brandIds = $request->input('brand', []);
@@ -42,23 +73,12 @@ class FrontController extends Controller
 
         $products = $productsQuery->orderBy('id', 'desc')->get();
         $products->transform(function ($product) use ($exchangeRate) {
-            $price = (float)$product->price;
-           
-            $taxPrice = (float)$product->tax_price ?? 0;
-    
-            if ($product->tax_type === 'inclusive') {                
-                $calculatedPrice = $price * (float)$exchangeRate['data'];
-            } elseif ($product->tax_type === 'exclusive') {
-                $calculatedPrice = $price * (float)$exchangeRate['data'];
-            } else {
-                // For no tax, show the base price
-                $calculatedPrice = $price * (float)$exchangeRate['data'];
-            }
-    
+            $price = (float) $product->price;
+            $calculatedPrice = $price * (float) $exchangeRate['data'];
+
             $product->price = round($calculatedPrice, 2);
             $product->currency = $exchangeRate['currency'] ?? '₹';
-            $product->cost_price = round((float)$product->cost_price * (float)$exchangeRate['data'], 2);
-    
+
             return $product;
         });
         $headerMenus = Menu::with([
@@ -117,7 +137,7 @@ class FrontController extends Controller
             })
             ->orderBy('order', 'asc')
             ->get();
-        
+
 
         $telcode = 'IN';
         if (!session()->has('country')) {
@@ -132,21 +152,16 @@ class FrontController extends Controller
         }
 
         $telcode = session('country', 'IN');
-
-
-        // Get conversion rate
-
         // Pass data to the view
         return view('front.shop', [
             'categories' => $categories,
             'brands' => $brands,
             'products' => $products,
-            'headerMenus' => $headerMenus,  
-            'footerMenus' => $footerMenus,  
-            'telcode' => $telcode,
-            'exchangeRate' => $exchangeRate
+            'exchangeRate' => $exchangeRate,
+            'headerMenus' => $headerMenus,
+            'footerMenus' => $footerMenus,
+            'telcode' => $telcode
         ]);
-
     }
 
 

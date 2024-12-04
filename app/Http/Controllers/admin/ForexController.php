@@ -5,6 +5,7 @@ namespace App\Http\Controllers\admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\ForexRate;
+use DB;
 class ForexController extends Controller
 {
     public function index()
@@ -63,5 +64,25 @@ class ForexController extends Controller
         $rate = ForexRate::findOrFail($id);
         $rate->update($request->all());
         return redirect()->route('admin.forex.index')->with('success', 'Forex rate updated successfully!');
+    }
+
+
+    public function editForexMode()
+    {
+        $currentMode = DB::table('settings')->where('key', 'forex_mode')->value('value') ?? 'auto';
+        return view('admin.forex.mode', compact('currentMode'));
+    }
+    public function updateForexMode(Request $request)
+    {
+        $request->validate([
+            'forex_mode' => 'required|in:auto,manual',
+        ]);
+
+        DB::table('settings')->updateOrInsert(
+            ['key' => 'forex_mode'],
+            ['value' => $request->forex_mode]
+        );
+
+        return redirect()->back()->with('success', 'Forex mode updated successfully.');
     }
 }
