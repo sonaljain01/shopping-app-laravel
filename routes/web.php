@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\admin\AdminLoginController;
 use App\Http\Controllers\admin\ProductController;
+use App\Http\Controllers\admin\TranslationController;
 use App\Http\Controllers\FrontController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ShopController;
@@ -258,6 +259,14 @@ Route::group(['prefix' => 'admin'], function () {
         Route::delete('stores/{id}', [StoreController::class, 'destroy'])->name('stores.destroy');
         Route::get('stores/{id}/edit', [StoreController::class, 'edit'])->name('stores.edit');
         Route::put('stores/{id}/update', [StoreController::class, 'update'])->name('stores.update');
+
+        //Translation routes
+        Route::get('/translations', [TranslationController::class, 'index'])->name('translations.index');
+        Route::get('/translations/create', [TranslationController::class, 'create'])->name('translations.create');
+        Route::post('/translations/store', [TranslationController::class, 'store'])->name('translations.store');
+        Route::get('/translations/{id}/edit', [TranslationController::class, 'edit'])->name('translations.edit');
+        Route::put('/translations/{id}/update', [TranslationController::class, 'update'])->name('translations.update');
+        Route::delete('/translations/{id}', [TranslationController::class, 'destroy'])->name('translations.destroy');
     });
 });
 

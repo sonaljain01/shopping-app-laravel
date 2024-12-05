@@ -116,9 +116,9 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="pages.html" class="nav-link">
+                    <a href="{{ route('translations.index') }}" class="nav-link">
                         <i class="nav-icon  far fa-file-alt"></i>
-                        <p>Pages</p>
+                        <p>Translations</p>
                     </a>
                 </li>	
                 <li class="nav-item">
