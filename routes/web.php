@@ -28,10 +28,37 @@ use App\Http\Controllers\admin\SettingController;
 use App\Http\Controllers\admin\ForexController;
 use App\Http\Controllers\admin\ForexRateController;
 use App\Http\Controllers\admin\StoreController;
-
+use App\Http\Controllers\admin\LanguageController;
 
 
 Route::group(['middleware' => TrackUtmMiddleware::class], function () {
+
+
+    // Route::get('/change-language/{locale}', function ($locale) {
+    //     session(['app_locale' => $locale]);
+    //     App::setLocale($locale);
+    //     return redirect()->back();
+    // })->name('change-language');
+    Route::get('change-language/{locale}', function ($locale) {
+        session(['app_locale' => $locale]); // Set the new locale in the session
+        return redirect()->back();
+    })->name('change-language');
+    // web.php
+    // Route::get('/change-language/{locale}', [TranslationController::class, 'changeLanguage'])->name('change-language');
+
+    Route::get('translations/{locale}', function ($locale) {
+        // Set locale for this request
+        App::setLocale($locale);
+    
+        // Fetch translations for the locale
+        $translations = \App\Models\Translation::where('language', $locale)
+            ->pluck('value', 'key')
+            ->toArray();
+    
+        return response()->json($translations);
+    });
+    
+    
     Route::get('/api/get-dial-code', [CountryController::class, 'getDialCode']);
     Route::post('/update-global-country', [AdminOrderController::class, 'updateGlobalCountry'])->name('update.global.country');
     Route::get('/', [FrontController::class, 'index'])->name('front.home');
@@ -261,12 +288,19 @@ Route::group(['prefix' => 'admin'], function () {
         Route::put('stores/{id}/update', [StoreController::class, 'update'])->name('stores.update');
 
         //Translation routes
-        Route::get('/translations', [TranslationController::class, 'index'])->name('translations.index');
-        Route::get('/translations/create', [TranslationController::class, 'create'])->name('translations.create');
-        Route::post('/translations/store', [TranslationController::class, 'store'])->name('translations.store');
-        Route::get('/translations/{id}/edit', [TranslationController::class, 'edit'])->name('translations.edit');
-        Route::put('/translations/{id}/update', [TranslationController::class, 'update'])->name('translations.update');
-        Route::delete('/translations/{id}', [TranslationController::class, 'destroy'])->name('translations.destroy');
+        Route::get('/languages', [LanguageController::class, 'index'])->name('languages.index');
+        Route::get('/languages/create', [LanguageController::class, 'create'])->name('languages.create');
+        Route::post('/languages/store', [LanguageController::class, 'store'])->name('languages.store');
+        Route::get('/languages/{id}/edit', [LanguageController::class, 'edit'])->name('languages.edit');
+        Route::delete('/languages/{id}', [LanguageController::class, 'destroy'])->name('languages.destroy');
+        Route::put('/languages/{languageCode}/update', [LanguageController::class, 'update'])->name('languages.update');
+
+
+
+        // Route::resource('languages', LanguageController::class);
+        // Route::post('/languages/synchronize', [LanguageController::class, 'synchronize'])->name('languages.synchronize');
+
+
     });
 });
 
