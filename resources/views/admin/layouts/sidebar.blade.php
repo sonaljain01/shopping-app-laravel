@@ -116,7 +116,7 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="{{ route('translations.index') }}" class="nav-link">
+                    <a href="{{ route('languages.index') }}" class="nav-link">
                         <i class="nav-icon  far fa-file-alt"></i>
                         <p>Translations</p>
                     </a>

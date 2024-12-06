@@ -22,8 +22,8 @@
                 <form action="{{ route('front.register.store') }}" method="POST" class="border p-3 rounded">
                     @csrf
                     <div class="form-group">
-                        <label for="username">User Name *</label>
-                        <input type="text" name="username" id="username" class="form-control" placeholder="Username*"
+                        <label for="username">{{ __('username') }} *</label>
+                        <input type="text" name="username" id="username" class="form-control" placeholder="{{ __('username') }}*"
                             value="{{ old('username') }}" required>
                         @error('username')
                             <div class="text-danger">{{ $message }}</div>
@@ -31,8 +31,8 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="email">Email *</label>
-                        <input type="email" name="email" id="email" class="form-control" placeholder="Email*"
+                        <label for="email">{{ __('email') }} *</label>
+                        <input type="email" name="email" id="email" class="form-control" placeholder="{{ __('email') }}*"
                             value="{{ old('email') }}" required>
                         @error('email')
                             <div class="text-danger">{{ $message }}</div>
@@ -41,31 +41,31 @@
                  
 
                     <div class="form-group col-md-6">
-                        <label for="country_code">Country Code *</label>
+                        <label for="country_code">{{ __('Country Code') }} *</label>
                         <input type="text" class="form-control" name="country_code" id="country_code" 
                             value="{{ $telcode }}" readonly />
                     </div>
                     <div class="col-md-6">
-                        <label for="phone_number">Phone Number *</label>
-                        <input type="tel" class="form-control" name="phone_number" id="phone_number" required>
+                        <label for="phone_number">{{ __('Phone Number') }} *</label>
+                        <input type="tel" class="form-control" name="phone_number" id="phone_number" placeholder="{{ __('Phone Number') }}*" required>
                     </div>
                     
 
 
                         <div class="row">
                             <div class="form-group col-md-6">
-                                <label for="password">Password *</label>
+                                <label for="password">{{ __('password') }} *</label>
                                 <input type="password" name="password" id="password" class="form-control"
-                                    placeholder="Password*" required>
+                                    placeholder="{{ __('password') }}*" required>
                                 @error('password')
                                     <div class="text-danger">{{ $message }}</div>
                                 @enderror
                             </div>
 
                             <div class="form-group col-md-6">
-                                <label for="password_confirmation">Confirm Password *</label>
+                                <label for="password_confirmation">{{ __('Confirm Password') }} *</label>
                                 <input type="password" name="password_confirmation" id="password_confirmation"
-                                    class="form-control" placeholder="Confirm Password*" required>
+                                    class="form-control" placeholder="{{ __('Confirm Password') }}*" required>
                                 @error('password_confirmation')
                                     <div class="text-danger">{{ $message }}</div>
                                 @enderror
@@ -73,20 +73,17 @@
                         </div>
 
                         <div class="form-group">
-                            <p>By registering your details, you agree with our Terms & Conditions, and Privacy and Cookie
-                                Policy.</p>
+                            <p>{{ __('By registering your details, you agree with our Terms & Conditions, and Privacy and Cookie Policy.') }}</p>
                         </div>
 
 
 
                         <div class="form-group">
-                            <button type="submit" class="btn btn-md full-width bg-dark text-light fs-md ft-medium">Create
-                                An
-                                Account</button>
+                            <button type="submit" class="btn btn-md full-width bg-dark text-light fs-md ft-medium">{{ __('Create An Account') }}</button>
                         </div>
 
                         <div class="form-group">
-                            <p>Already have an account? <a href="{{ route('front.login') }}">Login</a></p>
+                            <p>{{ __('Already have an account')  }}? <a href="{{ route('front.login') }}">{{ __('login') }}</a></p>
                         </div>
                 </form>
             </div>

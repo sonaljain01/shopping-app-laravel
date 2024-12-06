@@ -40,8 +40,8 @@
 
                     <div class="col-xl-4 col-lg-4 col-md-5 col-sm-12 hide-ipad">
                         <div class="top_second text-center">
-                            <p class="medium text-light m-0 p-0">Get Free delivery from $2000 <a href="#"
-                                    class="medium text-light text-underline">Shop Now</a></p>
+                            <p class="medium text-light m-0 p-0">{{ __('Get Free delivery from $2000 Shop Now') }} 
+                                    </p>
                         </div>
                     </div>
 
@@ -75,7 +75,7 @@
                                         <img src="{{ asset('vendor/blade-flags/country-gb.svg') }}" width="32"
                                             height="32" />
                                         UK</a></li> --}}
-                                <li class="current"><a title="US Dollar"git  href="javascript:void(0);" id="us"
+                                <li class="current"><a title="US Dollar"git href="javascript:void(0);" id="us"
                                         onclick="country(this.id)" class="dropdown-item medium text-medium">
                                         <img src="{{ asset('vendor/blade-flags/country-us.svg') }}" width="32"
                                             height="32" />
@@ -98,38 +98,47 @@
                             <a class="popup-title" href="javascript:void(0)" data-toggle="dropdown" title="Language"
                                 aria-label="Language dropdown">
                                 <span class="hidden-xl-down medium text-light">Language:</span>
-                                <span class="iso_code medium text-light">English</span>
+                                <span class="iso_code medium text-light">{{ App::getLocale() }}</span>
                                 <i class="fa fa-angle-down medium text-light"></i>
                             </a>
                             <ul class="dropdown-menu popup-content link">
-                                <li class="current"><a href="javascript:void(0);"
-                                        class="dropdown-item medium text-medium"><img
-                                            src="{{ asset('front-assets/img/1.jpg') }}" alt="en" width="16"
-                                            height="11" /><span>English</span></a></li>
-                                <li><a href="javascript:void(0);" class="dropdown-item medium text-medium"><img
-                                            src="{{ asset('front-assets/img/2.jpg') }}" alt="fr" width="16"
-                                            height="11" /><span>Français</span></a></li>
-                                <li><a href="javascript:void(0);" class="dropdown-item medium text-medium"><img
-                                            src="{{ asset('front-assets/img/3.jpg') }}" alt="de" width="16"
-                                            height="11" /><span>Deutsch</span></a></li>
-                                <li><a href="javascript:void(0);" class="dropdown-item medium text-medium"><img
-                                            src="{{ asset('front-assets/img/4.jpg') }}" alt="it"
-                                            width="16" height="11" /><span>Italiano</span></a></li>
-                                <li><a href="javascript:void(0);" class="dropdown-item medium text-medium"><img
-                                            src="{{ asset('front-assets/img/5.jpg') }}" alt="es"
-                                            width="16" height="11" /><span>Español</span></a></li>
-                                <li><a href="javascript:void(0);" class="dropdown-item medium text-medium"><img
-                                            src="{{ asset('front-assets/img/6.jpg') }}" alt="ar"
-                                            width="16" height="11" /><span>اللغة العربية</span></a></li>
+                                <div class="language-switcher">
+                                    <li><a href="{{ route('change.language', 'en') }}">English</a></li>
+                                    <li><a href="{{ route('change.language', 'fr') }}">French</a></li>
+                                    <li><a href="{{ route('change.language', 'zh') }}">Chinese</a></li>
+                                    <li><a href="{{ route('change.language', 'hi') }}">Hindi</a></li>
+                                    <li><a href="{{ route('change.language', 'de') }}">German</a></li>
+                                    <li><a href="{{ route('change.language', 'ko') }}">Korean</a></li>
+                                </div>
+                                
+                                
                             </ul>
+                            <script>
+                                // Function to change language dynamically
+                                function changeLanguage(locale) {
+                                    fetch(`/translations/${locale}`)
+                                        .then(response => response.json())
+                                        .then(translations => {
+                                            // Update the translation keys in the page
+                                            Object.keys(translations).forEach(key => {
+                                                // Update the text content of elements that have the translation key as data attribute
+                                                const elements = document.querySelectorAll(`[data-translation="${key}"]`);
+                                                elements.forEach(element => {
+                                                    element.textContent = translations[key];
+                                                });
+                                            });
+                                        })
+                                        .catch(error => console.error('Error fetching translations:', error));
+                                }
+                            </script>
                         </div>
 
                         <div class="currency-selector dropdown js-dropdown float-right mr-3">
-                            <a href="javascript:void(0);" class="text-light medium">Wishlist</a>
+                            <a href="javascript:void(0);" class="text-light medium">{{ __('wishlist') }}</a>
                         </div>
 
                         <div class="currency-selector dropdown js-dropdown float-right mr-3">
-                            <a href="javascript:void(0);" class="text-light medium">My Account</a>
+                            <a href="javascript:void(0);" class="text-light medium">{{ __('My Account') }}</a>
                         </div>
 
                     </div>
