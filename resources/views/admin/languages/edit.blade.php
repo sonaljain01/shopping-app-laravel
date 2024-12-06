@@ -34,7 +34,7 @@
                     @endforeach
                 </tbody>
             </table>
-            {{-- {{ $baseTranslations->links() }} --}}
+            
             <button type="submit" class="btn btn-primary">Save Translations</button>
             <button href="{{ route('languages.index') }}" class="btn btn-secondary">Cancel</button>
         </form>

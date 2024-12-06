@@ -53,7 +53,7 @@
                 <div class="single_search_boxed">
                     <div class="widget-boxed-header">
                         <h4>
-                            <a href="#pricing" data-toggle="collapse" aria-expanded="false" role="button">{{ __('pricing') }}</a>
+                            <a href="#pricing" data-toggle="collapse" aria-expanded="false" role="button">{{ __('price') }}</a>
                         </h4>
                     </div>
                     <div class="widget-boxed-body collapse show" id="pricing" data-parent="#pricing">

@@ -5,7 +5,7 @@ namespace App\Http\Controllers\admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Language;
-use Illuminate\Pagination\LengthAwarePaginator;
+
 
 class LanguageController extends Controller
 {
@@ -84,10 +84,10 @@ class LanguageController extends Controller
         $langPath = resource_path("lang/{$language->code}.json");
 
         if (file_exists($langPath)) {
-            unlink($langPath); // Delete the language file
+            unlink($langPath);
         }
 
-        $language->delete(); // Remove the language from the database
+        $language->delete(); 
 
         return redirect()->route('languages.index')->with('success', 'Language deleted successfully!');
     }

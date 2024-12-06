@@ -7,7 +7,7 @@
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="{{ route('front.home') }}">Home</a></li>
-                    <li class="breadcrumb-item"><a href="#">{{ __('shop') }}</a></li>
+                    <li class="breadcrumb-item"><a href="#">Shop</a></li>
                     <li class="breadcrumb-item active" aria-current="page">Women's</li>
                 </ol>
             </nav>
@@ -19,7 +19,7 @@
         <div class="row align-items-center justify-content-center">
             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                 <div class="text-left py-5 mt-3 mb-3">
-                    <h1 class="ft-medium mb-3">{{ __('shop') }}</h1>
+                    <h1 class="ft-medium mb-3">Shop</h1>
                     <ul class="shop_categories_list m-0 p-0">
                         <li><a href="#">Men</a></li>
                         <li><a href="#">Speakers</a></li>
