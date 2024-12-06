@@ -67,7 +67,7 @@
                         <input type="hidden" name="price_range" id="priceRange" value="{{ $minPrice ?? 0 }}-{{ $maxPrice ?? 1000 }}">
             
                         <!-- Apply Filter Button -->
-                        <button type="submit" class="btn btn-primary">Apply Filter</button>
+                        <button type="submit" class="btn btn-primary">{{ __('filter') }}</button>
                     </div>
                 </div>
             </form>
@@ -274,7 +274,7 @@
             <div class="single_search_boxed">
                 <div class="widget-boxed-header">
                     <h4><a href="#types" data-toggle="collapse" class="collapsed" aria-expanded="false"
-                            role="button">Type</a></h4>
+                            role="button">{{ __('type') }}</a></h4>
                 </div>
                 <div class="widget-boxed-body collapse" id="types" data-parent="#types">
                     <div class="side-list no-border">
@@ -319,7 +319,7 @@
             <div class="single_search_boxed">
                 <div class="widget-boxed-header">
                     <h4><a href="#occation" data-toggle="collapse" class="collapsed" aria-expanded="false"
-                            role="button">Occation</a></h4>
+                            role="button">{{ __('occation') }}</a></h4>
                 </div>
                 <div class="widget-boxed-body collapse" id="occation" data-parent="#occation">
                     <div class="side-list no-border">
@@ -364,7 +364,7 @@
             <div class="single_search_boxed">
                 <div class="widget-boxed-header">
                     <h4><a href="#colors" data-toggle="collapse" class="collapsed" aria-expanded="false"
-                            role="button">Colors</a></h4>
+                            role="button">{{ __('color') }}</a></h4>
                 </div>
                 <div class="widget-boxed-body collapse" id="colors" data-parent="#colors">
                     <div class="side-list no-border">

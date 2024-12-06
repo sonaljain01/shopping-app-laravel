@@ -40,8 +40,8 @@
 
                     <div class="col-xl-4 col-lg-4 col-md-5 col-sm-12 hide-ipad">
                         <div class="top_second text-center">
-                            <p class="medium text-light m-0 p-0">Get Free delivery from $2000 <a href="#"
-                                    class="medium text-light text-underline">Shop Now</a></p>
+                            <p class="medium text-light m-0 p-0">{{ __('Get Free delivery from $2000 Shop Now') }} 
+                                    </p>
                         </div>
                     </div>
 
@@ -107,6 +107,8 @@
                                     <li><a href="{{ route('change.language', 'fr') }}">French</a></li>
                                     <li><a href="{{ route('change.language', 'zh') }}">Chinese</a></li>
                                     <li><a href="{{ route('change.language', 'hi') }}">Hindi</a></li>
+                                    <li><a href="{{ route('change.language', 'de') }}">German</a></li>
+                                    <li><a href="{{ route('change.language', 'ko') }}">Korean</a></li>
                                 </div>
                                 
                                 
@@ -132,11 +134,11 @@
                         </div>
 
                         <div class="currency-selector dropdown js-dropdown float-right mr-3">
-                            <a href="javascript:void(0);" class="text-light medium">Wishlist</a>
+                            <a href="javascript:void(0);" class="text-light medium">{{ __('wishlist') }}</a>
                         </div>
 
                         <div class="currency-selector dropdown js-dropdown float-right mr-3">
-                            <a href="javascript:void(0);" class="text-light medium">My Account</a>
+                            <a href="javascript:void(0);" class="text-light medium">{{ __('My Account') }}</a>
                         </div>
 
                     </div>

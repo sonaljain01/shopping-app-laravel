@@ -42,7 +42,7 @@ Route::group(['middleware' => TrackUtmMiddleware::class], function () {
     Route::group(['middleware' => LanguageMiddleware::class], function () {
         
         Route::get('change-language/{locale}', function ($locale) {
-            if (in_array($locale, ['en', 'fr', 'zh', 'hi', 'ko'])) { 
+            if (in_array($locale, ['en', 'fr', 'zh', 'hi', 'ko', 'de'])) { 
                 session(['locale' => $locale]);
             }
             return redirect()->back();
