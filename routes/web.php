@@ -29,7 +29,7 @@ use App\Http\Controllers\admin\ForexController;
 use App\Http\Controllers\admin\ForexRateController;
 use App\Http\Controllers\admin\StoreController;
 use App\Http\Controllers\admin\LanguageController;
-
+use App\Http\Middleware\LanguageMiddleware;
 
 Route::group(['middleware' => TrackUtmMiddleware::class], function () {
 
@@ -39,10 +39,19 @@ Route::group(['middleware' => TrackUtmMiddleware::class], function () {
     //     App::setLocale($locale);
     //     return redirect()->back();
     // })->name('change-language');
-    Route::get('change-language/{locale}', function ($locale) {
-        session(['app_locale' => $locale]); // Set the new locale in the session
-        return redirect()->back();
-    })->name('change-language');
+    Route::group(['middleware' => LanguageMiddleware::class], function () {
+        
+        Route::get('change-language/{locale}', function ($locale) {
+            if (in_array($locale, ['en', 'fr', 'zh', 'hi', 'ko'])) { 
+                session(['locale' => $locale]);
+            }
+            return redirect()->back();
+        })->name('change.language');
+    });
+    // Route::get('change-language/{locale}', function ($locale) {
+    //     session(['app_locale' => $locale]); // Set the new locale in the session
+    //     return redirect()->back();
+    // })->name('change-language');
     // web.php
     // Route::get('/change-language/{locale}', [TranslationController::class, 'changeLanguage'])->name('change-language');
 

@@ -4,7 +4,7 @@
             <!-- Single Option -->
             <div class="single_search_boxed">
                 <div class="widget-boxed-header px-3">
-                    <h4 class="mt-3">Categories</h4>
+                    <h4 class="mt-3">{{ __('categories') }}</h4>
                 </div>
                 <div class="widget-boxed-body">
                     <div class="side-list no-border">
@@ -53,7 +53,7 @@
                 <div class="single_search_boxed">
                     <div class="widget-boxed-header">
                         <h4>
-                            <a href="#pricing" data-toggle="collapse" aria-expanded="false" role="button">Pricing</a>
+                            <a href="#pricing" data-toggle="collapse" aria-expanded="false" role="button">{{ __('pricing') }}</a>
                         </h4>
                     </div>
                     <div class="widget-boxed-body collapse show" id="pricing" data-parent="#pricing">
@@ -97,7 +97,7 @@
             <div class="single_search_boxed">
                 <div class="widget-boxed-header">
                     <h4><a href="#size" data-toggle="collapse" class="collapsed" aria-expanded="false"
-                            role="button">Size</a></h4>
+                            role="button">{{ __('size') }}</a></h4>
                 </div>
                 <div class="widget-boxed-body collapse" id="size" data-parent="#size">
                     <div class="side-list no-border">
@@ -155,7 +155,7 @@
             <!-- Single Option -->
             <div class="single_search_boxed">
                 <div class="widget-boxed-header">
-                    <h4><a href="#brands" data-toggle="collapse" aria-expanded="false" role="button">Brands</a>
+                    <h4><a href="#brands" data-toggle="collapse" aria-expanded="false" role="button">{{ __('brands') }}</a>
                     </h4>
                 </div>
                 <div class="widget-boxed-body collapse show" id="brands" data-parent="#brands">
@@ -190,7 +190,7 @@
             <div class="single_search_boxed">
                 <div class="widget-boxed-header">
                     <h4><a href="#gender" data-toggle="collapse" class="collapsed" aria-expanded="false"
-                            role="button">Gender</a></h4>
+                            role="button">{{ __('gender') }}</a></h4>
                 </div>
                 <div class="widget-boxed-body collapse" id="gender" data-parent="#gender">
                     <div class="side-list no-border">
@@ -229,7 +229,7 @@
             <div class="single_search_boxed">
                 <div class="widget-boxed-header">
                     <h4><a href="#discount" data-toggle="collapse" class="collapsed" aria-expanded="false"
-                            role="button">Discount</a></h4>
+                            role="button">{{ __('discount') }}</a></h4>
                 </div>
                 <div class="widget-boxed-body collapse" id="discount" data-parent="#discount">
                     <div class="side-list no-border">

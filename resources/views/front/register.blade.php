@@ -31,8 +31,8 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="email">Email *</label>
-                        <input type="email" name="email" id="email" class="form-control" placeholder="Email*"
+                        <label for="email">{{ __('email') }} *</label>
+                        <input type="email" name="email" id="email" class="form-control" placeholder="{{ __('email') }}*"
                             value="{{ old('email') }}" required>
                         @error('email')
                             <div class="text-danger">{{ $message }}</div>
@@ -86,7 +86,7 @@
                         </div>
 
                         <div class="form-group">
-                            <p>Already have an account? <a href="{{ route('front.login') }}">Login</a></p>
+                            <p>Already have an account? <a href="{{ route('front.login') }}">{{ __('login') }}</a></p>
                         </div>
                 </form>
             </div>

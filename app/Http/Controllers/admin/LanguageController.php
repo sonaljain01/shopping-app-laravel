@@ -54,22 +54,12 @@ class LanguageController extends Controller
         }
 
         $selectedTranslations = json_decode(file_get_contents($selectedLangPath), true);
-        $perPage = 10; // Number of translations per page
-        $currentPage = LengthAwarePaginator::resolveCurrentPage();
-        $pagedBaseTranslations = array_slice($baseTranslations, ($currentPage - 1) * $perPage, $perPage, true);
-
-        $paginator = new LengthAwarePaginator(
-            $pagedBaseTranslations,
-            count($baseTranslations),
-            $perPage,
-            $currentPage,
-            ['path' => url()->current()]
-        );
+        
         return view('admin.languages.edit', [
             'languageCode' => $languageCode,
             'translations' => $selectedTranslations,
             'baseTranslations' => $baseTranslations,
-            'paginator' => $paginator
+            
         ]);
 
 

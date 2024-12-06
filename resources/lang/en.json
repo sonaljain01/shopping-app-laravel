@@ -1,11 +1,15 @@
 {
     "login": "Login",
-    "register": "Register",
+    "register": "register",
     "logout": "Logout",
-    "dashboard": "Dashboard",
-    "profile": "Profile",
+   
     "categories": "Categories",
     "brands": "Brands",
-    "price": "Price",
-    "filter": "Filter"
+    "pricing": "Price",
+    "filter": "Filter",
+    "email": "Email",
+    "shop": "Shop",
+    "size": "Size",
+    "gender": "Gender",
+    "discount": "Discount"
 }

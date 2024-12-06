@@ -11,10 +11,6 @@ class TranslationController extends Controller
 {
     public function index()
     {
-        // $translations = Translation::all();
-        // // $translations = Translation::paginate(10);
-        // $groupTranslations = $translations->groupBy('language');
-        // return view('admin.translation.index', compact('groupTranslations'));
         $translations = Translation::orderBy('language')->paginate(10);
 
         return view('admin.translation.index', compact('translations'));
@@ -59,5 +55,11 @@ class TranslationController extends Controller
             'status' => true,
             'message' => 'Translation deleted successfully'
         ]);
+    }
+
+    public function changeLanguage($locale)
+    {
+        session(['app_locale' => $locale]);
+        return redirect()->back(); // Redirect back to the previous page
     }
 }

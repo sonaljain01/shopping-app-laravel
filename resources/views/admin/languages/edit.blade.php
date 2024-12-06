@@ -14,14 +14,16 @@
             <table class="table table-bordered">
                 <thead>
                     <tr>
+                        <th>ID</th>
                         <th>Key</th>
                         <th>Base (English)</th>
                         <th>{{ strtoupper($languageCode) }}</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($paginator as $key => $value)
+                    @foreach ($baseTranslations as $key => $value)
                         <tr>
+                            <td>{{ $loop->iteration }}</td>
                             <td>{{ $key }}</td>
                             <td>{{ $value }}</td>
                             <td>
@@ -32,13 +34,9 @@
                     @endforeach
                 </tbody>
             </table>
-
-            {{-- Display Pagination Links --}}
-            <div class="d-flex justify-content-center">
-                {{ $paginator->links() }}
-            </div>
-
+            {{-- {{ $baseTranslations->links() }} --}}
             <button type="submit" class="btn btn-primary">Save Translations</button>
+            <button href="{{ route('languages.index') }}" class="btn btn-secondary">Cancel</button>
         </form>
     </div>
 @endsection

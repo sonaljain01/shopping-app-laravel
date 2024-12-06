@@ -1,11 +1,12 @@
 {
-    "login": null,
-    "register": null,
-    "logout": null,
+    "login": "登录",
+    "register": "登记",
+    "logout": "注销",
     "dashboard": null,
     "profile": null,
-    "categories": null,
-    "brands": null,
-    "price": null,
-    "filter": null
+    "categories": "类别",
+    "brands": "品牌",
+    "pricing": "定价",
+    "filter": "筛选",
+    "email": "电子邮件"
 }
