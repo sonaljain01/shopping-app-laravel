@@ -61,10 +61,10 @@ class OrderController extends Controller
                 ];
             }
         } else {
-            
+
             $exchangeRate = getExchangeRate($country);
         }
-        
+
         $currency = $exchangeRate['currency'];
         $conversionRate = $exchangeRate['data'];
 
@@ -154,6 +154,7 @@ class OrderController extends Controller
 
     public function placeOrder(Request $request)
     {
+        // dd($request->all());
         // Check and normalize the "same_as_billing" input
         $sameAsBilling = $request->has('same_as_billing') && $request->input('same_as_billing') === 'on';
 
@@ -216,7 +217,7 @@ class OrderController extends Controller
                 'phone' => $validatedData['country_code'] . $validatedData['phone'],
                 'billing_address_id' => null,
                 'shipping_address_id' => null,
-                'country_code' => $request->country_code,
+                // 'country_code' => $request->country_code,
                 'tax' => $totalTax,
                 'grand_total' => $grandTotal
             ]);
@@ -255,13 +256,14 @@ class OrderController extends Controller
                     'zip' => $validatedData['shipping_zip'],
                     'phone' => $validatedData['shipping_phone'],
                     'country' => $validatedData['shipping_country'],
-                    'country_code' => $request->country_code,
+                    // 'country_code' => $request->country_code,
+                    'country_code' => $validatedData['shipping_country_code'],
                     'additional_information' => $validatedData['additional_information'],
                     'type' => 'shipping',
                     'is_default' => false,
                 ]);
             }
-
+            // dd($shippingAddress);
             // Assign addresses to the order
             $order->billing_address_id = $billingAddress->id;
             $order->shipping_address_id = $shippingAddress->id;
@@ -589,4 +591,23 @@ class OrderController extends Controller
 
 
     }
+
+    public function checkDeliveryShipping($cityName, $stateName)
+    {
+        $shipping_state = State::where('name', $stateName)->where('is_enabled', 1)->first();
+
+        if (!$shipping_state) {
+            return response()->json(['delivery_available' => false, 'message' => 'Delivery not available. State is disabled.']);
+        }
+
+        $shipping_city = City::where('name', $cityName)
+            ->where('is_enabled', 1)
+            ->where('state_id', $shipping_state->id)
+            ->first();
+
+        return $shipping_city
+            ? response()->json(['delivery_available' => true, 'message' => 'Delivery is available.'])
+            : response()->json(['delivery_available' => false, 'message' => 'Delivery not available. City is disabled or does not exist.']);
+    }
+
 }
