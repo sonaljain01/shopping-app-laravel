@@ -103,9 +103,8 @@ Route::group(['middleware' => TrackUtmMiddleware::class], function () {
     Route::get('/my-orders', [OrderController::class, 'myOrders'])->name('front.index');
     Route::get('/front/{user}', [OrderController::class, 'index'])->name('front.index.user');
     Route::get('/check-delivery/{city}/{state}', [OrderController::class, 'checkDelivery'])->name('check-delivery');
-    Route::get('/check-delivery/{shipping_city}/{shipping_state}', [OrderController::class, 'checkDeliveryShipping'])->name('check-delivery-shipping');
     Route::post('/billing-address/save', [OrderController::class, 'save'])->name('billing.address.save');
-
+    Route::get('/check-delivery/{shipping_city}/{shipping_state}', [OrderController::class, 'checkDeliveryShipping'])->name('check-delivery-shipping');
     Route::post('/wishlist/add', [WishlistController::class, 'add'])->name('wishlist.add');
 
     Route::middleware(['auth'])->group(function () {

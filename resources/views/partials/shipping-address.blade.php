@@ -158,17 +158,26 @@
             }
         }
 
-        async function checkDeliveryAvailability(city, state) {
-            try {
-                const response = await fetch(
-                    `/check-delivery/${encodeURIComponent(city)}/${encodeURIComponent(state)}`);
-                const data = await response.json();
+        function checkDeliveryAvailability(city, state) {
+            const routeTemplate =
+                `{{ route('check-delivery-shipping', ['shipping_city' => '__CITY__', 'shipping_state' => '__STATE__']) }}`;
+            const finalUrl = routeTemplate
+                .replace('__CITY__', encodeURIComponent(city))
+                .replace('__STATE__', encodeURIComponent(state));
 
-                displayMessage(data.message);
-            } catch (error) {
-                console.error("Error checking delivery availability:", error);
-                displayMessage("Error checking delivery availability.");
-            }
+            fetch(finalUrl)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.delivery_available) {
+                        displayMessage("Delivery is available to your location.");
+                    } else {
+                        displayMessage("Sorry, we do not deliver to your location.");
+                    }
+                })
+                .catch(error => {
+                    console.error("Error checking delivery availability:", error);
+                    displayMessage("Error checking delivery availability.");
+                });
         }
 
         function displayMessage(message) {

@@ -61,10 +61,10 @@ class OrderController extends Controller
                 ];
             }
         } else {
-
+            
             $exchangeRate = getExchangeRate($country);
         }
-
+        
         $currency = $exchangeRate['currency'];
         $conversionRate = $exchangeRate['data'];
 
@@ -239,7 +239,7 @@ class OrderController extends Controller
                 'type' => 'billing',
                 'is_default' => true,
             ]);
-
+            
             // Check if shipping address should be the same as billing address
             if ($sameAsBilling) {
                 $shippingAddress = $billingAddress->replicate()->fill(['type' => 'shipping', 'is_default' => false]);
@@ -599,15 +599,16 @@ class OrderController extends Controller
         if (!$shipping_state) {
             return response()->json(['delivery_available' => false, 'message' => 'Delivery not available. State is disabled.']);
         }
-
+    
         $shipping_city = City::where('name', $cityName)
             ->where('is_enabled', 1)
             ->where('state_id', $shipping_state->id)
             ->first();
-
+    
         return $shipping_city
             ? response()->json(['delivery_available' => true, 'message' => 'Delivery is available.'])
             : response()->json(['delivery_available' => false, 'message' => 'Delivery not available. City is disabled or does not exist.']);
-    }
 
+
+    }
 }
