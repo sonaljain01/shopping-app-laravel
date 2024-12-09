@@ -1,4 +1,4 @@
-<div class="card mb-4">
+{{-- <div class="card mb-4">
     <div class="card-body">
         <h5 class="mb-4">Billing Address</h5>
         <form action="{{ route('billing.address.save') }}" method="POST">
@@ -18,7 +18,7 @@
             </div> --}}
 
             <!-- Company -->
-            <div class="form-group">
+            {{-- <div class="form-group">
                 <label for="company">Company (Optional)</label>
                 <input type="text" class="form-control" id="company" name="company" 
                        value="{{ old('company', $billingAddress->company ?? '') }}">
@@ -69,4 +69,4 @@
             <button type="submit" class="btn btn-primary btn-block">Save Billing Address</button>
         </form>
     </div>
-</div>
+</div> --}} --}}
